@@ -1,0 +1,135 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:28
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\operator_control.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\operator_control.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\operator_control.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\operator_control.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\operator_control.c
+      1          #include "L6IR.h"
+      2          #include "Ball.h"
+      3          
+      4          #define OPERATOR_CONTROL_PERIOD  50
+      5          #define PHOTO_DEFAULT_ON_VALUE   285
+      6          #define PHOTO_DEFAULT_OFF_VALUE  600
+      7          
+      8          display_state display_st;
+      9          operator_control_consist operator_ctrl_consist;
+     10          s16 waiting_control_time;
+     11          extern uint16_t ADCBuffer[];
+     12          extern ADC_result ADC_data;
+     13          u32 photo_data_light, photo_data_dark;
+     14          extern spi_def spi_sets;
+     15          
+     16          
+     17          void Operator_present_control()
+     18          {
+     19            u32 photo_data;
+     20            //if(waiting_control_time >0) waiting_control_time--;
+     21            //else
+     22            //{
+     23             switch(operator_ctrl_consist)
+     24             {
+     25              case led_pulse:
+     26                if(waiting_control_time >0) waiting_control_time--;
+     27                else
+     28                {
+     29                 Led_ON;
+     30                 operator_ctrl_consist = pulse_adc1;
+     31                 waiting_control_time = OPERATOR_CONTROL_PERIOD;
+     32                }
+     33              break;
+     34             
+     35              case pulse_adc1:
+     36                photo_data_light = ADC_data.operator_photo;// ADCBuffer[2];//ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_3);
+     37                operator_ctrl_consist = pulse_adc2;
+     38              break;
+     39              
+     40              case pulse_adc2:
+     41                photo_data_light += ADC_data.operator_photo;//ADCBuffer[2];//ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_3);
+     42                if(waiting_control_time >0) waiting_control_time--;
+     43                else                        operator_ctrl_consist = pulse_adc3;    
+     44              break;
+     45          
+     46              case pulse_adc3:
+     47                photo_data_light+= ADC_data.operator_photo;//ADCBuffer[2];//ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_3);   
+     48                //photo_data_light = photo_data_light/OPERATOR_CONTROL_PERIOD;
+     49                 if((display_st == display_on)&&(photo_data_light>PHOTO_DEFAULT_OFF_VALUE)) display_st = display_make_off;
+     50          
+     51                 
+     52                 if((display_st == display_off)&&(photo_data_light<PHOTO_DEFAULT_ON_VALUE))  display_st = display_make_on;
+     53               
+     54                Led_OFF;
+     55                //display_st = display_on;
+     56                waiting_control_time = OPERATOR_CONTROL_PERIOD;
+     57                operator_ctrl_consist = led_pulse;
+     58              break;
+     59          
+     60              case not_action:
+     61                operator_ctrl_consist = led_pulse;      
+     62              break;  
+     63             }
+     64           // }
+     65          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   Operator_present_control
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     248  Operator_present_control
+       1  display_st
+       1  operator_ctrl_consist
+       4  photo_data_dark
+       4  photo_data_light
+       2  waiting_control_time
+
+ 
+  12 bytes in section .bss
+ 248 bytes in section .text
+ 
+ 248 bytes of CODE memory
+  12 bytes of DATA memory
+
+Errors: none
+Warnings: 1

@@ -1,0 +1,80 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:22
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\led_control.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\led_control.c -D USE_STDPERIPH_DRIVER
+#        -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE
+#        -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\led_control.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\led_control.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\led_control.c
+      1          #include "led_control.h"
+      2          #include "stm32l1xx_gpio.h"
+      3          
+      4          
+      5          
+      6          void led_pulse_control()
+      7          {
+      8            GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+      9          }
+     10          
+     11          
+     12          void led_off()
+     13          {
+     14            GPIO_SetBits(GPIOB, GPIO_Pin_5);
+     15          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   led_off
+         8   -> GPIO_SetBits
+       8   led_pulse_control
+         8   -> GPIO_ResetBits
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable1
+      12  led_off
+      12  led_pulse_control
+
+ 
+ 28 bytes in section .text
+ 
+ 28 bytes of CODE memory
+
+Errors: none
+Warnings: none

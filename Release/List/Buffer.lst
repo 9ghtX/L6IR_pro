@@ -1,0 +1,345 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:17
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\Buffer.cpp
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\Buffer.cpp -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\Buffer.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\Buffer.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\Buffer.cpp
+      1          /************************************************************
+      2            * @file    Project/LPD/Soft/bus.c
+      3            * @author  Sergey Voron
+      4            * @version V 3.0
+      5            * @date    4/02/2010
+      6            * @brief   Ring buffer
+      7          ************************************************************/
+      8          #include "buffer.h"
+      9          #include "stm32l1xx.h"
+     10          
+     11          void IniRingBuf(u8 *pbuf,u8 Size, Buf_Head* head)	//)
+     12          //void IniRingBuf(u8 Size, Buf_Head* head)	//)
+     13          		{
+     14                  head->size = Size;//sizeof pbuf;
+     15                  head->buf=pbuf;
+     16                  head->index_wr=head->index_rd=0;
+     17                  head->empty = true;
+     18                  head->full  = false;
+     19          		}
+     20          //=========================================================
+     21          bool get_empty(Buf_Head* head)
+     22          	{
+     23          	return head->empty;
+     24          	}
+     25          bool get_full(Buf_Head* head)
+     26          	{
+     27          	return head->full;
+     28          	}
+     29          //------------------------------------------------------
+     30          u8 get_free(Buf_Head* head)
+     31          	{
+     32          		u8 free;
+     33          		if(head->full) free=0;
+     34          		else
+     35          			{
+     36          			if(head->empty) free=head->size;
+     37          			else
+     38          				{
+     39          				if(head->index_wr > head->index_rd)	free = head->index_rd + head->size - head->index_wr;
+     40          				else 			 	                free = head->index_rd - head->index_wr;
+     41          				}	
+     42          			}
+     43          	return free;			
+     44          	}
+     45          //------------------------------------------------------
+     46          u8 get_fill(Buf_Head* head)
+     47          	{
+     48          		int fill;
+     49          		if(head->empty) fill=0;
+     50          		else
+     51          			{
+     52          			if(head->full) fill=head->size;
+     53          			else
+     54          				{
+     55          				if(head->index_wr > head->index_rd)	fill = head->index_wr - head->index_rd;
+     56          				else 			 	                fill = head->size + head->index_wr - head->index_rd;
+     57          				}
+     58          			}
+     59          	return fill;			
+     60          	}
+     61          //------------------------------------------------------
+     62          void clean(Buf_Head* head)
+     63          	{
+     64          	head->index_rd=head->index_wr;
+     65          	head->empty=true;
+     66          	head->full=false;
+     67          	}
+     68          //------------------------------------------------------
+     69          void push(Buf_Head* head,u8 item)
+     70          	{
+     71          	if(!head->full)
+     72          		{
+     73          		head->buf[head->index_wr++] = item;
+     74          		if(head->index_wr >= head->size) head->index_wr=0;		
+     75          		if(head->index_wr == head->index_rd)head->full=true;		
+     76              	head->empty=false;			
+     77            		}
+     78            	}
+     79          //------------------------------------------------------
+     80          u8 pop(Buf_Head* head)
+     81          	{
+     82          	u8 item;		
+     83              if(!head->empty)
+     84          		{
+     85          		item = head->buf[head->index_rd++];
+     86          		if(head->index_rd >= head->size) head->index_rd=0;
+     87          		if(head->index_wr == head->index_rd)head->empty=true;
+     88              	head->full=false;
+     89            		}
+     90              return item;
+     91          	}
+     92          //------------------------------------------------------
+     93          u8 get(Buf_Head* head)
+     94          	{
+     95          	return head->buf[head->index_rd];	
+     96          	}
+     97          //------------------------------------------------------
+     98          void ipush(Buf_Head* head,int item)
+     99          	{
+    100          	push(head,(u8)(item&0xff));
+    101          	push(head,(u8)((item&0xff00)>>8));
+    102            	}
+    103          //----------------------------------------------------------
+    104          int ipop(Buf_Head* head)
+    105          	{
+    106          	int item;		
+    107          	item = pop(head);
+    108          	item = item|(pop(head)<<8);
+    109              return item;
+    110          	}
+    111          //------------------------------------------------------
+    112          ///////////////////////////////////////////////////////////////////////////////
+    113          void insert_stsp(Buf_Head* head)
+    114              {
+    115              u8  temp,len,i;
+    116          
+    117              len = get_fill(head);
+    118              push(head,SOH);
+    119              for(i=0;i<len;i++)
+    120                {
+    121          			temp = pop(head);			
+    122          		
+    123          			if((temp == SOH) || (temp == DLE) || (temp == ETX))
+    124          				{
+    125          				push(head,DLE);
+    126          				temp = ~temp;
+    127          				}
+    128          			push(head,temp);
+    129                }
+    130              push(head,ETX);
+    131              }
+    132          
+    133          //------------------------------------------------------
+    134          void del_stsp(Buf_Head* head)
+    135              {
+    136              u8  len,i,temp;
+    137          
+    138              len = get_fill(head);
+    139              for(i=0;i<len;i++)
+    140                {
+    141                temp = pop(head);
+    142                if((temp != SOH)&&(temp != ETX))
+    143          				{
+    144          				if(temp == DLE)
+    145          					{
+    146          					temp = pop(head);		
+    147          					temp = ~temp;
+    148          					len--;
+    149          					}
+    150                  push(head,temp);			
+    151          				}
+    152                }
+    153              }
+    154          //------------------------------------------------------
+    155          u8 dow_crc(Buf_Head* head)
+    156              {
+    157              u8 temp,count,fl,i,j,crc=0;
+    158          
+    159              count = get_fill(head);
+    160          
+    161              for(j=0;j<count;j++)
+    162                {
+    163                temp = pop(head);
+    164                push(head,temp);
+    165                crc = crc ^ temp;
+    166          
+    167                for(i=0;i<8;i++)
+    168                  {
+    169                  fl=crc&1;
+    170                  if(fl)
+    171                    {
+    172                    crc = crc ^ 0x18;
+    173                    crc = 0x80 | (crc >>1);
+    174                    }
+    175                  else crc = (crc >>1);
+    176                  }
+    177                }
+    178              return crc;
+    179              }
+    180          //------------------------------------------------------
+    181          bool check_crc(Buf_Head* head)	
+    182          	{
+    183              u8  chcrc;
+    184          
+    185              chcrc=dow_crc(head);
+    186          
+    187          	if(chcrc==0)
+    188          		{
+    189          		if(head->index_wr == 0)	head->index_wr = head->size - 1;
+    190          		else 					head->index_wr = head->index_wr - 1;			
+    191          		
+    192          		return true;
+    193          		}
+    194          	else
+    195          		{					//if crc is wrong then buf clean.
+    196          		clean(head);
+    197          		return false;	
+    198          		}
+    199          	}
+    200          //------------------------------------------------------
+    201          bool insert_crc(Buf_Head* head)
+    202          	{
+    203          	u8  count,outcrc;
+    204          	
+    205          	count = get_fill(head);
+    206          	if(2*count <= head->size)
+    207          		{
+    208                  outcrc = dow_crc(head);
+    209                  push(head,outcrc);
+    210          		return true;		
+    211          		}
+    212          	return false;				//if isn't place then false
+    213          	}
+    214          //------------------------------------------------------
+    215          
+    216          void next(Buf_Head* head, u8 c)
+    217          {
+    218              u8 item;		
+    219              item = get_fill(head);
+    220          
+    221              if(item >= c)
+    222          	{
+    223                  if((head->index_rd + c) >= head->size)
+    224                    {
+    225                     head->index_rd = (head->index_rd + c) - head->size;
+    226                    }
+    227                  else
+    228                    {
+    229                     head->index_rd = (head->index_rd + c);
+    230                    }
+    231          	   head->empty = (head->index_wr == head->index_rd);
+    232              	   head->full=false;
+    233          
+    234            	}
+    235              else clean(head);
+    236          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   IniRingBuf
+       8   check_crc
+         8   -> clean
+         8   -> dow_crc
+       0   clean
+      16   del_stsp
+        16   -> get_fill
+        16   -> pop
+        16   -> push
+      24   dow_crc
+        24   -> get_fill
+        24   -> pop
+        24   -> push
+       0   get
+       0   get_empty
+       0   get_fill
+       0   get_free
+       0   get_full
+       8   insert_crc
+         8   -> dow_crc
+         8   -> get_fill
+         8   -> push
+      24   insert_stsp
+        24   -> get_fill
+        24   -> pop
+        24   -> push
+      16   ipop
+        16   -> pop
+      16   ipush
+        16   -> push
+      16   next
+        16   -> clean
+        16   -> get_fill
+       0   pop
+       0   push
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      22  IniRingBuf
+      50  check_crc
+      14  clean
+      78  del_stsp
+     104  dow_crc
+       8  get
+       4  get_empty
+      50  get_fill
+      50  get_free
+       4  get_full
+      44  insert_crc
+      96  insert_stsp
+      26  ipop
+      32  ipush
+      82  next
+      52  pop
+      48  push
+
+ 
+ 764 bytes in section .text
+ 
+ 764 bytes of CODE memory
+
+Errors: none
+Warnings: none

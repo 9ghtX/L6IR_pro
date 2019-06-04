@@ -1,0 +1,654 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:44
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_gpio.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_gpio.c
+#        -D USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200
+#        -D L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\stm32l1xx_gpio.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\stm32l1xx_gpio.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_gpio.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    stm32l1xx_gpio.c
+      4            * @author  MCD Application Team
+      5            * @version V1.1.1
+      6            * @date    05-March-2012
+      7            * @brief   This file provides firmware functions to manage the following 
+      8            *          functionalities of the GPIO peripheral:           
+      9            *           + Initialization and Configuration
+     10            *           + GPIO Read and Write
+     11            *           + GPIO Alternate functions configuration
+     12            * 
+     13            *  @verbatim
+     14              ===========================================================================
+     15                                   ##### How to use this driver #####
+     16              ===========================================================================
+     17                [..]
+     18                (#) Enable the GPIO AHB clock using RCC_AHBPeriphClockCmd()
+     19                (#) Configure the GPIO pin(s) using GPIO_Init()
+     20                    Four possible configuration are available for each pin:
+     21                   (++) Input: Floating, Pull-up, Pull-down.
+     22                   (++) Output: Push-Pull (Pull-up, Pull-down or no Pull)
+     23                        Open Drain (Pull-up, Pull-down or no Pull).
+     24                        In output mode, the speed is configurable: Very Low, Low,
+     25                        Medium or High.
+     26                   (++) Alternate Function: Push-Pull (Pull-up, Pull-down or no Pull)
+     27                        Open Drain (Pull-up, Pull-down or no Pull).
+     28                   (++) Analog: required mode when a pin is to be used as ADC channel,
+     29                        DAC output or comparator input.
+     30                (#) Peripherals alternate function:
+     31                    (++) For ADC, DAC and comparators, configure the desired pin in 
+     32                         analog mode using GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AN
+     33                    (++) For other peripherals (TIM, USART...):
+     34                        (+++) Connect the pin to the desired peripherals' Alternate 
+     35                              Function (AF) using GPIO_PinAFConfig() function.
+     36                        (+++) Configure the desired pin in alternate function mode using
+     37                              GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
+     38                        (+++) Select the type, pull-up/pull-down and output speed via 
+     39                              GPIO_PuPd, GPIO_OType and GPIO_Speed members.
+     40                        (+++) Call GPIO_Init() function.
+     41                (#) To get the level of a pin configured in input mode use GPIO_ReadInputDataBit()
+     42                (#) To set/reset the level of a pin configured in output mode use
+     43                    GPIO_SetBits()/GPIO_ResetBits()
+     44                (#) During and just after reset, the alternate functions are not 
+     45                    active and the GPIO pins are configured in input floating mode
+     46                    (except JTAG pins).
+     47                (#) The LSE oscillator pins OSC32_IN and OSC32_OUT can be used as 
+     48                    general-purpose (PC14 and PC15, respectively) when the LSE
+     49                    oscillator is off. The LSE has priority over the GPIO function.
+     50                (#) The HSE oscillator pins OSC_IN/OSC_OUT can be used as 
+     51                    general-purpose PH0 and PH1, respectively, when the HSE 
+     52                    oscillator is off. The HSE has priority over the GPIO function.
+     53              @endverbatim
+     54            *
+     55            ******************************************************************************
+     56            * @attention
+     57            *
+     58            * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+     59            *
+     60            * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+     61            * You may not use this file except in compliance with the License.
+     62            * You may obtain a copy of the License at:
+     63            *
+     64            *        http://www.st.com/software_license_agreement_liberty_v2
+     65            *
+     66            * Unless required by applicable law or agreed to in writing, software 
+     67            * distributed under the License is distributed on an "AS IS" BASIS, 
+     68            * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     69            * See the License for the specific language governing permissions and
+     70            * limitations under the License.
+     71            *
+     72            ******************************************************************************
+     73            */
+     74          
+     75          /* Includes ------------------------------------------------------------------*/
+     76          #include "stm32l1xx_gpio.h"
+     77          #include "stm32l1xx_rcc.h"
+     78          
+     79          /** @addtogroup STM32L1xx_StdPeriph_Driver
+     80            * @{
+     81            */
+     82          
+     83          /** @defgroup GPIO 
+     84            * @brief GPIO driver modules
+     85            * @{
+     86            */
+     87          
+     88          /* Private typedef -----------------------------------------------------------*/
+     89          /* Private define ------------------------------------------------------------*/
+     90          /* Private macro -------------------------------------------------------------*/
+     91          /* Private variables ---------------------------------------------------------*/
+     92          /* Private function prototypes -----------------------------------------------*/
+     93          /* Private functions ---------------------------------------------------------*/
+     94          
+     95          /** @defgroup GPIO_Private_Functions
+     96            * @{
+     97            */
+     98          
+     99          /** @defgroup GPIO_Group1 Initialization and Configuration
+    100           *  @brief   Initialization and Configuration
+    101           *
+    102          @verbatim   
+    103           ===============================================================================
+    104                              ##### Initialization and Configuration #####
+    105           ===============================================================================
+    106          
+    107          @endverbatim
+    108            * @{
+    109            */
+    110          
+    111          /**
+    112            * @brief  Deinitializes the GPIOx peripheral registers to their default reset 
+    113            *         values.
+    114            *         By default, The GPIO pins are configured in input floating mode
+    115            *         (except JTAG pins).
+    116            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    117            * @retval None
+    118            */
+    119          void GPIO_DeInit(GPIO_TypeDef* GPIOx)
+    120          {
+    121            /* Check the parameters */
+    122            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    123          
+    124            if(GPIOx == GPIOA)
+    125            {
+    126              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+    127              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOA, DISABLE);  
+    128            }
+    129            else if(GPIOx == GPIOB)
+    130            {
+    131              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+    132              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOB, DISABLE);
+    133            }
+    134            else if(GPIOx == GPIOC)
+    135            {
+    136              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+    137              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOC, DISABLE);
+    138            }
+    139            else if(GPIOx == GPIOD)
+    140            {
+    141              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOD, ENABLE);
+    142              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOD, DISABLE);
+    143            }
+    144            else if(GPIOx == GPIOE)
+    145            {
+    146              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOE, ENABLE);
+    147              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOE, DISABLE);
+    148            }
+    149            else if(GPIOx == GPIOF)
+    150            {
+    151              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOF, ENABLE);
+    152              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOF, DISABLE);
+    153            }
+    154            else if(GPIOx == GPIOG)
+    155            {
+    156              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOG, ENABLE);
+    157              RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOG, DISABLE);
+    158            }   
+    159            else
+    160            {
+    161              if(GPIOx == GPIOH)
+    162              {
+    163                RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOH, ENABLE);
+    164                RCC_AHBPeriphResetCmd(RCC_AHBPeriph_GPIOH, DISABLE);
+    165              }
+    166            }
+    167          }
+    168          
+    169          /**
+    170            * @brief  Initializes the GPIOx peripheral according to the specified 
+    171            *         parameters in the GPIO_InitStruct.
+    172            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    173            * @param  GPIO_InitStruct: pointer to a GPIO_InitTypeDef structure that 
+    174            *         contains the configuration information for the specified GPIO
+    175            *         peripheral.
+    176          
+    177            * @retval None
+    178            */
+    179          void GPIO_Init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* GPIO_InitStruct)
+    180          {
+    181            uint32_t pinpos = 0x00, pos = 0x00 , currentpin = 0x00;
+    182            
+    183            /* Check the parameters */
+    184            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    185            assert_param(IS_GPIO_PIN(GPIO_InitStruct->GPIO_Pin));
+    186            assert_param(IS_GPIO_MODE(GPIO_InitStruct->GPIO_Mode));
+    187            assert_param(IS_GPIO_PUPD(GPIO_InitStruct->GPIO_PuPd));
+    188          
+    189            /* -------------------------Configure the port pins---------------- */
+    190            /*-- GPIO Mode Configuration --*/
+    191            for (pinpos = 0x00; pinpos < 0x10; pinpos++)
+    192            {
+    193              pos = ((uint32_t)0x01) << pinpos;
+    194          
+    195              /* Get the port pins position */
+    196              currentpin = (GPIO_InitStruct->GPIO_Pin) & pos;
+    197          
+    198              if (currentpin == pos)
+    199              {
+    200                GPIOx->MODER  &= ~(GPIO_MODER_MODER0 << (pinpos * 2));
+    201          
+    202                GPIOx->MODER |= (((uint32_t)GPIO_InitStruct->GPIO_Mode) << (pinpos * 2));
+    203          
+    204                if ((GPIO_InitStruct->GPIO_Mode == GPIO_Mode_OUT) || (GPIO_InitStruct->GPIO_Mode == GPIO_Mode_AF))
+    205                {
+    206                  /* Check Speed mode parameters */
+    207                  assert_param(IS_GPIO_SPEED(GPIO_InitStruct->GPIO_Speed));
+    208          
+    209                  /* Speed mode configuration */
+    210                  GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (pinpos * 2));
+    211                  GPIOx->OSPEEDR |= ((uint32_t)(GPIO_InitStruct->GPIO_Speed) << (pinpos * 2));
+    212          
+    213                  /*Check Output mode parameters */
+    214                  assert_param(IS_GPIO_OTYPE(GPIO_InitStruct->GPIO_OType));
+    215          
+    216                  /* Output mode configuration */
+    217                  GPIOx->OTYPER  &= ~((GPIO_OTYPER_OT_0) << ((uint16_t)pinpos)) ;
+    218                  GPIOx->OTYPER |= (uint16_t)(((uint16_t)GPIO_InitStruct->GPIO_OType) << ((uint16_t)pinpos));
+    219                }
+    220          
+    221                /* Pull-up Pull down resistor configuration */
+    222                GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << ((uint16_t)pinpos * 2));
+    223                GPIOx->PUPDR |= (((uint32_t)GPIO_InitStruct->GPIO_PuPd) << (pinpos * 2));
+    224              }
+    225            }
+    226          }
+    227          
+    228          /**
+    229            * @brief  Fills each GPIO_InitStruct member with its default value.
+    230            * @param  GPIO_InitStruct : pointer to a GPIO_InitTypeDef structure which will 
+    231            *         be initialized.
+    232            * @retval None
+    233            */
+    234          void GPIO_StructInit(GPIO_InitTypeDef* GPIO_InitStruct)
+    235          {
+    236            /* Reset GPIO init structure parameters values */
+    237            GPIO_InitStruct->GPIO_Pin  = GPIO_Pin_All;
+    238            GPIO_InitStruct->GPIO_Mode = GPIO_Mode_IN;
+    239            GPIO_InitStruct->GPIO_Speed = GPIO_Speed_400KHz;
+    240            GPIO_InitStruct->GPIO_OType = GPIO_OType_PP;
+    241            GPIO_InitStruct->GPIO_PuPd = GPIO_PuPd_NOPULL;
+    242          }
+    243          
+    244          /**
+    245            * @brief  Locks GPIO Pins configuration registers.
+    246            *         The locked registers are GPIOx_MODER, GPIOx_OTYPER, GPIOx_OSPEEDR,
+    247            *         GPIOx_PUPDR, GPIOx_AFRL and GPIOx_AFRH.
+    248            *         The configuration of the locked GPIO pins can no longer be modified
+    249            *         until the next reset.
+    250            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    251            * @param  GPIO_Pin: specifies the port bit to be written.
+    252            *   This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
+    253            * @retval None
+    254            */
+    255          void GPIO_PinLockConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    256          {
+    257            __IO uint32_t tmp = 0x00010000;
+    258            
+    259            /* Check the parameters */
+    260            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    261            assert_param(IS_GPIO_PIN(GPIO_Pin));
+    262            
+    263            tmp |= GPIO_Pin;
+    264            /* Set LCKK bit */
+    265            GPIOx->LCKR = tmp;
+    266            /* Reset LCKK bit */
+    267            GPIOx->LCKR =  GPIO_Pin;
+    268            /* Set LCKK bit */
+    269            GPIOx->LCKR = tmp;
+    270            /* Read LCKK bit*/
+    271            tmp = GPIOx->LCKR;
+    272            /* Read LCKK bit*/
+    273            tmp = GPIOx->LCKR;
+    274          }
+    275          
+    276          /**
+    277            * @}
+    278            */
+    279          
+    280          /** @defgroup GPIO_Group2 GPIO Read and Write
+    281           *  @brief   GPIO Read and Write
+    282           *
+    283          @verbatim   
+    284           ===============================================================================
+    285                                ##### GPIO Read and Write #####
+    286           ===============================================================================  
+    287          
+    288          @endverbatim
+    289            * @{
+    290            */
+    291          
+    292          /**
+    293            * @brief  Reads the specified input port pin.
+    294            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    295            * @param  GPIO_Pin: specifies the port bit to read.
+    296            *   This parameter can be GPIO_Pin_x where x can be (0..15).
+    297            * @retval The input port pin value.
+    298            */
+    299          uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    300          {
+    301            uint8_t bitstatus = 0x00;
+    302            
+    303            /* Check the parameters */
+    304            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    305            assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
+    306          
+    307            if ((GPIOx->IDR & GPIO_Pin) != (uint32_t)Bit_RESET)
+    308            {
+    309              bitstatus = (uint8_t)Bit_SET;
+    310            }
+    311            else
+    312            {
+    313              bitstatus = (uint8_t)Bit_RESET;
+    314            }
+    315            return bitstatus;
+    316          }
+    317          
+    318          /**
+    319            * @brief  Reads the specified GPIO input data port.
+    320            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    321            * @retval GPIO input data port value.
+    322            */
+    323          uint16_t GPIO_ReadInputData(GPIO_TypeDef* GPIOx)
+    324          {
+    325            /* Check the parameters */
+    326            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    327            
+    328            return ((uint16_t)GPIOx->IDR);
+    329          }
+    330          
+    331          /**
+    332            * @brief  Reads the specified output data port bit.
+    333            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    334            * @param  GPIO_Pin: Specifies the port bit to read.
+    335            *   This parameter can be GPIO_Pin_x where x can be (0..15).
+    336            * @retval The output port pin value.
+    337            */
+    338          uint8_t GPIO_ReadOutputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    339          {
+    340            uint8_t bitstatus = 0x00;
+    341          
+    342            /* Check the parameters */
+    343            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    344            assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
+    345            
+    346            if ((GPIOx->ODR & GPIO_Pin) != (uint32_t)Bit_RESET)
+    347            {
+    348              bitstatus = (uint8_t)Bit_SET;
+    349            }
+    350            else
+    351            {
+    352              bitstatus = (uint8_t)Bit_RESET;
+    353            }
+    354            return bitstatus;
+    355          }
+    356          
+    357          /**
+    358            * @brief  Reads the specified GPIO output data port.
+    359            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    360            * @retval GPIO output data port value.
+    361            */
+    362          uint16_t GPIO_ReadOutputData(GPIO_TypeDef* GPIOx)
+    363          {
+    364            /* Check the parameters */
+    365            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    366            
+    367            return ((uint16_t)GPIOx->ODR);
+    368          }
+    369          
+    370          /**
+    371            * @brief  Sets the selected data port bits.
+    372            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    373            * @param  GPIO_Pin: specifies the port bits to be written.
+    374            *   This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
+    375            * @note  This functions uses GPIOx_BSRR register to allow atomic read/modify 
+    376            *        accesses. In this way, there is no risk of an IRQ occurring between
+    377            *        the read and the modify access.
+    378            * @retval None
+    379            */
+    380          void GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    381          {
+    382            /* Check the parameters */
+    383            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    384            assert_param(IS_GPIO_PIN(GPIO_Pin));
+    385            
+    386            GPIOx->BSRRL = GPIO_Pin;
+    387          }
+    388          
+    389          /**
+    390            * @brief  Clears the selected data port bits.
+    391            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    392            * @param  GPIO_Pin: specifies the port bits to be written.
+    393            *   This parameter can be any combination of GPIO_Pin_x where x can be (0..15).
+    394            * @note  This functions uses GPIOx_BSRR register to allow atomic read/modify 
+    395            *        accesses. In this way, there is no risk of an IRQ occurring between
+    396            *        the read and the modify access.
+    397            * @retval None
+    398            */
+    399          void GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    400          {
+    401            /* Check the parameters */
+    402            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    403            assert_param(IS_GPIO_PIN(GPIO_Pin));
+    404            
+    405            GPIOx->BSRRH = GPIO_Pin;
+    406          }
+    407          
+    408          /**
+    409            * @brief  Sets or clears the selected data port bit.
+    410            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    411            * @param  GPIO_Pin: specifies the port bit to be written.
+    412            *   This parameter can be one of GPIO_Pin_x where x can be (0..15).
+    413            * @param  BitVal: specifies the value to be written to the selected bit.
+    414            *   This parameter can be one of the BitAction enum values:
+    415            *     @arg Bit_RESET: to clear the port pin
+    416            *     @arg Bit_SET: to set the port pin
+    417            * @retval None
+    418            */
+    419          void GPIO_WriteBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, BitAction BitVal)
+    420          {
+    421            /* Check the parameters */
+    422            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    423            assert_param(IS_GET_GPIO_PIN(GPIO_Pin));
+    424            assert_param(IS_GPIO_BIT_ACTION(BitVal));
+    425            
+    426            if (BitVal != Bit_RESET)
+    427            {
+    428              GPIOx->BSRRL = GPIO_Pin;
+    429            }
+    430            else
+    431            {
+    432              GPIOx->BSRRH = GPIO_Pin ;
+    433            }
+    434          }
+    435          
+    436          /**
+    437            * @brief  Writes data to the specified GPIO data port.
+    438            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    439            * @param  PortVal: specifies the value to be written to the port output data 
+    440            *                  register.
+    441            * @retval None
+    442            */
+    443          void GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal)
+    444          {
+    445            /* Check the parameters */
+    446            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    447            
+    448            GPIOx->ODR = PortVal;
+    449          }
+    450          
+    451          /**
+    452            * @brief  Toggles the specified GPIO pins..
+    453            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    454            * @param  GPIO_Pin: Specifies the pins to be toggled.
+    455            * @retval None
+    456            */
+    457          void GPIO_ToggleBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+    458          {
+    459            /* Check the parameters */
+    460            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    461          
+    462            GPIOx->ODR ^= GPIO_Pin;
+    463          }
+    464          
+    465          /**
+    466            * @}
+    467            */
+    468          
+    469          /** @defgroup GPIO_Group3 GPIO Alternate functions configuration functions
+    470           *  @brief   GPIO Alternate functions configuration functions
+    471           *
+    472          @verbatim   
+    473           ===============================================================================
+    474                    ##### GPIO Alternate functions configuration functions #####
+    475           ===============================================================================  
+    476          
+    477          @endverbatim
+    478            * @{
+    479            */
+    480          
+    481          /**
+    482            * @brief  Changes the mapping of the specified pin.
+    483            * @param  GPIOx: where x can be (A..H) to select the GPIO peripheral.
+    484            * @param  GPIO_PinSource: specifies the pin for the Alternate function.
+    485            *   This parameter can be GPIO_PinSourcex where x can be (0..15).
+    486            * @param  GPIO_AFSelection: selects the pin to used as Alternat function.
+    487            *   This parameter can be one of the following values:
+    488            *     @arg GPIO_AF_RTC_50Hz: RTC 50/60 Hz synchronization
+    489            *     @arg GPIO_AF_MCO: Microcontroller clock output
+    490            *     @arg GPIO_AF_RTC_AF1: Time stamp, Tamper, Alarm A out, Alarm B out,
+    491            *                           512 Hz clock output (with an LSE oscillator of 32.768 kHz)
+    492            *     @arg GPIO_AF_WKUP: wakeup
+    493            *     @arg GPIO_AF_SWJ: SWJ (SW and JTAG)
+    494            *     @arg GPIO_AF_TRACE: Connect TRACE pins to AF0 (default after reset)
+    495            *     @arg GPIO_AF_TIM2c: Connect TIM2 pins to AF1
+    496            *     @arg GPIO_AF_TIM3: Connect TIM3 pins to AF2
+    497            *     @arg GPIO_AF_TIM4: Connect TIM4 pins to AF2
+    498            *     @arg GPIO_AF_TIM5: Connect TIM5 pins to AF2
+    499            *     @arg GPIO_AF_TIM9: Connect TIM9 pins to AF3
+    500            *     @arg GPIO_AF_TIM10: Connect TIM10 pins to AF3
+    501            *     @arg GPIO_AF_TIM11: Connect TIM11 pins to AF3
+    502            *     @arg GPIO_AF_I2C1: Connect I2C1 pins to AF4
+    503            *     @arg GPIO_AF_I2C2: Connect I2C2 pins to AF4
+    504            *     @arg GPIO_AF_SPI1: Connect SPI1 pins to AF5
+    505            *     @arg GPIO_AF_SPI2: Connect SPI2/I2S2 pins to AF5
+    506            *     @arg GPIO_AF_SPI3: Connect SPI3/I2S3 pins to AF6
+    507            *     @arg GPIO_AF_USART1: Connect USART1 pins to AF7
+    508            *     @arg GPIO_AF_USART2: Connect USART2 pins to AF7
+    509            *     @arg GPIO_AF_USART3: Connect USART3 pins to AF7
+    510            *     @arg GPIO_AF_UART4: Connect UART4 pins to AF8
+    511            *     @arg GPIO_AF_UART5: Connect UART5 pins to AF8
+    512            *     @arg GPIO_AF_USB: Connect USB pins to AF10
+    513            *     @arg GPIO_AF_LCD: Connect LCD pins to AF11
+    514            *     @arg GPIO_AF_FSMC: Connect FSMC pins to AF12
+    515            *     @arg GPIO_AF_SDIO: Connect SDIO pins to AF12
+    516            *     @arg GPIO_AF_RI: Connect RI pins to AF14
+    517            *     @arg GPIO_AF_EVENTOUT: Cortex-M3 EVENTOUT signal
+    518            * @note The pin should already been configured in Alternate Function mode(AF)
+    519            *        using GPIO_InitStruct->GPIO_Mode = GPIO_Mode_AF
+    520            * @note Please refer to the Alternate function mapping table in the device 
+    521            *        datasheet for the detailed mapping of the system and peripherals'
+    522            *        alternate function I/O pins.  
+    523            * @note EVENTOUT is not mapped on PH0, PH1 and PH2.  
+    524            * @retval None
+    525            */
+    526          void GPIO_PinAFConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_PinSource, uint8_t GPIO_AF)
+    527          {
+    528            uint32_t temp = 0x00;
+    529            uint32_t temp_2 = 0x00;
+    530            
+    531            /* Check the parameters */
+    532            assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+    533            assert_param(IS_GPIO_PIN_SOURCE(GPIO_PinSource));
+    534            assert_param(IS_GPIO_AF(GPIO_AF));
+    535            
+    536            temp = ((uint32_t)(GPIO_AF) << ((uint32_t)((uint32_t)GPIO_PinSource & (uint32_t)0x07) * 4)) ;
+    537            GPIOx->AFR[GPIO_PinSource >> 0x03] &= ~((uint32_t)0xF << ((uint32_t)((uint32_t)GPIO_PinSource & (uint32_t)0x07) * 4)) ;
+    538            temp_2 = GPIOx->AFR[GPIO_PinSource >> 0x03] | temp;
+    539            GPIOx->AFR[GPIO_PinSource >> 0x03] = temp_2;
+    540          }
+    541          
+    542          /**
+    543            * @}
+    544            */
+    545          
+    546          /**
+    547            * @}
+    548            */
+    549          
+    550          /**
+    551            * @}
+    552            */
+    553          
+    554          /**
+    555            * @}
+    556            */
+    557          /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   GPIO_DeInit
+         8   -> RCC_AHBPeriphResetCmd
+       8   GPIO_Init
+      12   GPIO_PinAFConfig
+       4   GPIO_PinLockConfig
+       0   GPIO_ReadInputData
+       0   GPIO_ReadInputDataBit
+       0   GPIO_ReadOutputData
+       0   GPIO_ReadOutputDataBit
+       0   GPIO_ResetBits
+       0   GPIO_SetBits
+       0   GPIO_StructInit
+       0   GPIO_ToggleBits
+       0   GPIO_Write
+       0   GPIO_WriteBit
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable0
+       4  ??DataTable0_1
+       4  ??DataTable0_2
+       4  ??DataTable0_3
+       4  ??DataTable0_4
+       4  ??DataTable0_5
+       4  ??DataTable0_6
+       4  ??DataTable0_7
+     194  GPIO_DeInit
+     162  GPIO_Init
+      80  GPIO_PinAFConfig
+      40  GPIO_PinLockConfig
+       4  GPIO_ReadInputData
+      22  GPIO_ReadInputDataBit
+       4  GPIO_ReadOutputData
+      22  GPIO_ReadOutputDataBit
+       4  GPIO_ResetBits
+       4  GPIO_SetBits
+      24  GPIO_StructInit
+       8  GPIO_ToggleBits
+       4  GPIO_Write
+      14  GPIO_WriteBit
+
+ 
+ 618 bytes in section .text
+ 
+ 618 bytes of CODE memory
+
+Errors: none
+Warnings: none

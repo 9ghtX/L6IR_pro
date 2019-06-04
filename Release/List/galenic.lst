@@ -1,0 +1,94 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:20
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\galenic.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\galenic.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\galenic.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\galenic.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\galenic.c
+      1          #include "galenic.h"
+      2          #include "L6IR.h"
+      3          //#include "led_control.h"
+      4          u8 t_mode_count, n_mode_count, tn_mode_count, nd_mode_count, nl_mode_count;
+      5          u8 dev_mode;
+      6          
+      7          void galenic_func()
+      8          {
+      9            if((!TEST_T_MODE)&&TEST_N_MODE&&TEST_TN_MODE&&TEST_ND_MODE&&TEST_NL_MODE) t_mode_count++;
+     10            else t_mode_count = 0; 
+     11            if((!TEST_N_MODE)&&TEST_T_MODE&&TEST_TN_MODE&&TEST_ND_MODE&&TEST_NL_MODE) n_mode_count++;
+     12            else n_mode_count = 0;
+     13            if((!TEST_TN_MODE)&&TEST_T_MODE&&TEST_N_MODE&&TEST_ND_MODE&&TEST_NL_MODE) tn_mode_count++;
+     14            else tn_mode_count =0;
+     15            if((!TEST_ND_MODE)&&TEST_T_MODE&&TEST_N_MODE&&TEST_TN_MODE&&TEST_NL_MODE) nd_mode_count++;
+     16            else nd_mode_count = 0;
+     17            if((!TEST_NL_MODE)&&TEST_T_MODE&&TEST_N_MODE&&TEST_TN_MODE&&TEST_ND_MODE) nl_mode_count++;
+     18            else nl_mode_count =0;
+     19            
+     20            if((t_mode_count>=3)&&(!(n_mode_count|tn_mode_count|nd_mode_count|nl_mode_count))&&(dev_mode!=T_MODE))     {dev_mode = T_MODE; set_device_mode(dev_mode);/*led_off();*/}
+     21            if((n_mode_count>=3)&&(!(t_mode_count|tn_mode_count|nd_mode_count|nl_mode_count))&&(dev_mode!=N_MODE))     {dev_mode = N_MODE; set_device_mode(dev_mode);/*led_off();*/}
+     22            if((tn_mode_count>=3)&&(!(t_mode_count|n_mode_count|nd_mode_count|nl_mode_count))&&(dev_mode!=TN_MODE))    {dev_mode = TN_MODE; set_device_mode(dev_mode);/*led_off();*/}
+     23            if((nd_mode_count>=3)&&(!(t_mode_count|n_mode_count|tn_mode_count|nl_mode_count))&&(dev_mode!=N_MODE_DISP)){dev_mode = N_MODE_DISP; set_device_mode(N_MODE_DISP);/*led_off();*/}
+     24            if((nl_mode_count>=3)&&(!(t_mode_count|n_mode_count|tn_mode_count|nd_mode_count))&&(dev_mode!=N_MODE_IR))  {dev_mode = N_MODE_IR; set_device_mode(N_MODE_IR); /*led_pulse_control();*/}    
+     25          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   galenic_func
+         8   -> GPIO_ReadInputDataBit
+         8   -> set_device_mode
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  dev_mode
+     704  galenic_func
+       1  n_mode_count
+       1  nd_mode_count
+       1  nl_mode_count
+       1  t_mode_count
+       1  tn_mode_count
+
+ 
+   6 bytes in section .bss
+ 704 bytes in section .text
+ 
+ 704 bytes of CODE memory
+   6 bytes of DATA memory
+
+Errors: none
+Warnings: none

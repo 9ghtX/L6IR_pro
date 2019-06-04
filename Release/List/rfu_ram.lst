@@ -1,0 +1,397 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:36
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\rfu_ram.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\rfu_ram.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\rfu_ram.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\rfu_ram.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\rfu_ram.c
+      1          
+      2          /**
+      3           * @file rfu_ram.c
+      4           */
+      5          #define RFU_PROTOCOL_MAX_PKT_SIZE 512UL
+      6          
+      7          #include "rfu_platform.h"
+      8          
+      9          #define read32(pBuf)                                                           \
+     10            (((uint32_t)(pBuf)[0]) | ((uint32_t)(pBuf)[1] << 8) |                        \
+     11             ((uint32_t)(pBuf)[2] << 16) | ((uint32_t)(pBuf)[3] << 24))
+     12          
+     13          #define read16(pBuf) (((uint16_t)(pBuf)[0]) | ((uint16_t)(pBuf)[1] << 8))
+     14          
+     15          #define CRC8_NEXT(crc, data)                                                   \
+     16            do {                                                                         \
+     17              uint8_t temp = data;                                                       \
+     18              crc = crc ^ temp;                                                          \
+     19              for (int i = 0; i < 8; ++i) {                                              \
+     20                if (crc & 1) {                                                           \
+     21                  crc = crc ^ 0x18;                                                      \
+     22                  crc = 0x80 | (crc >> 1);                                               \
+     23                } else {                                                                 \
+     24                  crc = ~0x80 & (crc >> 1);                                              \
+     25                }                                                                        \
+     26              }                                                                          \
+     27            } while (__LINE__ == -1)
+     28          
+     29          typedef enum protocol_symbols_et {
+     30            START_SYMBOL = 0x24,
+     31            STOP_SYMBOL = 0x3B,
+     32            ESCAPE_SYMBOL = 0x2F
+     33          } protocol_symbols_t;
+     34          
+     35          typedef enum protocol_state_et {
+     36            rx_start_symbol = 0,
+     37            rx_destination_address = 1,
+     38            rx_operation_code = 2,
+     39            rx_data = 3,
+     40            process_command = 4
+     41          } protocol_state_t;
+     42          
+     43          typedef enum operation_code_et {
+     44            o_info = 63,    //'?'
+     45            o_crc = 99,     //'c'
+     46            o_auth = 105,   //'a'
+     47            o_erase = 101,  //'e'
+     48            o_write = 119,  //'w'
+     49            o_exit = 120,   //'x'
+     50            o_swicth = 0xFF // already switched to reprogramming mode - send ok
+     51          } operation_code_t;
+     52          
+     53          RFU_CODE(void send_char(int ch)) {
+     54            while (!(RFU_USARTx->SR & USART_FLAG_TXE))
+     55              ;
+     56            RFU_USARTx->DR = (ch & 0x1FF);
+     57          }
+     58          
+     59          RFU_CODE(void send(uint8_t *data, uint32_t length)) {
+     60            uint8_t crc = 0;
+     61            RFU_RS485_TXON();
+     62          
+     63            send_char(START_SYMBOL);
+     64            while (length--) {
+     65              uint8_t ch = *data;
+     66              CRC8_NEXT(crc, ch);
+     67              if ((START_SYMBOL == ch) || (STOP_SYMBOL == ch) || (ESCAPE_SYMBOL == ch)) {
+     68                send_char(ESCAPE_SYMBOL);
+     69                ch ^= 0xFF;
+     70              }
+     71              send_char(ch);
+     72              data++;
+     73            }
+     74            if ((START_SYMBOL == crc) || (STOP_SYMBOL == crc) || (ESCAPE_SYMBOL == crc)) {
+     75              send_char(ESCAPE_SYMBOL);
+     76              crc ^= 0xFF;
+     77            }
+     78            send_char(crc);
+     79            send_char(STOP_SYMBOL);
+     80            while (!(RFU_USARTx->SR & USART_FLAG_TC))
+     81              ;
+     82            RFU_RS485_TXOFF();
+     83          }
+     84          
+     85          RFU_CODE(void send_ec(uint8_t self_address, uint8_t opcode, uint8_t ec)) {
+     86            uint8_t data_buffer[3] = {self_address, opcode, ec};
+     87            send(data_buffer, sizeof(data_buffer) / sizeof(data_buffer[0]));
+     88          }
+     89          
+     90          RFU_CODE(void send_u32(uint8_t self_address, uint8_t opcode, uint32_t value)) {
+     91            uint8_t data_buffer[6] = {self_address, opcode, 0, 0, 0, 0};
+     92            data_buffer[2] = value;
+     93            data_buffer[3] = value >> 8;
+     94            data_buffer[4] = value >> 16;
+     95            data_buffer[5] = value >> 24;
+     96            send(data_buffer, sizeof(data_buffer) / sizeof(data_buffer[0]));
+     97          }
+     98          
+     99          RFU_CODE(void rfu_main(uint8_t nt_address)) {
+    100            uint8_t in_buffer[RFU_PROTOCOL_MAX_PKT_SIZE] = {0};
+    101            uint16_t in_count = 0;
+    102            volatile uint8_t crc = 0;
+    103            uint8_t byte_stuffing_on = 0;
+    104          
+    105            uint8_t opcode = 0;
+    106            uint8_t auth_ok = 0;
+    107            protocol_state_t protocol_state = rx_start_symbol;
+    108          
+    109            // initialize
+    110            // ! —читаем что UART уже проинициализирован как надо.
+    111          
+    112            // exec app
+    113            while (1) {
+    114              /* receiving */
+    115              if (!(RFU_USARTx->SR & USART_FLAG_RXNE)) {
+    116                continue;
+    117              }
+    118              uint8_t rxed = (RFU_USARTx->DR & 0xFF);
+    119              /**************************************************************************/
+    120          
+    121              /* process received byte */
+    122              if (byte_stuffing_on) {
+    123                rxed ^= 0xFF;
+    124                byte_stuffing_on = 0;
+    125              } else if (ESCAPE_SYMBOL == rxed) {
+    126                byte_stuffing_on = 1;
+    127                continue; /* receive next byte */
+    128              } else if (STOP_SYMBOL == rxed) {
+    129                protocol_state = process_command;
+    130              } else {
+    131              }
+    132              /**************************************************************************/
+    133          
+    134              switch (protocol_state) {
+    135          
+    136              case rx_start_symbol:
+    137                if (START_SYMBOL == rxed) {
+    138                  crc = 0;
+    139                  byte_stuffing_on = 0;
+    140                  in_count = 0;
+    141                  protocol_state = rx_destination_address;
+    142                }
+    143                break;
+    144          
+    145              case rx_destination_address:
+    146                protocol_state =
+    147                    (nt_address == rxed) ? rx_operation_code : rx_start_symbol;
+    148                CRC8_NEXT(crc, rxed); /*crc push*/
+    149                break;
+    150          
+    151              case rx_operation_code:
+    152                opcode = rxed;
+    153                protocol_state = rx_data;
+    154                CRC8_NEXT(crc, rxed); /*crc push*/
+    155                break;
+    156          
+    157              case rx_data:
+    158                /* accumulate data */
+    159                if (in_count < RFU_PROTOCOL_MAX_PKT_SIZE) {
+    160                  in_buffer[in_count] = rxed;
+    161                  CRC8_NEXT(crc, rxed); /*crc push*/
+    162                  ++in_count;
+    163                } else {
+    164                  /*buffer ovferflowed*/
+    165                  protocol_state = rx_start_symbol;
+    166                }
+    167                break;
+    168          
+    169              case process_command:
+    170                if ((0 != crc) || (0 == in_count)) {
+    171                  /* crc failed */
+    172                  protocol_state = rx_start_symbol;
+    173                  break;
+    174                }
+    175          
+    176                /*crc - ok(0) packet ready - handling operation starts here*/
+    177                in_count -= 1; /*remove crc byte*/
+    178          
+    179                if (opcode == o_info) {
+    180                  send_u32(nt_address, o_info, RFU_DEVICE_ID);
+    181                } else if (opcode == o_swicth) {
+    182                  send_u32(nt_address, o_swicth, RFU_DEVICE_ID);
+    183                } else if (opcode == o_auth) {
+    184                  /* todo add auth procedures */
+    185                  /* return info - to usart */
+    186          
+    187                  RFU_FLASH_Unlock();
+    188                  send_u32(nt_address, o_auth, RFU_DEVICE_ID);
+    189                  auth_ok = 1;
+    190                } else {
+    191                  if (!auth_ok) {
+    192                    /*return code 4 to master*/
+    193                    // send_ec(nt_address, opcode, 4);
+    194                    /*password protection not passed*/
+    195                    protocol_state = rx_start_symbol;
+    196                    break;
+    197                  }
+    198          
+    199                  if (opcode == o_crc) {
+    200                    if (12 != in_count) {
+    201                      /*format error*/
+    202                      // send_ec(nt_address, o_crc, 2);
+    203                      protocol_state = rx_start_symbol;
+    204                      break;
+    205                    }
+    206          
+    207                    uint32_t start_address = read32(&in_buffer[0]);
+    208                    uint32_t length = read32(&in_buffer[4]);
+    209                    uint32_t checksum_data = read32(&in_buffer[8]);
+    210                    /* calc */
+    211                    uint8_t checksum = 0;
+    212                    uint8_t *check = (uint8_t *)start_address;
+    213                    for (uint32_t i = 0; i < length; ++i) {
+    214                      CRC8_NEXT(checksum, *check); /*crc push*/
+    215                      check++;
+    216                    }
+    217          
+    218                    if ( checksum_data == checksum ) {
+    219                       send_u32(nt_address, o_crc, checksum);
+    220                       protocol_state = rx_start_symbol;
+    221                       break;
+    222                    } else {
+    223                      // do not answer
+    224                       protocol_state = rx_start_symbol;
+    225                       break;
+    226                      // send_ec(nt_address, o_crc, 0xFF); //-1 error crc check
+    227                    }
+    228                  } else if (opcode == o_erase) {
+    229                    // todo add custom flags for pages erasure
+    230                    // erase flash
+    231                    uint8_t ec = (FLASH_COMPLETE == RFU_FLASH_EraseAllPages()) ? 0 : 4;
+    232                    send_ec(nt_address, o_erase, ec);
+    233          
+    234                  } else if (opcode == o_write) {
+    235                    if (12 > in_count) {
+    236                      /*format error*/
+    237                      // send_ec(nt_address, o_write, 2);
+    238                      protocol_state = rx_start_symbol;
+    239                      break;
+    240                    }
+    241          #if 0 // crc not used yet
+    242                    uint32_t crc32_data = read32(&in_buffer[in_count - 4]);
+    243          #endif
+    244                    uint32_t start_address = read32(&in_buffer[0]);
+    245                    uint32_t length = read32(&in_buffer[4]);
+    246                    uint8_t *data_ptr = &in_buffer[8];
+    247          /* send ack code 3. */
+    248          
+    249          /* check crc32 of data_ptr length */
+    250          #if 0
+    251                     CRC->CR = 1;
+    252                     for (uint32_t i = 0; i < length + 4; i += 4) {
+    253                       CRC->DR = *((uint32_t *)(in_buffer + i));
+    254                     }
+    255                     if(0 != CRC->DR)
+    256                     {
+    257                       // send_ec(nt_address, o_write, 2);
+    258                       protocol_state = rx_start_symbol;
+    259                       break;
+    260                     }
+    261          #endif
+    262                    /* check alignment */
+    263                    if (0 != length % sizeof(uint16_t)) {
+    264                      // send_ec(nt_address, o_write, 2);
+    265                      protocol_state = rx_start_symbol;
+    266                      break;
+    267                    }
+    268          
+    269                    /* check bank ranges */
+    270                    if (!IS_FLASH_ADDRESS(start_address) &&
+    271                        (!IS_FLASH_ADDRESS(start_address +
+    272                                           length))) { // address range error:
+    273                      // send_ec(nt_address, o_write, 2);
+    274                      protocol_state = rx_start_symbol;
+    275                      break;
+    276                    }
+    277          
+    278                    /* write flash */
+    279          
+    280                    for (uint32_t address = start_address;
+    281                         address < start_address + length; address += sizeof(uint32_t)) {
+    282                      uint32_t data = read32(data_ptr);
+    283                      FLASH_Status st = RFU_FLASH_ProgramWord(address, data);
+    284                      data_ptr += sizeof(uint32_t);
+    285                    }
+    286                    send_ec(nt_address, o_write, 0);
+    287                    /* return code 0 to MASTER */
+    288                  } else if (opcode == o_exit) {
+    289          
+    290                    RFU_FLASH_Lock();
+    291                    /* return code 0 to MASTER */
+    292                    // send_ec(nt_address, o_exit, 3);
+    293                    /* device restart here */
+    294                    RFU_Restart();
+    295          
+    296                  } else {
+    297                    // send_ec(nt_address, o_exit, 1);
+    298                    /* bad command - return code 1 to MASTER */
+    299                  }
+    300                  protocol_state = rx_start_symbol;
+    301                }
+    302                break;
+    303              default:
+    304                protocol_state = rx_start_symbol;
+    305                break;
+    306              }
+    307            } /* while(1) */
+    308          }
+    309          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+     560   rfu_main
+       560   -> RFU_FLASH_EraseAllPages
+       560   -> RFU_FLASH_FastProgramWord
+       560   -> RFU_FLASH_Lock
+       560   -> RFU_FLASH_Unlock
+       560   -> __aeabi_memclr4
+       560   -> send_ec
+       560   -> send_u32
+      24   send
+        24   -> send_char
+       0   send_char
+       8   send_ec
+         8   -> send
+      24   send_u32
+        24   -> send
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_2
+       4  ??DataTable2_3
+       4  ??DataTable2_4
+       4  ??DataTable2_5
+     512  ?_0
+       8  ?_1
+     972  rfu_main
+     168  send
+      22  send_char
+      24  send_ec
+      56  send_u32
+
+ 
+   520 bytes in section .rodata
+ 1 266 bytes in section RFU_CODE
+ 
+ 1 266 bytes of CODE  memory
+   520 bytes of CONST memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,146 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:30
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\protocol_cu.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\protocol_cu.c -D USE_STDPERIPH_DRIVER
+#        -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE
+#        -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\protocol_cu.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\protocol_cu.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\protocol_cu.c
+      1          #ifdef CONTROL_UNIT
+      2          
+      3          #include "protocol.h"
+      4          #include "net.h"
+      5          #include "GPS.h"
+      6          #include "spieeprom.h"
+      7          #include "Persey_headers.h"
+      8          
+      9          
+     10           void protocol()
+     11          {
+     12           bool st;
+     13           u8 command, adress, size;
+     14           del_stsp(&RXbuf);
+     15           st = check_crc(&RXbuf);
+     16           adress = pop(&RXbuf);
+     17           command = pop(&RXbuf);
+     18          
+     19          #ifdef GPS_UNIT
+     20            if((st)&&((adress == ADRESS)||(adress == ADRESS_GPS)||(net_sets.net_pr == NET_MASTER)))
+     21          #else
+     22            if((st)&&((adress == ADRESS)||(net_sets.net_pr == NET_MASTER)))
+     23          #endif
+     24          
+     25           {
+     26             switch(command)
+     27             {
+     28              case GET_KEY_CODE:
+     29                size = get_fill(&keyBuf);
+     30               push(&TXbuf,ADRESS);
+     31               push(&TXbuf,GET_KEY_CODE);
+     32               push(&TXbuf, size);
+     33               for(u8 i=0; i<size; i++)
+     34               {
+     35                push(&TXbuf,pop(&keyBuf));
+     36               }
+     37              insert_crc(&TXbuf);
+     38              insert_stsp(&TXbuf);
+     39              break;
+     40          
+     41              case GET_GPS_DATA:
+     42               push(&TXbuf,ADRESS);
+     43               push(&TXbuf,GET_GPS_DATA);
+     44               load_gps_buffer(&TXbuf);
+     45               insert_crc(&TXbuf);
+     46               insert_stsp(&TXbuf);
+     47              break;
+     48          
+     49              case WRITE_SERIAL_NUMBER:
+     50                size = sizeof(serial_number);
+     51                u8 data, i;
+     52          
+     53                for(i=0;i<size;i++)
+     54                {
+     55                 data = pop(&RXbuf);
+     56                 serial_number |= (data<<(8*i));
+     57                }
+     58                EEPROMWriteByte(SERIAL_NUMBER_ADDRESS, data);
+     59                push(&TXbuf,ADRESS);
+     60                push(&TXbuf,WRITE_SERIAL_NUMBER);
+     61                insert_crc(&TXbuf);
+     62                insert_stsp(&TXbuf);
+     63              break;
+     64          
+     65              case READ_SERIAL_NUMBER:
+     66               data = EEPROMReadByte(SERIAL_NUMBER_ADDRESS);
+     67               push(&TXbuf,ADRESS);
+     68               push(&TXbuf,READ_SERIAL_NUMBER);
+     69               push(&TXbuf,data);
+     70               insert_crc(&TXbuf);
+     71               insert_stsp(&TXbuf);
+     72              break;
+     73          
+     74              case GET_PO_VERSION:
+     75               push(&TXbuf,ADRESS);
+     76               push(&TXbuf, GET_PO_VERSION);
+     77               push(&TXbuf, ((u8)(PROGRAMM_VERSION&0xff)));
+     78               push(&TXbuf, ((u8)((PROGRAMM_VERSION>>8)&0xff)));
+     79               insert_crc(&TXbuf);
+     80               insert_stsp(&TXbuf);
+     81              break;
+     82          
+     83              case 0x15:
+     84                 data = EEPROMReadStatus();
+     85                 push(&TXbuf,data);
+     86              break;
+     87          
+     88             }
+     89          #ifndef L6IR_CU
+     90             USART_ITConfig(USART1, USART_IT_TC, ENABLE);
+     91          #endif
+     92           }
+     93           clean(&RXbuf);
+     94           task_flag = false;
+     95           counter_sys  = 0;
+     96          }
+     97          
+     98          #endif
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

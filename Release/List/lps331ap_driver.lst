@@ -1,0 +1,239 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:24
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\lps331ap_driver.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\lps331ap_driver.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\lps331ap_driver.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\lps331ap_driver.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\lps331ap_driver.c
+      1          /**
+      2           * @file   lps331ap_driver.c
+      3           * @date   14 рту. 2013 у.
+      4           * @author
+      5           * @brief  lps331aptrdriver
+      6           */
+      7          
+      8          #include <math.h>
+      9          #include "lps331ap_driver.h"
+     10          #include "hal_mcu.h"
+     11          #include "hal_critical_section.h"
+     12          #include "i2c.h"
+     13          //#include "debug.h"
+     14          
+     15          void LPS331AP_I2C_Init(void)
+     16          {
+     17            //already initialized
+     18          }
+     19          
+     20          //void LPS331AP_INT1_Config(void);
+     21          void LPS331AP_Config(LPS331AP_ConfigTypeDef *LPS331AP_Config_Struct)
+     22          {
+     23            uint8_t tmpreg;
+     24            tmpreg = (uint8_t)( (uint8_t)LPS331AP_Config_Struct->Power            +
+     25                                (uint8_t)LPS331AP_Config_Struct->Output_Data_Rate +
+     26                                (uint8_t)LPS331AP_Config_Struct->Data_Update      +
+     27                                (uint8_t)LPS331AP_Config_Struct->DeltaEnabled       );
+     28            LPS331AP_Write(&tmpreg, LPS331AP_CTRL_REG1_ADDR, 1);
+     29          }
+     30          
+     31          
+     32          void LPS331AP_PowerDown_Cmd(FunctionalState NewState)
+     33          {
+     34            uint8_t tmpreg = 0x00;
+     35            LPS331AP_Read(&tmpreg, LPS331AP_CTRL_REG1_ADDR, 1);
+     36            if(NewState==DISABLE)
+     37            {
+     38              tmpreg |= LPS331AP_CTRL_REG1_POWER_ACTIVE_MODE;
+     39            }
+     40            else
+     41            {
+     42              tmpreg &= ~(LPS331AP_CTRL_REG1_POWER_ACTIVE_MODE);;
+     43            }
+     44            LPS331AP_Write(&tmpreg, LPS331AP_CTRL_REG1_ADDR, 1);
+     45          }
+     46          void LPS331AP_Reboot_Cmd(void)
+     47          {
+     48            uint8_t tmpreg = LPS331AP_CTRL_REG2_REBOOT_MEMORY;
+     49            LPS331AP_Write(&tmpreg, LPS331AP_CTRL_REG2_ADDR, 1);
+     50          }
+     51          
+     52          void LPS331AP_Set_Reference(uint32_t refvalue)
+     53          {
+     54            uint16_t temp;
+     55            uint8_t  tempbuffer[3];
+     56            temp = (uint32_t) (refvalue/P_Conversion);
+     57            tempbuffer[0] = (uint8_t) (temp);     //low part
+     58            tempbuffer[1] = (uint8_t) (temp>>8);  //mid part
+     59            tempbuffer[2] = (uint8_t) (temp>>16); //high part
+     60            LPS331AP_Write(&tempbuffer[0], LPS331AP_REF_P_XL_ADDR, 3);
+     61          }
+     62          
+     63          void LPS331AP_Get_Altitude(float* altitude)
+     64          {
+     65            uint8_t temp[3]={0,0,0};
+     66            uint32_t press_temp = 0;
+     67            uint32_t press_value = 0;
+     68            LPS331AP_Read_Pressure_Regs(&temp[0]);
+     69            press_temp = (((uint32_t)temp[2])<<16) + (((uint32_t)temp[1])<<8) + ((uint32_t)(temp[0]));
+     70            press_value = (uint32_t)(press_temp/P_Conversion);
+     71            *altitude =   (uint32_t) (H_p)*(log(P_0/press_value));
+     72          }
+     73          
+     74          void LPS331AP_Get_Pressure(float* pressure)
+     75          {
+     76            uint32_t press_temp = 0;
+     77            LPS331AP_Get_Raw_Pressure(&press_temp);
+     78            *pressure = (float)press_temp / 4096.0 * 0.75;
+     79           // *pressure = (uint32_t)(press_temp)/P_Conversion;
+     80          }
+     81          
+     82          void LPS331AP_Get_Raw_Pressure(uint32_t* pressure)
+     83          {
+     84            uint8_t  temp[3]={0,0,0};
+     85            uint32_t press_temp = 0;
+     86            LPS331AP_Read(&temp[0], LPS331AP_PRESS_POUT_XL_REH_ADDR, 1);
+     87            LPS331AP_Read(&temp[1], LPS331AP_PRESS_OUT_L_ADDR, 1);
+     88            LPS331AP_Read(&temp[2], LPS331AP_PRESS_OUT_H_ADDR, 1);
+     89            press_temp = (((uint32_t)temp[2])<<16) + (((uint32_t)temp[1])<<8) + (((uint32_t)(temp[0])));
+     90            *pressure = (uint32_t)(press_temp);
+     91          }
+     92          
+     93          void LPS331AP_Get_Temperature(float* temperature)
+     94          {
+     95            uint8_t temp[2]={0,0};
+     96            int16_t temp_value = 0;
+     97            LPS331AP_Read(&temp[0], LPS331AP_TEMP_OUT_L_ADDR, 1);
+     98            LPS331AP_Read(&temp[1], LPS331AP_TEMP_OUT_H_ADDR, 1);
+     99            temp_value = (int16_t)((((uint16_t)temp[1])<<8) + ((uint16_t)(temp[0])));
+    100            *temperature = 42.5 + (temp_value/480.0);
+    101          }
+    102          
+    103          
+    104          void LPS331AP_Read(uint8_t* pBuffer, uint8_t ReadAddr, uint8_t NumByteToRead)
+    105          {
+    106            bool result = i2c_ReadReg(LPS331AP_I2C, LPS331AP_DEVICE_ADDRESS, ReadAddr, pBuffer, NumByteToRead);
+    107            //if(false == result) DBG("LPS331AP_Read error\n");
+    108          }
+    109          
+    110          
+    111          void LPS331AP_Write(uint8_t* pBuffer, uint8_t WriteAddr, uint8_t NumByteToWrite)
+    112          {
+    113           bool result = i2c_WriteReg(LPS331AP_I2C, LPS331AP_DEVICE_ADDRESS, WriteAddr, pBuffer, NumByteToWrite);
+    114           //if(false == result) DBG("LPS331AP_Write error\n");
+    115          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   LPS331AP_Config
+         8   -> LPS331AP_Write
+      16   LPS331AP_Get_Altitude
+        16   -> LPS331AP_Read_Pressure_Regs
+        16   -> __aeabi_d2f
+        16   -> __aeabi_d2uiz
+        16   -> __aeabi_ddiv
+        16   -> __aeabi_dmul
+        16   -> __aeabi_ui2d
+        16   -> log
+      16   LPS331AP_Get_Pressure
+        16   -> LPS331AP_Get_Raw_Pressure
+        16   -> __aeabi_d2f
+        16   -> __aeabi_ddiv
+        16   -> __aeabi_dmul
+        16   -> __aeabi_f2d
+        16   -> __aeabi_ui2f
+      16   LPS331AP_Get_Raw_Pressure
+        16   -> LPS331AP_Read
+      16   LPS331AP_Get_Temperature
+        16   -> LPS331AP_Read
+        16   -> __aeabi_d2f
+        16   -> __aeabi_dadd
+        16   -> __aeabi_ddiv
+        16   -> __aeabi_i2d
+       0   LPS331AP_I2C_Init
+      16   LPS331AP_PowerDown_Cmd
+        16   -> LPS331AP_Read
+        16   -> LPS331AP_Write
+       8   LPS331AP_Read
+         8   -> i2c_ReadReg
+       8   LPS331AP_Reboot_Cmd
+         8   -> LPS331AP_Write
+       8   LPS331AP_Set_Reference
+         8   -> LPS331AP_Write
+         8   -> __aeabi_d2uiz
+         8   -> __aeabi_ddiv
+         8   -> __aeabi_ui2d
+       8   LPS331AP_Write
+         8   -> i2c_WriteReg
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable5
+       4  ??DataTable5_1
+       4  ??DataTable5_2
+       4  ??DataTable5_3
+       4  ??DataTable5_4
+       4  ??DataTable5_5
+       4  ??DataTable5_6
+       4  ??DataTable5_7
+       4  ??DataTable5_8
+       4  ?_0
+       4  ?_1
+       2  ?_2
+      32  LPS331AP_Config
+      94  LPS331AP_Get_Altitude
+      50  LPS331AP_Get_Pressure
+      72  LPS331AP_Get_Raw_Pressure
+      78  LPS331AP_Get_Temperature
+       2  LPS331AP_I2C_Init
+      66  LPS331AP_PowerDown_Cmd
+      22  LPS331AP_Read
+      20  LPS331AP_Reboot_Cmd
+      50  LPS331AP_Set_Reference
+      22  LPS331AP_Write
+
+ 
+  10 bytes in section .rodata
+ 544 bytes in section .text
+ 
+ 544 bytes of CODE  memory
+  10 bytes of CONST memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,164 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:23
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\lps331ap.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\lps331ap.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\lps331ap.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\lps331ap.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\lps331ap.c
+      1          /**
+      2           * @file   lps331ap.c
+      3           * @date   14 рту. 2013 у.
+      4           * @author
+      5           * @brief  lps331ap
+      6           */
+      7          #ifdef LPS331AP
+      8          #include <hal_types.h>
+      9          //#include <debug.h>
+     10          #include <protocol.h>
+     11          //#include "MeteoModuleTasks.h"
+     12          #include "lps331ap.h"
+     13          #include "lps331ap_driver.h"
+     14          #include "i2c.h"
+     15          
+     16          #define I2C_BEGIN     if(false == i2c_open(2)) return 0; else do
+     17          #define I2C_COMPLETE  while(0); i2c_close(2);
+     18          
+     19          typedef enum lps331ap_state_type_tag
+     20          {
+     21            POWER_OFF         = -1,
+     22            POWER_ON          =  0,
+     23            CHECK_LINK        =  1,
+     24            SET_CONFIGURATION =  2,
+     25            MEASURE_POLLING   =  3
+     26          } lps331ap_state_t;
+     27          
+     28          static int32_t lps331ap_task(uint16_t tid);
+     29          static lps331ap_state_t state = POWER_OFF;
+     30           float pressure;
+     31           float temperature;
+     32          
+     33          
+     34          float lps331ap_get_temperature(void)
+     35          {
+     36            return (temperature);
+     37          }
+     38          
+     39          int32_t(*pressure_f_point)(uint16_t); 
+     40          void lps331ap_init(void)
+     41          {
+     42              pressure_f_point = lps331ap_task;
+     43          //  DBG("lps331ap_init\n");
+     44          //  protocol_set_callback(READ_P_SENSOR, send_pressure);
+     45          //  protocol_set_callback(READ_T_SENSOR, send_temperature);
+     46          //  mtask_start(TASK_LPS331AP, 0, lps331ap_task);
+     47          }
+     48          
+     49          int32_t lps331ap_task(uint16_t tid)
+     50          {
+     51            switch(state)
+     52            {
+     53          
+     54              case POWER_OFF:
+     55              I2C_BEGIN
+     56              {
+     57                LPS331AP_Reboot_Cmd();
+     58                LPS331AP_PowerDown_Cmd(ENABLE);
+     59              }
+     60              I2C_COMPLETE
+     61              state = POWER_ON;
+     62              return (100);
+     63              case POWER_ON:
+     64                I2C_BEGIN
+     65                {
+     66                  LPS331AP_PowerDown_Cmd(DISABLE);
+     67                }
+     68                I2C_COMPLETE
+     69                state = CHECK_LINK;
+     70              return 100; //100 ms for powering on
+     71              case CHECK_LINK:
+     72                I2C_BEGIN
+     73                {
+     74                  uint8_t who_am_i;
+     75                  LPS331AP_Read(&who_am_i, LPS331AP_WHO_AM_I_ADDR, 1);
+     76                  if(who_am_i != 0xBB)
+     77                  {
+     78                    state = POWER_OFF;
+     79                  }
+     80                  else
+     81                  {
+     82                    state = SET_CONFIGURATION;
+     83                  }
+     84                }
+     85                I2C_COMPLETE
+     86                return (100);
+     87          
+     88              case SET_CONFIGURATION:
+     89                I2C_BEGIN
+     90                {
+     91                  LPS331AP_ConfigTypeDef  LPS331AP_InitStructure;
+     92                  //LPS331AP_InterruptTypeDef LPS331AP_InterruptStructure;
+     93                  /*  LPS331AP configuration */
+     94                  LPS331AP_InitStructure.Power = LPS331AP_POWER_ACTIVE;
+     95                  LPS331AP_InitStructure.Output_Data_Rate = LPS331AP_P12p5Hz_T1Hz;
+     96                  LPS331AP_InitStructure.Data_Update = LPS331AP_NO_DATA_UPDATE_UNTIL_READ; //LPS001DL_BDU_Single;
+     97                  LPS331AP_InitStructure.DeltaEnabled = LPS331AP_DELTA_P_DISABLED;
+     98                  LPS331AP_Config(&LPS331AP_InitStructure);
+     99                }
+    100                I2C_COMPLETE
+    101                state = MEASURE_POLLING;
+    102                return (1000);
+    103              case MEASURE_POLLING:
+    104                I2C_BEGIN
+    105                {
+    106                  LPS331AP_Get_Pressure(&pressure);
+    107                  LPS331AP_Get_Temperature(&temperature);
+    108              //    DBG("LPS331AP: T=%0.2f АC; P=%0.2f mmHg\n", temperature, pressure);
+    109           //       protocol_log(2, "LPS331AP: T=%0.2f АC; P=%0.2f mmHg", temperature, pressure);
+    110                }
+    111                I2C_COMPLETE
+    112                return (1000);
+    113              default:
+    114                return (0);
+    115            }
+    116          }
+    117          #endif
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

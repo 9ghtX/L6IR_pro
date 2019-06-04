@@ -1,0 +1,150 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:18
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\default_flash_content.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\default_flash_content.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\default_flash_content.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\default_flash_content.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\default_flash_content.c
+      1          #include "L6IR.h"
+      2          
+      3          void default_flash_content()
+      4          {
+      5           flash.obj_focus=77;
+      6           flash.pix_size=0.015;
+      7           
+      8           flash.ballistics_buf[0].identify =0;
+      9           flash.ballistics_buf[0].bullet_V0 = 815;
+     10           flash.ballistics_buf[0].bullet_m = 9.4;
+     11           flash.ballistics_buf[0].bullet_BC = 0.408;
+     12           flash.ballistics_buf[0].weapon_step = 240;
+     13           flash.ballistics_buf[0].weapon_H = 94;
+     14            flash.ballistics_buf[0].weapon_L0 = 100;
+     15             flash.ballistics_buf[0].weapon_P0 = 750;
+     16              flash.ballistics_buf[0].weapon_T0 = 15;
+     17           
+     18              flash.ballistics_buf[1].identify =1;
+     19           flash.ballistics_buf[1].bullet_V0 = 815;
+     20           flash.ballistics_buf[1].bullet_m = 9.4;
+     21           flash.ballistics_buf[1].bullet_BC = 0.408;
+     22           flash.ballistics_buf[1].weapon_step = 240;
+     23           flash.ballistics_buf[1].weapon_H = 94;
+     24            flash.ballistics_buf[1].weapon_L0 = 100;
+     25             flash.ballistics_buf[1].weapon_P0 = 750;
+     26              flash.ballistics_buf[1].weapon_T0 = 15;
+     27           
+     28              flash.ballistics_buf[2].identify =2;
+     29           flash.ballistics_buf[2].bullet_V0 = 825;
+     30           flash.ballistics_buf[2].bullet_m = 9.6;
+     31           flash.ballistics_buf[2].bullet_BC = 0.412;
+     32           flash.ballistics_buf[2].weapon_step = 240;
+     33           flash.ballistics_buf[2].weapon_H = 94;
+     34            flash.ballistics_buf[2].weapon_L0 = 100;
+     35             flash.ballistics_buf[2].weapon_P0 = 750;
+     36              flash.ballistics_buf[2].weapon_T0 = 15;
+     37              
+     38            flash.ballistics_buf[3].identify =3;
+     39           flash.ballistics_buf[3].bullet_V0 = 815;
+     40           flash.ballistics_buf[3].bullet_m = 9.4;
+     41           flash.ballistics_buf[3].bullet_BC = 0.408;
+     42           flash.ballistics_buf[3].weapon_step = 240;
+     43           flash.ballistics_buf[3].weapon_H = 89; 
+     44            flash.ballistics_buf[3].weapon_L0 = 100;
+     45             flash.ballistics_buf[3].weapon_P0 = 750;
+     46              flash.ballistics_buf[3].weapon_T0 = 15;
+     47           
+     48              flash.ballistics_buf[4].identify =4;
+     49           flash.ballistics_buf[4].bullet_V0 = 825;
+     50           flash.ballistics_buf[4].bullet_m = 9.4;
+     51           flash.ballistics_buf[4].bullet_BC = 0.408;
+     52           flash.ballistics_buf[4].weapon_step = 240;
+     53           flash.ballistics_buf[4].weapon_H = 89;
+     54            flash.ballistics_buf[4].weapon_L0 = 100;
+     55             flash.ballistics_buf[4].weapon_P0 = 750;
+     56              flash.ballistics_buf[4].weapon_T0 = 15;
+     57           
+     58              flash.ballistics_buf[5].identify =5;
+     59           flash.ballistics_buf[5].bullet_V0 = 780;
+     60           flash.ballistics_buf[5].bullet_m = 9.4;
+     61           flash.ballistics_buf[5].bullet_BC = 0.408;
+     62           flash.ballistics_buf[5].weapon_step = 240;
+     63           flash.ballistics_buf[5].weapon_H = 89;
+     64            flash.ballistics_buf[5].weapon_L0 = 100;
+     65             flash.ballistics_buf[5].weapon_P0 = 750;
+     66              flash.ballistics_buf[5].weapon_T0 = 15;
+     67           
+     68              flash.ballistics_buf[6].identify =6;
+     69           flash.ballistics_buf[6].bullet_V0 = 825;
+     70           flash.ballistics_buf[6].bullet_m = 9.4;
+     71           flash.ballistics_buf[6].bullet_BC = 0.408;
+     72           flash.ballistics_buf[6].weapon_step = 240;
+     73           flash.ballistics_buf[6].weapon_H = 89;
+     74           
+     75            flash.ballistics_buf[6].weapon_L0 = 100;
+     76             flash.ballistics_buf[6].weapon_P0 = 750;
+     77              flash.ballistics_buf[6].weapon_T0 = 15;
+     78          
+     79           
+     80           flash.ballistics_buf[7].bullet_V0 = 780;
+     81           flash.ballistics_buf[7].bullet_m = 9.4;
+     82           flash.ballistics_buf[7].bullet_BC = 0.408;
+     83           flash.ballistics_buf[7].weapon_step = 240;
+     84           flash.ballistics_buf[7].weapon_H = 89;
+     85            flash.ballistics_buf[7].weapon_L0 = 100;
+     86             flash.ballistics_buf[7].weapon_P0 = 750;
+     87              flash.ballistics_buf[7].weapon_T0 = 15;   
+     88             
+     89          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   default_flash_content
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     592  default_flash_content
+
+ 
+ 592 bytes in section .text
+ 
+ 592 bytes of CODE memory
+
+Errors: none
+Warnings: none

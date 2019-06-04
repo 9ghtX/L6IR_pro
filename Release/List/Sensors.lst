@@ -1,0 +1,223 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:39
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\Sensors.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\Sensors.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\Sensors.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\Sensors.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\Sensors.c
+      1          #include "L6IR.h"
+      2          #include "lps331ap.h"
+      3          #include "Ball.h"
+      4          #include "net.h"
+      5          #include "LSM6DS33.h"
+      6          #include <math.h>
+      7          
+      8           typedef struct
+      9          {
+     10           s32 lps331ap;
+     11           s32 lsm6ds33;
+     12          } synchro_time;
+     13          
+     14          static synchro_time sens_synchro_time;
+     15          extern int32_t(*pressure_f_point)(uint16_t); 
+     16          
+     17          extern float pressure;
+     18          extern float temperature;
+     19          
+     20          void  sens_synchro_func()
+     21          {
+     22            sens_synchro_time.lps331ap --;
+     23            sens_synchro_time.lsm6ds33 --;
+     24          }
+     25          
+     26          
+     27          void i2c_sensors_tasks()
+     28          {
+     29            /*
+     30           if(sens_synchro_time.lps331ap < 0)
+     31             {
+     32               sens_synchro_time.lps331ap = (*pressure_f_point)(0);
+     33               senspar.pressure = pressure;
+     34               senspar.temperature = temperature;
+     35               senspar.change_par = true;
+     36               wright_data_to_cam(GET_PRESSURE_DATA, senspar.pressure);
+     37               wright_data_to_cam(GET_TEMPERATURE_DATA, senspar.temperature);
+     38             }
+     39           */
+     40           if(sens_synchro_time.lsm6ds33 <0)
+     41             {
+     42               LSM6DS33_tasks();
+     43               sens_synchro_time.lsm6ds33 = LSM6DS33_PERIOD;
+     44             
+     45           
+     46           if(LSM6DS33_out_data.temp_ready)
+     47            {
+     48              
+     49             LSM6DS33_out_data.temp_ready = false; 
+     50            }
+     51           if(LSM6DS33_out_data.accel_ready)
+     52            {
+     53             angles_calculate();
+     54             turning_off_indicate();
+     55             LSM6DS33_out_data.accel_ready = false;
+     56            }
+     57           }
+     58          }
+     59          #define CONST_2PI_DEV_360    0.017453292
+     60          #define CONST_360_DEV_2PI    57.29577951
+     61          
+     62          void    angles_calculate()
+     63          {
+     64           float x_axis, y_axis, z_axis;
+     65           x_axis = (float)LSM6DS33_out_data.accelerometer_x;
+     66           y_axis = (float)LSM6DS33_out_data.accelerometer_y;
+     67           z_axis = (float)LSM6DS33_out_data.accelerometer_z;
+     68           
+     69           
+     70           senspar.declinate =0- CONST_360_DEV_2PI*atan(x_axis/y_axis);
+     71           
+     72           senspar.inclinate = 0- CONST_360_DEV_2PI*atan(z_axis/y_axis);
+     73           senspar.change_par = true;
+     74           //if((senspar.inclinate>=(decl+1)) ||(senspar.inclinate<=(decl-1)) )
+     75           wright_data_to_cam(METEO_GET_INCLINATE_DATA, senspar.inclinate); 
+     76            
+     77          }
+     78          
+     79          
+     80          #define FILTER_PERIOD_FOR_TURN_OFF 20
+     81          s32 xbuf[FILTER_PERIOD_FOR_TURN_OFF];
+     82          s32 ybuf[FILTER_PERIOD_FOR_TURN_OFF];
+     83          s32 zbuf[FILTER_PERIOD_FOR_TURN_OFF];
+     84          u16 axis_quant, axis_point;
+     85          void   turning_off_indicate()
+     86          {
+     87          s32 x_axis_filter=0, y_axis_filter=0, z_axis_filter=0;
+     88          int i;
+     89          
+     90            xbuf[axis_point] = (s32)LSM6DS33_out_data.accelerometer_x;
+     91            ybuf[axis_point] = (s32)LSM6DS33_out_data.accelerometer_y;
+     92            zbuf[axis_point] = (s32)LSM6DS33_out_data.accelerometer_z;
+     93            
+     94           if(axis_quant<FILTER_PERIOD_FOR_TURN_OFF) axis_quant++;
+     95           axis_point++;
+     96           if(axis_point>=FILTER_PERIOD_FOR_TURN_OFF)axis_point=0;
+     97           
+     98           for(i=0; i<axis_quant; i++)
+     99           {
+    100            x_axis_filter += xbuf[i];
+    101            y_axis_filter += ybuf[i];
+    102            z_axis_filter += zbuf[i];
+    103           }
+    104           x_axis_filter = x_axis_filter/axis_quant;
+    105           y_axis_filter = y_axis_filter/axis_quant;
+    106           z_axis_filter = z_axis_filter/axis_quant;
+    107           
+    108           if((x_axis_filter>-300)&&(x_axis_filter<300)&&(z_axis_filter>-300)&&(z_axis_filter<300))
+    109           {
+    110            if(y_axis_filter<-16000)  
+    111            {
+    112              if(LSM6DS33_out_data.turnover == true)
+    113              {
+    114               //spi_objects[COMMAND_REG_ADDR].wright_data = TURNON_COMAND; // «акоменчено пока точно не определимс€ с командами
+    115               LSM6DS33_out_data.turnover = false;
+    116              }
+    117            }
+    118            if(y_axis_filter> 16000) 
+    119            {
+    120              
+    121              if(LSM6DS33_out_data.turnover == false)
+    122              {
+    123               // spi_objects[COMMAND_REG_ADDR].wright_data = TURNON_COMAND;// «акоменчено пока точно не определимс€ с командами
+    124                LSM6DS33_out_data.turnover = true; 
+    125              }
+    126            }
+    127           }
+    128           
+    129          
+    130          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   angles_calculate
+        16   -> __aeabi_d2f
+        16   -> __aeabi_dmul
+        16   -> __aeabi_f2d
+        16   -> __aeabi_fdiv
+        16   -> __aeabi_i2f
+        16   -> atan
+        16   -> wright_data_to_cam
+       8   i2c_sensors_tasks
+         8   -> LSM6DS33_tasks
+         8   -> angles_calculate
+         8   -> turning_off_indicate
+       0   sens_synchro_func
+       8   turning_off_indicate
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable3
+       4  ??DataTable3_1
+       4  ??DataTable3_2
+       4  ??DataTable3_3
+       4  ??DataTable3_4
+       4  ??DataTable3_5
+       4  ??DataTable3_6
+       4  ??DataTable3_7
+       4  ??DataTable3_8
+       4  ??DataTable3_9
+     122  angles_calculate
+       2  axis_point
+       2  axis_quant
+      58  i2c_sensors_tasks
+      22  sens_synchro_func
+       8  sens_synchro_time
+     228  turning_off_indicate
+      80  xbuf
+      80  ybuf
+      80  zbuf
+
+ 
+ 252 bytes in section .bss
+ 470 bytes in section .text
+ 
+ 470 bytes of CODE memory
+ 252 bytes of DATA memory
+
+Errors: none
+Warnings: none

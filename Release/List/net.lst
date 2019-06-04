@@ -1,0 +1,1381 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:30
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\net.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\net.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\net.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\net.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\net.c
+      1          #include "net.h"
+      2          #include "Ball.h"
+      3          
+      4          #ifdef TNM_MODE
+      5          #include "digital_resist.h"
+      6          #endif
+      7          
+      8          uart_obj uart_obj_buf[UART_OBJ_Q];
+      9          net_settigs net_sets;
+     10          u16 obj_in_net;
+     11          bool task_flag;
+     12          u16 keys_syncro_count;
+     13          u16 system_wait_timer;
+     14          net_status_struct net_status;
+     15          u16 net_global_count;
+     16          extern encoder encoder0, encoder1;
+     17            uart_obj extern_master_find;
+     18          
+     19            uart_obj cu_get_keys;
+     20            uart_obj cu_get_net_condition;
+     21          
+     22            uart_obj get_gps;
+     23            uart_obj get_compass;
+     24            uart_obj calibrate_compass;
+     25            uart_obj get_compass_status;
+     26            uart_obj get_temperature;
+     27            uart_obj get_pressure;
+     28            uart_obj get_inclinate;
+     29            uart_obj get_declinate;
+     30          
+     31            uart_obj power_off;
+     32          
+     33            uart_obj get_encoder_0;
+     34            uart_obj get_encoder_1;
+     35          
+     36            uart_obj rf_start_messure;
+     37            uart_obj rf_get_status;
+     38            uart_obj rf_get_distance;
+     39          
+     40          //  uart_obj system_init_wait;
+     41          
+     42          /*
+     43          #ifdef CU_DEVICE
+     44            uart_obj cu_get_keys;
+     45            uart_obj cu_get_gps;
+     46          
+     47          #endif
+     48          
+     49          #ifdef LD_DEVICE
+     50          
+     51          #endif
+     52          
+     53          
+     54          #ifdef METEO_DEVICE
+     55          
+     56          #endif
+     57          
+     58          
+     59          #ifdef RADIO_DEVICE
+     60          
+     61          #endif
+     62          */
+     63          
+     64          
+     65          
+     66          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+     67            ×òåíèå íàñòðîåê èçäåëèÿ ñ ïëàòû óñòðîéñòâà óïðàâëåíèÿ
+     68          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+     69          
+     70          void read_sets_from_CU()
+     71          {
+     72          
+     73          }
+     74          
+     75          
+     76          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+     77            Ôóíêöèÿ ïîèñêà âíåøíåãî ïîäêëþ÷åíèÿ
+     78          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+     79          net_priority find_PC_connecting()
+     80          {
+     81           net_priority net_pr= NET_MASTER;
+     82          
+     83          
+     84          
+     85           return net_pr;
+     86          }
+     87          
+     88          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+     89            Ôóíêöèÿ èíèöèàëèçàöèè êàìåðû è ñåòè ïî êîíôèãóðàöèè, ñ÷èòàííîé èç Flash
+     90          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+     91          extern  u8 encoder1_masks_buf[];// ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
+     92          extern  u8 encoder0_masks_buf[];
+     93          extern  u8 ctrl_unit_masks_buf[];
+     94          
+     95          void smart_device_ini()
+     96          {
+     97           if((flash.cam_type&0x0000000f)==setup)
+     98             {
+     99               net_sets.net_pr = NET_SLAVE;
+    100             }
+    101           else
+    102           {
+    103             net_sets.net_pr = NET_MASTER;
+    104           }   
+    105             
+    106           if((flash.cam_type&0x0000000f)==thermal_head)
+    107             {
+    108               
+    109               encoder1_masks_buf[ZOOM_FUNC_NUM] = MASK_OFF;
+    110               encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    111               encoder0_masks_buf[ZOOM_FUNC_NUM] = MASK_OFF;  
+    112               ctrl_unit_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    113               ctrl_unit_masks_buf[ZOOM_FUNC_NUM] = MASK_OFF;  
+    114             }
+    115           
+    116           switch(flash.cam_type&0x0000C200)
+    117           {
+    118             
+    119             case 0x0000C200:// 3 encoder, 1 control unit
+    120               
+    121             break;
+    122             
+    123             case 0x0000C000:// 3 encoder, 0 control unit
+    124               
+    125             break;
+    126             
+    127             case 0x00004200: // 1 encoder, 1 control unit
+    128              net_sets.net_control_unit1 = true;
+    129              net_sets.net_encoder_0 = true;
+    130              encoder0.adress = ADRESS_ENCODER1;
+    131              encoder1.adress = ADRESS_ENCODER2;
+    132              encoder0.encoder_func = encoder0_func;
+    133             break;
+    134          
+    135             case 0x00004000:// 1 encoder, 0 control unit
+    136              net_sets.net_encoder_0 = true;
+    137              encoder0.adress = ADRESS_ENCODER3;
+    138              encoder1.adress = ADRESS_ENCODER2;
+    139              encoder0.encoder_func = encoder0_func;  
+    140              encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_OFF;
+    141             break;
+    142          
+    143             case 0x00008200:// 2 encoder, 1 control unit
+    144               net_sets.net_control_unit1 = true;
+    145               net_sets.net_encoder_1 = true;
+    146               net_sets.net_encoder_0 = true;
+    147               encoder0.adress =  ADRESS_ENCODER0;
+    148               encoder1.adress =ADRESS_ENCODER1;
+    149               
+    150               encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    151               
+    152               encoder0.encoder_func = encoder0_func_2enc;
+    153               if(flash.cam_type&CONFIG_BALL_TEST) encoder1.encoder_func = encoder1_func;
+    154               else encoder1.encoder_func = encoder1_t_func;     
+    155             break;
+    156             
+    157             case 0x00008000:// 2 encoder, 0 control unit
+    158               net_sets.net_encoder_1 = true;
+    159               net_sets.net_encoder_0 = true;
+    160               encoder0.adress = ADRESS_ENCODER1;
+    161               encoder1.adress = ADRESS_ENCODER3;
+    162               
+    163               encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    164               
+    165               encoder1.encoder_func = encoder0_func;
+    166               if(flash.cam_type&CONFIG_BALL_TEST) encoder0.encoder_func = encoder1_func;
+    167               else encoder0.encoder_func = encoder1_t_func;
+    168             break;//ye lf
+    169             
+    170             case 0x00000200:// 0 encoder, 1 control unit
+    171               net_sets.net_control_unit1 = true;
+    172               encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    173               encoder0.adress =  ADRESS_ENCODER0;
+    174               encoder1.adress =ADRESS_ENCODER1;
+    175             break;
+    176             
+    177             case 0x00000000://  0 encoder, 0 control unit
+    178               
+    179             break;  
+    180           }
+    181           
+    182           //switch
+    183           net_sets.net_range_finder = true;
+    184          
+    185           if(flash.cam_type&CONFIG_METEO_TEST) net_sets.net_meteo = true;
+    186           else net_sets.net_meteo = false;
+    187           if(flash.cam_type&CONFIG_GPS_TEST)   net_sets.net_navigator = true;
+    188           else net_sets.net_navigator = false;
+    189           if(flash.cam_type&CONFIG_RADIO_TEST) net_sets.net_ext_communication =true;
+    190           else net_sets.net_ext_communication =false;
+    191           
+    192           if(flash.cam_type&CONFIG_EXPO_TEST) encoder0_masks_buf[EXPOSSITION_FUNC_NUM] = MASK_ON;
+    193           else encoder0_masks_buf[EXPOSSITION_FUNC_NUM] = MASK_OFF;
+    194          
+    195           if(flash.cam_type&CONFIG_EOC_TEST)   encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    196           else   encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_OFF;
+    197           if(flash.cam_type&CONFIG_BALL_TEST)   cam_sets.ball_calculation = true;
+    198           else cam_sets.ball_calculation = false;
+    199           
+    200           if(((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_MONOCULAR)||((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_NOZZLE))
+    201           {
+    202             encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_OFF;
+    203             encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    204           }
+    205           
+    206           if(!(flash.cam_type&CONFIG_TEMP_PRESS_TEST))
+    207             {
+    208              encoder0_masks_buf[TEMP_ENTER_FUNC_NUM]  = MASK_OFF;
+    209              encoder0_masks_buf[PRESS_ENTER_FUNC_NUM]   = MASK_OFF; 
+    210             }
+    211          }
+    212          
+    213          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    214            Óñòàíîâêà íàñòðîåê ïî óìîë÷àíèþ 
+    215          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    216          
+    217          void net_set_default(net_priority net_pr)
+    218          {
+    219           net_sets.boudrate = BD115200;
+    220           net_sets.net_pr = net_pr;
+    221          }
+    222          
+    223          
+    224          
+    225          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    226           Ôóíêöèÿ ïåðâè÷íîé èíèöèàëèçàöèè ñåòåâûõ çàäà÷.
+    227          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    228          void pref_net_init()
+    229          {
+    230             obj_in_net = 0;
+    231             extern_master_find.task_id          =   EXTERN_MASTER_FIND;
+    232             extern_master_find.dev_addr         =   ADRESS_EXT_MASTER;
+    233             extern_master_find.command          =   EXT_MASTER_REQUEST;
+    234             extern_master_find.counter          =   0;
+    235             extern_master_find.delay            =   EXT_MASTER_DELAY;
+    236             extern_master_find.obj_net_number   =   obj_in_net;
+    237             extern_master_find.synchro          =   ASYNCHRO;
+    238             uart_obj_buf[obj_in_net]            =   extern_master_find;
+    239             obj_in_net++;
+    240          
+    241             cu_get_net_condition.task_id        =   CU_GET_NET_CONDIT;
+    242             cu_get_net_condition.dev_addr       =   ADRESS_CU;
+    243             cu_get_net_condition.command        =   CONDISSION_REQUEST;
+    244             cu_get_net_condition.counter        =   0;
+    245             cu_get_net_condition.delay          =   CU_GET_CONDIT_TIMER;
+    246             cu_get_net_condition.obj_net_number =   obj_in_net;
+    247             cu_get_net_condition.synchro        =   ASYNCHRO;               
+    248             uart_obj_buf[obj_in_net]            =   cu_get_net_condition;
+    249             obj_in_net++;
+    250             net_sets.net_pr = NET_MASTER;
+    251             uart_obj_buf[extern_master_find.obj_net_number].counter  =   EXT_MASTER_DELAY;
+    252          }
+    253          
+    254          
+    255          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    256           Ôóíêöèÿ èíèöèàëèçàöèè ñåòåâûõ çàäà÷.
+    257          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    258          
+    259          void net_init()
+    260          {
+    261            obj_in_net = 0;
+    262            net_global_count = 0;
+    263            net_status.last_net_task = 0;
+    264           /* system_init_wait.task_id = SYSTEM_INIT_WAIT;
+    265            system_init_wait.counter = SYSTEM_INIT_WAIT_TIMER;
+    266            system_init_wait.delay   = SYSTEM_INIT_WAIT_TIMER;
+    267            system_init_wait.synchro = ASYNCHRO;
+    268            uart_obj_buf[obj_in_net] = system_init_wait;
+    269            obj_in_net++;*/
+    270          
+    271          
+    272          
+    273          
+    274          
+    275            if(net_sets.net_control_unit1)
+    276              {
+    277                  if(flash.cam_type&CONFIG_CU_KEYS_TEST)
+    278                  {
+    279                  cu_get_keys.task_id         = CU_GET_KEYS;
+    280                  cu_get_keys.dev_addr        = ADRESS_CU;
+    281                  cu_get_keys.command         = GET_KEY_CODE;
+    282                  cu_get_keys.counter         = 0;
+    283                  cu_get_keys.delay           = CU_GET_KEYS_TIMER;
+    284                  cu_get_keys.synchro         = SYNCHRO;
+    285                  cu_get_keys.obj_net_number  = obj_in_net;
+    286                  uart_obj_buf[obj_in_net]    = cu_get_keys;
+    287                  obj_in_net++;
+    288                  }
+    289          
+    290                  power_off.task_id           = POWER_OFF_COM;
+    291                  power_off.dev_addr          = ADRESS_CU;
+    292                  power_off.command           = POWER_OFF_COMMAND;
+    293                  power_off.counter           = 0;
+    294                  power_off.delay             = POWER_OFF_TIMER;
+    295                  power_off.synchro           = ASYNCHRO;
+    296                  power_off.obj_net_number    = obj_in_net;
+    297                  uart_obj_buf[obj_in_net]    = power_off;
+    298                  obj_in_net++;
+    299          
+    300              }
+    301          
+    302          
+    303            if( net_sets.net_encoder_0)
+    304              {
+    305                  get_encoder_0.task_id      = ENCODER0_GET_KEYS;
+    306                  get_encoder_0.dev_addr     = encoder0.adress;
+    307                  get_encoder_0.command      = GET_KEY_CODE;
+    308                  get_encoder_0.counter      = (CU_GET_KEYS_TIMER/2);
+    309                  get_encoder_0.delay        = CU_GET_KEYS_TIMER;
+    310                  get_encoder_0.synchro      = SYNCHRO;
+    311                  uart_obj_buf[obj_in_net]   = get_encoder_0;
+    312                  obj_in_net++;
+    313              }
+    314          
+    315            if( net_sets.net_encoder_1)
+    316              {
+    317                  get_encoder_1.task_id      = ENCODER1_GET_KEYS;
+    318                  get_encoder_1.dev_addr     = encoder1.adress;
+    319                  get_encoder_1.command      = GET_KEY_CODE;
+    320                  get_encoder_1.counter      = 0;
+    321                  get_encoder_1.delay        = CU_GET_KEYS_TIMER;
+    322                  get_encoder_1.synchro      = SYNCHRO;
+    323                  uart_obj_buf[obj_in_net]   = get_encoder_1;
+    324                  obj_in_net++;
+    325              }
+    326          // #endif
+    327           /* 
+    328             #ifdef TNV_MODE
+    329            if( net_sets.net_encoder_1)
+    330              {
+    331                  get_encoder_1.task_id      = ENCODER1_GET_KEYS;
+    332                  get_encoder_1.dev_addr     = ADRESS_ENCODER1;
+    333                  get_encoder_1.command      = GET_KEY_CODE;
+    334                  get_encoder_1.counter      = 0;
+    335                  get_encoder_1.delay        = CU_GET_KEYS_TIMER;
+    336                  get_encoder_1.synchro      = SYNCHRO;
+    337                  uart_obj_buf[obj_in_net]   = get_encoder_1;
+    338                  obj_in_net++;
+    339              } 
+    340             #endif
+    341          */
+    342            if(net_sets.net_navigator)
+    343              {
+    344               get_gps.task_id               = GET_GPS;
+    345               get_gps.dev_addr              = ADRESS_GPS;
+    346               get_gps.command               = GET_GPS_DATA;
+    347               get_gps.counter               = 0;
+    348               get_gps.delay                 = GET_GPS_TIMER;
+    349               get_gps.synchro               = SYNCHRO;
+    350               uart_obj_buf[obj_in_net]      = get_gps;
+    351               obj_in_net++;
+    352              }
+    353          //#ifdef METEO
+    354            if(net_sets.net_meteo)
+    355              {
+    356               get_compass.task_id  = GET_COMPASS;
+    357               get_compass.dev_addr = ADRESS_METEO;
+    358               get_compass.command  = GET_COMPASS_DATA;
+    359               get_compass.counter  = 0;
+    360               get_compass.delay    = GET_COMPASS_TIMER;
+    361               if((flash.cam_type&CONFIG_METEO_TEST) != TPmeteo)get_compass.synchro  = SYNCHRO;
+    362               else get_compass.synchro  = ASYNCHRO;
+    363               get_compass.obj_net_number = obj_in_net;
+    364               uart_obj_buf[obj_in_net] = get_compass;
+    365               obj_in_net++;
+    366          
+    367               calibrate_compass.task_id  = COMPASS_CALIBRATE;
+    368               calibrate_compass.dev_addr = ADRESS_METEO;
+    369               calibrate_compass.command  = COMPASS_CALIBRATE_DATA;
+    370               calibrate_compass.counter = 0;
+    371               calibrate_compass.delay = COMPASS_CALIBRATE_TIMER;
+    372               calibrate_compass.synchro = ASYNCHRO;
+    373               calibrate_compass.obj_net_number = obj_in_net;
+    374               uart_obj_buf[obj_in_net] = calibrate_compass;
+    375               obj_in_net++;
+    376          
+    377               get_compass_status.task_id  = GET_COMPASS_STATUS;
+    378               get_compass_status.dev_addr = ADRESS_METEO;
+    379               get_compass_status.command  = GET_COMPASS_STATUS_DATA;
+    380               get_compass_status.counter  = 0;
+    381               get_compass_status.delay    = GET_COMPASS_STATUS_TIMER;
+    382               get_compass_status.synchro  = ASYNCHRO;
+    383               get_compass_status.obj_net_number = obj_in_net;
+    384               uart_obj_buf[obj_in_net]    = get_compass_status;
+    385               obj_in_net++;
+    386          
+    387               get_temperature.task_id     = METEO_GET_TEMP;
+    388               get_temperature.dev_addr    = ADRESS_METEO;
+    389               get_temperature.command     = GET_TEMPERATURE_DATA;
+    390               get_temperature.counter     = 0;
+    391               get_temperature.delay       = GET_TEMPERATURE_TIMER;
+    392               get_temperature.synchro     = SYNCHRO;
+    393               get_temperature.obj_net_number = obj_in_net;
+    394               uart_obj_buf[obj_in_net]    = get_temperature;
+    395               obj_in_net++;
+    396          
+    397               get_pressure.task_id     = METEO_GET_PRESS;
+    398               get_pressure.dev_addr    = ADRESS_METEO;
+    399               get_pressure.command     = GET_PRESSURE_DATA;
+    400               get_pressure.counter     = GET_PRESSURE_TIMER/2;
+    401               get_pressure.delay       = GET_PRESSURE_TIMER;
+    402               get_pressure.synchro     = SYNCHRO;
+    403               get_pressure.obj_net_number = obj_in_net;
+    404               uart_obj_buf[obj_in_net]    = get_pressure;
+    405               obj_in_net++;
+    406          
+    407               get_inclinate.task_id     = METEO_GET_INCLINATE;
+    408               get_inclinate.dev_addr    = ADRESS_METEO;
+    409               get_inclinate.command     = METEO_GET_INCLINATE_DATA;
+    410               get_inclinate.counter     = 0;
+    411               get_inclinate.delay       = GET_INCLINATE_TIMER;
+    412               if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)get_inclinate.synchro     = SYNCHRO;
+    413               else get_inclinate.synchro     = ASYNCHRO;
+    414               get_inclinate.obj_net_number = obj_in_net;
+    415               uart_obj_buf[obj_in_net]    = get_inclinate;
+    416               obj_in_net++;
+    417          
+    418               get_declinate.task_id     = METEO_GET_DECLINATE;
+    419               get_declinate.dev_addr    = ADRESS_METEO;
+    420               get_declinate.command     = METEO_GET_DECLINATE_DATA;
+    421               get_declinate.counter     = GET_DECLINATE_TIMER/2;
+    422               get_declinate.delay       = GET_DECLINATE_TIMER;
+    423               if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)get_declinate.synchro     = SYNCHRO;
+    424               else get_declinate.synchro     = ASYNCHRO;
+    425               get_declinate.obj_net_number = obj_in_net;
+    426               uart_obj_buf[obj_in_net]    = get_declinate;
+    427               obj_in_net++;
+    428          
+    429              }
+    430          //#endif
+    431            if(net_sets.net_range_finder)
+    432              {
+    433               rf_start_messure.task_id  = RF_START_MESSURE;
+    434               rf_start_messure.dev_addr = ADRESS_LPD;
+    435               rf_start_messure.command  = START_MESSURE_DIST;
+    436               rf_start_messure.counter  = 0;
+    437               rf_start_messure.delay    = RF_START_MESSURE_TIMER;
+    438               rf_start_messure.synchro  = ASYNCHRO;
+    439               rf_start_messure.obj_net_number = obj_in_net;
+    440               uart_obj_buf[obj_in_net] = rf_start_messure;
+    441               obj_in_net++;
+    442          
+    443               rf_get_status.task_id  = RF_GET_STATUS;
+    444               rf_get_status.dev_addr = ADRESS_LPD;
+    445               rf_get_status.command  = GET_LPD_STATUS;
+    446               rf_get_status.counter  = 0;
+    447               rf_get_status.delay    = GET_RF_STATUS_TIMER;
+    448               rf_get_status.synchro  = ASYNCHRO;
+    449               rf_get_status.obj_net_number = obj_in_net;
+    450               uart_obj_buf[obj_in_net] = rf_get_status;
+    451               obj_in_net++;
+    452          
+    453               rf_get_distance.task_id  = RF_GET_DISTANCE;
+    454               rf_get_distance.dev_addr = ADRESS_LPD;
+    455               rf_get_distance.command  = GET_LPD_DISTANCE;
+    456               rf_get_distance.counter  = 0;
+    457               rf_get_distance.delay    = RF_GET_DISTANCE_TIMER;
+    458               rf_get_distance.synchro  = ASYNCHRO;
+    459               rf_get_distance.obj_net_number = obj_in_net;
+    460               uart_obj_buf[obj_in_net] = rf_get_distance;
+    461               obj_in_net++;
+    462              }
+    463          
+    464          }
+    465          
+    466          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    467          Ôóíêöèÿ èíêðèìåíòèðîâàíèÿ ñ÷åò÷èêîâ ñèíõðîíèçàöèè
+    468          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    469          
+    470          void  net_counter()
+    471          {
+    472            u16 i;
+    473           for(i=0;i<obj_in_net;i++)
+    474           {
+    475            if(uart_obj_buf[i].synchro != ASYNCHRO) uart_obj_buf[i].counter++;
+    476           }
+    477          }
+    478          
+    479          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    480          Ôóíêöèÿ öèêëè÷åñêîãî îïðîñà çàäà÷.
+    481          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    482          
+    483          void net_task()
+    484          {
+    485           u16 i;
+    486           u8 task_number;
+    487          if(!task_flag)
+    488            {
+    489             for(i=0;i<obj_in_net;i++)
+    490                {
+    491                 if(uart_obj_buf[i].counter >= uart_obj_buf[i].delay)
+    492                   {
+    493                    push(&net_status.fifo_stack, i);
+    494                    uart_obj_buf[i].counter = 0;
+    495                    /*make_request(uart_obj_buf[i]);
+    496                    net_status.last_net_task = uart_obj_buf[i].task_id;
+    497                    uart_obj_buf[i].counter = 0;
+    498                    task_flag = true;
+    499                    //net_global_count = i;
+    500                    i = obj_in_net;*/
+    501                   }
+    502                }
+    503          
+    504              if(!get_empty(&net_status.fifo_stack))
+    505              {
+    506                task_number = pop(&net_status.fifo_stack);
+    507                make_request(uart_obj_buf[task_number]);
+    508                net_status.last_net_task = uart_obj_buf[task_number].task_id;
+    509                uart_obj_buf[task_number].counter = 0;
+    510                task_flag = true;
+    511              }
+    512            }
+    513           }
+    514          
+    515          
+    516          
+    517          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    518           Ôóíêöèÿ ôîðìèðîâàíèÿ çàïðîñà äëÿ óñòðîéñòâ.
+    519          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    520          void make_request(uart_obj object)
+    521          {
+    522          
+    523               push(&TXbuf,object.dev_addr);
+    524               push(&TXbuf,object.command);
+    525               insert_crc(&TXbuf);
+    526               insert_stsp(&TXbuf);
+    527               USART_ITConfig(USART1, USART_IT_TC, ENABLE);
+    528          }
+    529          
+    530          
+    531          
+    532          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    533           Ôóíêöèÿ îáðàáîòêè îøèáîê ñåòè
+    534          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    535          
+    536          
+    537          void net_fault_function()
+    538          {
+    539           switch(net_status.last_net_task)
+    540           {
+    541           case EXTERN_MASTER_FIND:
+    542             net_set_default(NET_MASTER);
+    543             net_init();
+    544             //uart_obj_buf[cu_get_net_condition.obj_net_number].counter  =   CU_GET_CONDIT_TIMER;
+    545           break;
+    546          
+    547           case CU_GET_NET_CONDIT:
+    548            net_init();
+    549            system_wait_timer =500;
+    550           break;
+    551          
+    552           default:
+    553           system_wait_timer =100;
+    554          
+    555           break;
+    556           }
+    557           clean(&net_status.fifo_stack);
+    558           //clean(&RXbuf);
+    559           net_fault_flag = false;
+    560          }
+    561          
+    562          
+    563          /*##############################################################################
+    564                  Ôóíêöèÿ êîíòðîëÿ çàðÿäà àêêóìóëÿòîðà
+    565          ###############################################################################*/
+    566          extern ADC_result ADC_data;
+    567          void Power_control_func()
+    568          {
+    569           int adc_data;
+    570           float voltage, temperature;
+    571           //if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET)
+    572          //  {
+    573            // adc_data = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
+    574             voltage = ((float)ADC_data.battery_ctrl*6.6)/4096;
+    575             temperature = ((((float)ADC_data.temperature*3.3)/4096)-1.8663)/0.01169;
+    576            if(voltage<3.4)
+    577             {
+    578          //   uart_obj_buf[power_off.obj_net_number].counter  = POWER_OFF_TIMER;
+    579             voltage =0;
+    580             }
+    581             if(temperature <0)
+    582             {
+    583              temperature =0;
+    584             }
+    585          //  senspar.inclinate = voltage*10;
+    586          //  wright_data_to_cam(METEO_GET_INCLINATE_DATA, senspar.inclinate);
+    587             // ADC_SoftwareStartConv(ADC1);
+    588          //  }
+    589          }
+    590          
+    591          
+    592          
+    593          void lpd_requests(u8 command)
+    594          {
+    595             switch(command)
+    596             {
+    597               case START_MESSURE_DIST:
+    598                    uart_obj_buf[rf_get_status.obj_net_number].synchro = SYNCHRO;
+    599               break;
+    600          
+    601          
+    602               case GET_LPD_STATUS:
+    603                    uart_obj_buf[rf_get_distance.obj_net_number].counter = uart_obj_buf[rf_get_distance.obj_net_number].delay;
+    604               break;
+    605          
+    606          
+    607               case GET_LPD_DISTANCE:
+    608                    uart_obj_buf[rf_get_status.obj_net_number].synchro = ASYNCHRO;
+    609                    u8 targets;
+    610                    u8* data;//0, data1, data2, data3;
+    611                    float dist;
+    612                    float* dist_point;
+    613                    dist_point = &dist;
+    614                    data = (u8*)(dist_point);
+    615          
+    616                    targets = pop(&RXbuf);
+    617                    *(data+0) = pop(&RXbuf);
+    618                    *(data+1) = pop(&RXbuf);
+    619                    *(data+2) = pop(&RXbuf);
+    620                    *(data+3) = pop(&RXbuf);
+    621          
+    622                    // data = (((u32)data0)<<24)&(((u32)data1)<<16)&(((u32)data2)<<8)&((u32)data3);
+    623                    senspar.distance = dist;
+    624                    spi_objects[DISTANCE_ADDR].wright_data = (0x0000FFFF&((u32)senspar.distance));
+    625                    senspar.change_par = true;
+    626                    //balCalculate(senspar.distance);
+    627          
+    628               break;
+    629          
+    630             }
+    631          
+    632          }
+    633          
+    634          
+    635          //##############################################################################
+    636          //         WRIGHT DATA TO CAMERA FOR IMAGINE
+    637          //##############################################################################
+    638          void wright_data_to_cam(u8 addr, float data)
+    639          {
+    640           switch(addr)
+    641           {
+    642             case GET_TEMPERATURE_DATA:
+    643             spi_objects[TEMPERATURE_WRIGHT_ADDR].wright_data = 0xF0000000|0x0000FFFF&((s32)data);
+    644             break;
+    645          
+    646             case GET_PRESSURE_DATA:
+    647             spi_objects[PRESSURE_ADDR].wright_data = 0xF0000000|0x0000FFFF&((s32)data);
+    648             break;
+    649          
+    650             case METEO_GET_INCLINATE_DATA:
+    651             spi_objects[INCLINATE_ADDR].wright_data = 0xF0000000|0x0000FFFF&((s32)data);
+    652             break;
+    653           }
+    654          }
+    655          
+    656          
+    657          /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
+    658          
+    659          ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
+    660          /*
+    661          void encoder_func_ini()
+    662          {
+    663            bool ready=false;
+    664            u32 count=0, reg=0;
+    665           while(!ready)
+    666           {
+    667             spi_objects[COMMAND_REG_ADDR].wright_data = COM_ZOOM_DISP;
+    668                  task_flag =true;
+    669                  while(task_flag);
+    670                 reg= spi_silar_read(COMMAND_REG_ADDR);
+    671             if(reg==COM_ZOOM_DISP) ready = true;
+    672             else count++;
+    673               if(count>10) ready=true;
+    674           }
+    675          }*/
+    676          //==============================================================================
+    677          //           KEYS SYNCRO FUNCTION
+    678          //==============================================================================
+    679          void keys_syncro_func()
+    680          {
+    681             if(keys_syncro_count !=0) keys_syncro_count--;
+    682          }
+    683          /*#############################################################################
+    684          Îáðàáîòêà áóôåðà êîäîâ êíîïîê, ïîëó÷åííûõ îò óñòðîéñòâ ñåòè
+    685          ##############################################################################*/
+    686          
+    687          
+    688          
+    689          #ifdef L6IR_CU
+    690          
+    691          #include "L6IR.h"
+    692          extern spi_def spi_sets;
+    693          
+    694          #define EXPOSSITION_MAX 15
+    695          #define EXPOSSITION_MIN -15
+    696          #define EOC_BRIGHTNES_MAX 8
+    697          #define EOC_BRIGHTNES_MIN 0
+    698          #define LED_BRIGHTNES_MAX 255
+    699          #define LED_BRIGHTNES_MIN 1
+    700          
+    701          s8 expossition_value;
+    702          u16 expo_timeout;
+    703          u8 led_brightnes = LED_BRIGHTNES_MAX;
+    704          extern u16 error_counter;
+    705          extern bool led_pulse_enable;
+    706          u8 eoc_brightnes_value = EOC_BRIGHTNES_MAX;
+    707          extern bool cam_power_state;
+    708          void keys_analis()
+    709          {
+    710            u8 i, key_code;
+    711            u8 ball_num = (u8)(0x0f&(spi_sets.silar_state>>4));
+    712            u32 temp_dist;
+    713            s32 temp_press;
+    714             
+    715            if(!get_empty(&keys.keys_stack))
+    716            {
+    717               if(cam_power_state) spi_read_camers_state();
+    718             //keys.quant--;
+    719             key_code = get(&keys.keys_stack);//keys.buffer[i];
+    720             if(error_counter==0) clean(&keys.keys_stack);
+    721             switch(key_code)
+    722             {
+    723              case KEY_ID:
+    724           //    if(!task_flag)
+    725           //      {
+    726                  // rf_start_messure.counter
+    727                   uart_obj_buf[rf_start_messure.obj_net_number].counter= RF_START_MESSURE_TIMER;
+    728                   pop(&keys.keys_stack);
+    729                   //keys.quant--;
+    730          //       }
+    731              break;
+    732          
+    733              case KEY_ENTER:
+    734              WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);
+    735              break;
+    736          
+    737              case KEY_PLUS:
+    738              WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+    739              break;
+    740          
+    741              case KEY_MINUS:
+    742              WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+    743              break;
+    744          
+    745              case KEY_PHOTO:
+    746              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    747              else                           {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PHOTO_CLICK);}
+    748          
+    749              case KEY_MENU_ENTER:
+    750              WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MENU_CLICK);
+    751              break;
+    752          
+    753              case KEY_ENCODER1:
+    754              spi_objects[COMMAND_REG_ADDR].wright_data = KEY_MENU_CLICK;
+    755              // if((0x08&spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+    756              break;
+    757          
+    758              
+    759              
+    760              case KEY_DISTANTS_PLUS:
+    761                if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    762              else
+    763              {
+    764                if((!spi_objects[DISTANCE_ADDR].wright_data)&&(spi_objects[DISTANCE_ADDR].wright_enable))
+    765                {
+    766                temp_dist = (u32)senspar.distance;
+    767                temp_dist=(temp_dist - temp_dist%50)+50;//(0xfff&(spi_objects[DISTANCE_ADDR].read_data+50));
+    768               if(temp_dist > 1000) temp_dist =1000;
+    769          
+    770               spi_objects[DISTANCE_ADDR].reg_for_wright = true;
+    771               spi_objects[DISTANCE_ADDR].wright_data = (0x0000FFFF&temp_dist);
+    772               if((0xfff&spi_objects[DISTANCE_ADDR].wright_data)==0) spi_objects[DISTANCE_ADDR].wright_data|=0x01;
+    773               senspar.distance = (float)temp_dist;
+    774               senspar.change_par = true;
+    775               clean(&keys.keys_stack);
+    776                }
+    777              }
+    778              break;
+    779          
+    780              case KEY_DISTANTS_MINUS:
+    781              if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    782              else
+    783              {
+    784                if((!spi_objects[DISTANCE_ADDR].wright_data)&&(spi_objects[DISTANCE_ADDR].wright_enable))
+    785                {      
+    786                temp_dist = (u32)senspar.distance;
+    787                temp_dist = (temp_dist - temp_dist%50)- 50;   
+    788          
+    789              if(temp_dist<100) temp_dist =100;
+    790          
+    791              spi_objects[DISTANCE_ADDR].reg_for_wright = true;
+    792              spi_objects[DISTANCE_ADDR].wright_data = (0xfff&((u32)senspar.distance));
+    793              if((0xfff&spi_objects[DISTANCE_ADDR].wright_data)==0) spi_objects[DISTANCE_ADDR].wright_data|=0x01;
+    794              senspar.distance = (float)temp_dist;
+    795              senspar.change_par = true;
+    796              clean(&keys.keys_stack);
+    797                }
+    798              }
+    799              break;
+    800              
+    801              case ENCODER_PLUS_ZOOM:
+    802              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    803              else {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ZOOM_PLUS);}
+    804              break;
+    805          
+    806              case ENCODER_MINUS_ZOOM:
+    807              if(0x08&spi_sets.silar_state) {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    808              else {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ZOOM_MINUS);}
+    809              break;
+    810          
+    811              case KEY_BRIGHTNES_MINUS:
+    812              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    813              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_BRIGHTNES_MINUS);}
+    814              break;
+    815          
+    816              case KEY_BRIGHTNES_PLUS:
+    817              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    818              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_BRIGHTNES_PLUS);}
+    819              break;
+    820          
+    821              case KEY_MARKS_BRIGHTNES_MINUS:
+    822              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    823              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MARKS_BRIGHTNES_MINUS);}
+    824              break;
+    825          
+    826              case KEY_MARKS_BRIGHTNES_PLUS:
+    827              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    828              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MARKS_BRIGHTNES_PLUS);}
+    829              break;
+    830              
+    831          #ifdef TNM_MODE
+    832              case KEY_EOC_BRIGHTNES_MINUS:
+    833              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    834              else 
+    835              {
+    836                if(eoc_brightnes_value>EOC_BRIGHTNES_MIN)        
+    837                {
+    838                  eoc_brightnes_value--;
+    839                  if(cam_power_state)cWRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_SET_EOC_BR_VALUE|eoc_brightnes_value);
+    840                  digital_resist_send_function(eoc_brightnes_value);
+    841                }
+    842                if(led_pulse_enable)
+    843                {
+    844                 if(led_brightnes>LED_BRIGHTNES_MIN)
+    845                 {
+    846                  led_brightnes = led_brightnes&(led_brightnes>>1);
+    847                  
+    848                 }
+    849                }
+    850              }
+    851              break;
+    852          
+    853              case KEY_EOC_BRIGHTNES_PLUS:
+    854              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    855              else 
+    856              { 
+    857                if(eoc_brightnes_value<EOC_BRIGHTNES_MAX)
+    858                {
+    859                eoc_brightnes_value++;      
+    860                if(cam_power_state)cWRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_SET_EOC_BR_VALUE|eoc_brightnes_value);
+    861                digital_resist_send_function(eoc_brightnes_value); 
+    862                
+    863                if(led_pulse_enable)
+    864                {
+    865                 if(led_brightnes<=LED_BRIGHTNES_MAX)
+    866                 {
+    867                  led_brightnes = led_brightnes|(led_brightnes<<1);
+    868                  
+    869                 }
+    870                }
+    871                }
+    872              }
+    873              break;
+    874          #endif 
+    875              
+    876              
+    877              case KEY_EXPOSSITION_MINUS:
+    878              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    879              else 
+    880              {
+    881                if((expossition_value>EXPOSSITION_MIN)&&(expo_timeout == 0))        
+    882                {
+    883                  expossition_value-=1;
+    884                  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_SET_EXPOSIT_VALUE|(((u32)expossition_value)&0x000000ff));
+    885                  expo_timeout =300;
+    886                }
+    887                else clean(&keys.keys_stack);
+    888              } 
+    889              
+    890              break;
+    891              
+    892              case KEY_EXPOSSITION_PLUS:
+    893              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    894              else 
+    895              {
+    896                if((expossition_value<EXPOSSITION_MAX)&&(expo_timeout == 0))        
+    897                {
+    898                  expossition_value+=1;
+    899                  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_SET_EXPOSIT_VALUE|expossition_value);
+    900                  expo_timeout =300;
+    901                }
+    902                else clean(&keys.keys_stack);
+    903              }    
+    904              break;    
+    905              case KEY_LEGIBILITY_MINUS:
+    906              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    907              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_LEGIBILITY_MINUS);}
+    908              break;
+    909          
+    910              case KEY_LEGIBILITY_PLUS:
+    911              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    912              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_LEGIBILITY_PLUS);}
+    913              break;
+    914          
+    915              case KEY_PALETTE_MINUS:
+    916              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    917              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PALETTE_MINUS);}
+    918              break;
+    919          
+    920              case KEY_PALETTE_PLUS:
+    921              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    922              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PALETTE_PLUS);}
+    923              break;
+    924          
+    925              case KEY_POSITIVE:
+    926              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    927              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_POSITIVE);}
+    928              break;
+    929          
+    930              case KEY_NEGATIVE:
+    931              if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    932              else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_NEGATIVE);}
+    933              break;
+    934          
+    935              case COM_NO_SYMBOL_DISP:
+    936              if(!(0x08&spi_sets.silar_state))//  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    937              {
+    938                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_NO_SYMBOL_DISP);
+    939                spi_sets.current_function = COM_NO_SYMBOL_DISP;
+    940              }
+    941              else pop(&keys.keys_stack);
+    942              break;
+    943              
+    944              case COM_DISTANTS_DISP:
+    945              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    946              else
+    947              {
+    948                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_DISTANTS_DISP);
+    949                spi_sets.current_function = COM_DISTANTS_DISP;     
+    950              }
+    951              break;
+    952              
+    953              case COM_MARKS_BRIGHTNES_DISP:
+    954              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    955              else
+    956              {
+    957                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_MARKS_BRIGHTNES_DISP);
+    958                spi_sets.current_function = COM_MARKS_BRIGHTNES_DISP;   
+    959              }
+    960              break;
+    961              
+    962              case COM_EOC_BRIGHTNES_DISP:
+    963              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    964              else
+    965              {
+    966                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_EOC_BRIGHTNES_DISP);
+    967                spi_sets.current_function = COM_EOC_BRIGHTNES_DISP;   
+    968              }
+    969              break;
+    970              
+    971              case COM_BRIGHTNES_DISP:
+    972              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    973              else
+    974              {
+    975                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_BRIGHTNES_DISP);
+    976                spi_sets.current_function = COM_BRIGHTNES_DISP;
+    977              }
+    978              break;
+    979          
+    980              case COM_ZOOM_DISP:
+    981              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    982              else
+    983              {
+    984                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_ZOOM_DISP);
+    985                spi_sets.current_function = COM_ZOOM_DISP;
+    986              }
+    987              break;
+    988          
+    989              case COM_POS_NEG_DISP:
+    990              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    991              else
+    992              {
+    993                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_POS_NEG_DISP);
+    994                spi_sets.current_function = COM_POS_NEG_DISP;
+    995              }
+    996              break;
+    997          
+    998              case COM_POLETTE_DISP:
+    999              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+   1000              else
+   1001              {
+   1002                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_POLETTE_DISP);
+   1003                spi_sets.current_function = COM_POLETTE_DISP;
+   1004              }
+   1005              break;
+   1006          
+   1007              case COM_LIGIBILITY_DISP:
+   1008              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+   1009              else
+   1010              {
+   1011                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_LIGIBILITY_DISP);
+   1012                spi_sets.current_function = COM_LIGIBILITY_DISP;
+   1013              }
+   1014              break;
+   1015          
+   1016              case KEY_ENTER_L:
+   1017               WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_PRESS);
+   1018              break;
+   1019          
+   1020              case KEY_POWER_OFF:
+   1021                if(0x08&spi_sets.silar_state) { WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_PRESS);}
+   1022              else
+   1023              {
+   1024               // WRIGHT_SPI_REG(COMMAND_REG_ADDR, CAMERA_OFF_COMMAND);
+   1025                clean(&keys.keys_stack);
+   1026                if(net_sets.net_control_unit1)
+   1027                {
+   1028                uart_obj_buf[power_off.obj_net_number].counter  = POWER_OFF_TIMER;
+   1029                uart_obj_buf[power_off.obj_net_number].synchro  = SYNCHRO;
+   1030                }
+   1031                // pop(&);
+   1032              }
+   1033              break;
+   1034              
+   1035              case KEY_ENTER_SPECIAL_MENU:
+   1036               WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_SPECIAL_MENU);
+   1037               break;
+   1038               
+   1039              case COM_TEMPERATURE_DISP:
+   1040                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_TEMPERATURE_DISP); 
+   1041              break;  
+   1042              
+   1043              case KEY_TEMPERATURE_PLUS:
+   1044               senspar.temp_auto = false;
+   1045               clean(&keys.keys_stack);
+   1046               if(senspar.temperature < 50)
+   1047                 {
+   1048                   senspar.temperature += 1;
+   1049                   wright_data_to_cam(GET_TEMPERATURE_DATA, senspar.temperature);
+   1050                 }
+   1051              break;
+   1052                   
+   1053              case KEY_TEMPERATURE_MINUS:
+   1054               senspar.temp_auto = false;
+   1055               clean(&keys.keys_stack);
+   1056               if(senspar.temperature > -50)
+   1057                 {
+   1058                   senspar.temperature -= 1;
+   1059                   wright_data_to_cam(GET_TEMPERATURE_DATA, senspar.temperature);
+   1060                 }     
+   1061              break;
+   1062                   
+   1063              case COM_PRESSURE_DISP:
+   1064                WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_PRESSURE_DISP);
+   1065              break;
+   1066              
+   1067                   
+   1068              case KEY_PRESSURE_PLUS:
+   1069                senspar.press_auto = false;
+   1070                clean(&keys.keys_stack);
+   1071                if(senspar.pressure < 990)
+   1072                  {
+   1073                    temp_press = (s32)senspar.pressure;
+   1074                     temp_press=temp_press+ 10 - (temp_press%10);
+   1075                     senspar.pressure = (float)temp_press;
+   1076                    wright_data_to_cam(GET_PRESSURE_DATA, senspar.pressure);
+   1077                  }
+   1078              break;
+   1079              
+   1080                   
+   1081              case KEY_PRESSURE_MINUS:
+   1082                clean(&keys.keys_stack);
+   1083                senspar.press_auto = false;
+   1084                if(senspar.pressure > 200)
+   1085                  {
+   1086                    temp_press = (s32)senspar.pressure;
+   1087                    temp_press = temp_press -10 - (temp_press%10);
+   1088                    senspar.pressure = (float)temp_press;
+   1089                    wright_data_to_cam(GET_PRESSURE_DATA, senspar.pressure);
+   1090                  } 
+   1091              break;
+   1092              
+   1093               case NO_ACTION:
+   1094                clean(&keys.keys_stack);
+   1095               break;
+   1096               
+   1097               default:
+   1098              if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+   1099              else
+   1100              {
+   1101                WRIGHT_SPI_REG(COMMAND_REG_ADDR, key_code);
+   1102                spi_sets.current_function = key_code;
+   1103              }       
+   1104               break;  
+   1105             }
+   1106            }
+   1107          }
+   1108          
+   1109          
+   1110          void keys_analis_P_O()
+   1111          {
+   1112            #ifdef TNM_MODE
+   1113            u8 i, key_code;
+   1114              if(!get_empty(&keys.keys_stack))
+   1115            {
+   1116             key_code = pop(&keys.keys_stack);//keys.buffer[i];
+   1117             if(error_counter==0) clean(&keys.keys_stack);
+   1118             switch(key_code)
+   1119             {
+   1120              case KEY_EOC_BRIGHTNES_MINUS:
+   1121          
+   1122                if(eoc_brightnes_value>EOC_BRIGHTNES_MIN)        
+   1123                {
+   1124                  eoc_brightnes_value--;
+   1125                  digital_resist_send_function(eoc_brightnes_value);
+   1126                }
+   1127                if(led_pulse_enable)
+   1128                {
+   1129                 if(led_brightnes<=LED_BRIGHTNES_MAX)
+   1130                 {
+   1131                  led_brightnes = led_brightnes|(led_brightnes<<1);
+   1132                  
+   1133                 }
+   1134                }
+   1135           
+   1136              break;
+   1137          
+   1138              case KEY_EOC_BRIGHTNES_PLUS:
+   1139                if(eoc_brightnes_value<EOC_BRIGHTNES_MAX)
+   1140                {
+   1141                eoc_brightnes_value++;      
+   1142                digital_resist_send_function(eoc_brightnes_value); 
+   1143                }
+   1144                if(led_pulse_enable)
+   1145                {
+   1146                 if(led_brightnes>=LED_BRIGHTNES_MIN)
+   1147                 {
+   1148                  led_brightnes = led_brightnes&(led_brightnes>>1);
+   1149                  
+   1150                 }
+   1151                }
+   1152                
+   1153              break;
+   1154             }
+   1155            }
+   1156          #endif  
+   1157          }
+   1158          
+   1159          #endif
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   Power_control_func
+         8   -> __aeabi_d2f
+         8   -> __aeabi_dadd
+         8   -> __aeabi_ddiv
+         8   -> __aeabi_dmul
+         8   -> __aeabi_f2d
+         8   -> __aeabi_ui2f
+         8 __aeabi_cfcmple
+       0   find_PC_connecting
+      16   keys_analis
+        16   -> __aeabi_f2iz
+        16   -> __aeabi_f2uiz
+        16   -> __aeabi_fadd
+        16   -> __aeabi_i2f
+        16   -> __aeabi_ui2f
+        16   -> clean
+        16   -> get
+        16   -> get_empty
+        16   -> pop
+        16   -> spi_read_camers_state
+        16   -> wright_data_to_cam
+        16 __aeabi_cfcmple
+        16 __aeabi_cfrcmple
+       0   keys_analis_P_O
+       0   keys_syncro_func
+      16   lpd_requests
+        16   -> __aeabi_f2uiz
+        16   -> pop
+      16   make_request
+        16   -> USART_ITConfig
+        16   -> insert_crc
+        16   -> insert_stsp
+        16   -> push
+       0   net_counter
+       8   net_fault_function
+         8   -> clean
+         8   -> net_init
+         8   -> net_set_default
+       8   net_init
+         8   -> __aeabi_memcpy
+       0   net_set_default
+      24   net_task
+        24   -> __aeabi_memcpy
+        24   -> get_empty
+        24   -> make_request
+        24   -> pop
+        24   -> push
+       8   pref_net_init
+         8   -> __aeabi_memcpy
+       0   read_sets_from_CU
+       0   smart_device_ini
+       8   wright_data_to_cam
+         8   -> __aeabi_f2iz
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable10
+       4  ??DataTable11
+       4  ??DataTable11_1
+       4  ??DataTable11_10
+       4  ??DataTable11_11
+       4  ??DataTable11_12
+       4  ??DataTable11_13
+       4  ??DataTable11_14
+       4  ??DataTable11_15
+       4  ??DataTable11_16
+       4  ??DataTable11_17
+       4  ??DataTable11_18
+       4  ??DataTable11_19
+       4  ??DataTable11_2
+       4  ??DataTable11_20
+       4  ??DataTable11_21
+       4  ??DataTable11_22
+       4  ??DataTable11_23
+       4  ??DataTable11_24
+       4  ??DataTable11_25
+       4  ??DataTable11_26
+       4  ??DataTable11_27
+       4  ??DataTable11_28
+       4  ??DataTable11_29
+       4  ??DataTable11_3
+       4  ??DataTable11_30
+       4  ??DataTable11_31
+       4  ??DataTable11_32
+       4  ??DataTable11_33
+       4  ??DataTable11_34
+       4  ??DataTable11_35
+       4  ??DataTable11_36
+       4  ??DataTable11_37
+       4  ??DataTable11_38
+       4  ??DataTable11_39
+       4  ??DataTable11_4
+       4  ??DataTable11_40
+       4  ??DataTable11_41
+       4  ??DataTable11_42
+       4  ??DataTable11_43
+       4  ??DataTable11_5
+       4  ??DataTable11_6
+       4  ??DataTable11_7
+       4  ??DataTable11_8
+       4  ??DataTable11_9
+       4  ??DataTable12
+       4  ??DataTable12_1
+       4  ??DataTable12_10
+       4  ??DataTable12_11
+       4  ??DataTable12_2
+       4  ??DataTable12_3
+       4  ??DataTable12_4
+       4  ??DataTable12_5
+       4  ??DataTable12_6
+       4  ??DataTable12_7
+       4  ??DataTable12_8
+       4  ??DataTable12_9
+       4  ??DataTable8
+       4  ??DataTable8_1
+       4  ??DataTable8_2
+       4  ??DataTable8_3
+       4  ??DataTable9
+       4  ??DataTable9_1
+       4  ??DataTable9_2
+     116  Power_control_func
+      12  calibrate_compass
+      12  cu_get_keys
+      12  cu_get_net_condition
+       1  eoc_brightnes_value
+       2  expo_timeout
+       1  expossition_value
+      12  extern_master_find
+       6  find_PC_connecting
+      12  get_compass
+      12  get_compass_status
+      12  get_declinate
+      12  get_encoder_0
+      12  get_encoder_1
+      12  get_gps
+      12  get_inclinate
+      12  get_pressure
+      12  get_temperature
+    4004  keys_analis
+       2  keys_analis_P_O
+       2  keys_syncro_count
+      20  keys_syncro_func
+       1  led_brightnes
+     154  lpd_requests
+      48  make_request
+      68  net_counter
+      62  net_fault_function
+       2  net_global_count
+    1662  net_init
+      16  net_set_default
+      28  net_sets
+      68  net_status
+     174  net_task
+       2  obj_in_net
+      12  power_off
+     246  pref_net_init
+       2  read_sets_from_CU
+      12  rf_get_distance
+      12  rf_get_status
+      12  rf_start_messure
+     698  smart_device_ini
+       2  system_wait_timer
+       1  task_flag
+     180  uart_obj_buf
+      78  wright_data_to_cam
+
+ 
+   492 bytes in section .bss
+     2 bytes in section .data
+ 7 612 bytes in section .text
+ 
+ 7 612 bytes of CODE memory
+   494 bytes of DATA memory
+
+Errors: none
+Warnings: 4

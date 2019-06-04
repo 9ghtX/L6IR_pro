@@ -1,0 +1,145 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       02/Apr/2019  19:17:16
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\Camera_tasks.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\Camera_tasks.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\Camera_tasks.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\Camera_tasks.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\Camera_tasks.c
+      1          #include "L6IR.h"
+      2          #include "Ball.h"
+      3          #include "hal_critical_section.h"
+      4          #include "net.h"
+      5          #include "Camera.h"
+      6          
+      7          extern spi_def spi_sets;
+      8          extern bool flash_is_read;
+      9          
+     10          u32 mask_for_waiting;
+     11          typedef enum
+     12          {
+     13            start_waiting =0,
+     14            flash_reading,
+     15            battle_tasks
+     16          }tasks_m;
+     17          
+     18          tasks_m tasks_mode;
+     19          
+     20          bool silar_spi_tasks()
+     21          {
+     22            bool task_make_status = false;
+     23            spi_sets.silar_status = spi_silar_read(STATUS_REG_ADDR); 
+     24            /*READING RESTERS*/
+     25            if((spi_sets.read_sichro_count==0))//&&spi_sets.stat_read_enable)
+     26               {
+     27                switch(tasks_mode) 
+     28                {
+     29          
+     30                     case start_waiting:
+     31                  
+     32                      tasks_mode++;
+     33                      break;
+     34                  
+     35                     case flash_reading:
+     36                      if(spi_sets.silar_status&FLASH_READY_BIT) flash_reading_process(); 
+     37                      if(flash_is_read)tasks_mode++;  
+     38                     break;
+     39                  
+     40                      case battle_tasks:
+     41                        if(spi_sets.silar_status&mask_for_waiting)battle_receive(mask_for_waiting);
+     42                        else  no_data_receive(mask_for_waiting);
+     43                      break;
+     44                  
+     45                     default:
+     46                     tasks_mode = start_waiting;
+     47                     break;
+     48                   }
+     49               }
+     50            /*WRIGHTING REGISTERS*/
+     51                 else// if()
+     52                  {
+     53                    switch(tasks_mode)
+     54                    {
+     55                      case start_waiting:
+     56                  
+     57                      break;
+     58                  
+     59                      case flash_reading:
+     60          
+     61                      break;
+     62                  
+     63                      case battle_tasks:
+     64                        battle_transmit_find();
+     65                      break;
+     66                  
+     67                     default:
+     68                     tasks_mode = start_waiting;
+     69                     break;       
+     70                  
+     71                  }
+     72                }
+     73            return task_make_status;
+     74          }
+     75          
+     76          void battle_receive(u32 task_mask)
+     77          {
+     78          switch(task_mask)
+     79          {
+     80            case TEMP_REED_READY_BIT:
+     81            
+     82            break;
+     83            
+     84            default:
+     85            
+     86            break;
+     87          }
+     88          
+     89          }
+     90          
+     91          void no_data_receive(u32 task_mask)
+     92          {
+     93          
+     94          
+     95          }
+     96          
+     97          bool battle_transmit_find()
+     98          {
+     99          
+    100          
+    101          }
+    102          
+
+Errors: 3
+Warnings: 4

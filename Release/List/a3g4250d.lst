@@ -1,0 +1,279 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:14
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\a3g4250d.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\a3g4250d.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\a3g4250d.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\a3g4250d.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\a3g4250d.c
+      1          /**
+      2           * @file   A3G4250D.c
+      3           * @date   14 рту. 2013 у.
+      4           * @author
+      5           * @brief  A3G4250D
+      6           */
+      7          #ifdef A3G4250D
+      8          #include <hal_types.h>
+      9          //#include <debug.h>
+     10          #include <a3g4250d_driver.h>
+     11          #include <i2c.h>
+     12          #include <cbuf.h>
+     13          #include <protocol.h>
+     14          //#include <MeteoModuleTasks.h>
+     15          //#include <Calibration.h>
+     16          //#include <mTask.h>
+     17          #include <a3g4250d.h>
+     18          
+     19          
+     20          #define I2C_BEGIN       if(false == i2c_open(1)) return 0; else do
+     21          #define I2C_COMPLETE    while(0); i2c_close(1);
+     22          #define I2C_SET_FREE()  i2c_close(1)
+     23          
+     24          #define ToRad(x) ((x)*0.01745329252)  // *pi/180
+     25          #define ToDeg(x) ((x)*57.2957795131)  // *180/pi
+     26          
+     27          // gyro: 490 dps full scale
+     28          // 8.75 mdps/digit; 1 dps = 0.00875
+     29          #define Gyro_Gain_X 0.00875 //X axis Gyro gain
+     30          #define Gyro_Gain_Y 0.00875 //Y axis Gyro gain
+     31          #define Gyro_Gain_Z 0.00875 //Z axis Gyro gain
+     32          #define Gyro_Scaled_X(x) ((x)*(Gyro_Gain_X)) //Return the scaled ADC raw data of the gyro in radians for second
+     33          #define Gyro_Scaled_Y(x) ((x)*(Gyro_Gain_Y)) //Return the scaled ADC raw data of the gyro in radians for second
+     34          #define Gyro_Scaled_Z(x) ((x)*(Gyro_Gain_Z)) //Return the scaled ADC raw data of the gyro in radians for second
+     35          
+     36          extern uint8_t compas_status;
+     37          static bool is_ready = false;
+     38          static bool send_than_ready = false;
+     39          static float RollPitchYaw[3] = {0}; //x,y,z
+     40          
+     41          static int32_t a3g4250d_start(uint16_t tid);
+     42          static int32_t a3g4250d_begin_read(uint16_t tid);
+     43          static int32_t a3g4250d_complete_read(uint16_t tid);
+     44          static void protocol_callback(cbuf_t* buf);
+     45          
+     46          void protocol_callback(cbuf_t* buf)
+     47          {
+     48            uint8_t cmd;
+     49            CbufGet(buf, &cmd  );
+     50            if(is_ready)
+     51            {
+     52            }
+     53            else
+     54            {
+     55              send_than_ready = true;
+     56            }
+     57          }
+     58          
+     59          
+     60          void a3g4250d_init(void)
+     61          {
+     62            DBG("a3g4250d_init\n");
+     63           // protocol_set_callback(READ_G_SENSOR, protocol_callback);
+     64          //  mtask_start(TASK_A3G4250D, 0, a3g4250d_start);
+     65          }
+     66          
+     67          int32_t a3g4250d_start(uint16_t tid)
+     68          {
+     69            I2C_BEGIN
+     70            {
+     71              A3G4250D_ConfigTypeDef A3G4250D_Cfg;
+     72              A3G4250D_config4 A3G4250D_Cfg4;
+     73                A3G4250D_Cfg4.ble=0;
+     74                A3G4250D_Cfg4.self_test=A3G4250D_SELF_TEST_DISABLE;
+     75                A3G4250D_Cfg4.sim =0;
+     76              A3G4250D_FilterConfigTypeDef A3G4250D_Filter_Cfg;
+     77              A3G4250D_Cfg.odr   = A3G4250D_ODR_100Hz;
+     78              A3G4250D_Cfg.axis  = A3G4250D_X_ENABLED + A3G4250D_Y_ENABLED + A3G4250D_Z_ENABLED;
+     79              A3G4250D_Cfg.power = A3G4250D_POWER_NOMAL;
+     80              A3G4250D_Cfg.cutoff = A3G4250D_CUTOFF_110;
+     81              A3G4250D_Config(&A3G4250D_Cfg, &A3G4250D_Cfg4);
+     82          
+     83              A3G4250D_Filter_Cfg.filter_mode   = A3G4250D_FILTER_MODE_NORMAL;
+     84              A3G4250D_Filter_Cfg.filter_cutoff =
+     85              //A3G4250D_ODR100Hz_FILTER_CUTOFF_8Hz    ;
+     86              //A3G4250D_ODR100Hz_FILTER_CUTOFF_4Hz    ;
+     87              //A3G4250D_ODR100Hz_FILTER_CUTOFF_2Hz    ;
+     88              //A3G4250D_ODR100Hz_FILTER_CUTOFF_1Hz    ;
+     89              //A3G4250D_ODR100Hz_FILTER_CUTOFF_0p5Hz  ;
+     90              //A3G4250D_ODR100Hz_FILTER_CUTOFF_0p2Hz  ;
+     91              //A3G4250D_ODR100Hz_FILTER_CUTOFF_0p1Hz  ;
+     92              //A3G4250D_ODR100Hz_FILTER_CUTOFF_0p05Hz ;
+     93              //A3G4250D_ODR100Hz_FILTER_CUTOFF_0p02Hz ;
+     94              A3G4250D_ODR100Hz_FILTER_CUTOFF_0p01Hz ;
+     95          
+     96              A3G4250D_FilterConfig(&A3G4250D_Filter_Cfg);
+     97            }
+     98            I2C_COMPLETE
+     99           // mtask_start(TASK_A3G4250D, 0, a3g4250d_begin_read);
+    100            return 100;
+    101          }
+    102          
+    103          extern bool not_moving;
+    104          #define FILTER_PERIOD 100
+    105          float filterbufX[FILTER_PERIOD], filterbufY[FILTER_PERIOD], filterbufZ[FILTER_PERIOD], filterbufDef[FILTER_PERIOD];
+    106          int  filter_pointer, filter_count;
+    107          float sumDataX, sumDataY, sumDataZ, sumDataDef, filtDataX, filtDataY, filtDataZ, filtDataDef;
+    108          float ex_angle;
+    109          int compensator_count;
+    110          int time_compensator;
+    111          float dreif = -0.233;//0.415;
+    112          //#define COEFFS_GIRO 0.025
+    113          float angle;
+    114          
+    115          static int32_t a3g4250d_begin_read(uint16_t tid)
+    116          {
+    117            uint8_t ready = 0;
+    118            a3g4250d_status_t* status = (a3g4250d_status_t*) &ready;
+    119            I2C_BEGIN
+    120            {
+    121              bool ok = false;
+    122              ok = A3G4250D_ReadReg(A3G4250D_STATUS_REG, &ready);
+    123              if(!ok)
+    124              {
+    125                DBG("A3G4250D: STATUS REG READ FAILED\n");
+    126             //   mtask_start(TASK_A3G4250D, 0, a3g4250d_start);
+    127                I2C_SET_FREE();
+    128                return (100);
+    129              }
+    130            }
+    131            I2C_COMPLETE
+    132          
+    133            if(status->ZYXDA)
+    134            {
+    135              return a3g4250d_complete_read(tid);
+    136            }
+    137           // mtask_start(TASK_A3G4250D, 0, a3g4250d_begin_read);
+    138            return 10;
+    139          }
+    140          
+    141          static int32_t a3g4250d_complete_read(uint16_t tid)
+    142          {
+    143            bool ok = false;
+    144            uint8_t data[6];
+    145            int16_t* values = (int16_t*)data;
+    146            uint8_t data_temp;
+    147            I2C_BEGIN
+    148            {
+    149          #if 1
+    150              ok = (i2c_ReadReg(I2C1,0xD3, A3G4250D_OUT_XL_REG, data, 6));
+    151              ok = (i2c_ReadReg(I2C1,0xD3, A3G4250D_OUT_TEMP_REG, &data_temp, 1));
+    152          #else
+    153              ok |= A3G4250D_ReadReg(A3G4250D_OUT_XL_REG, &data[0]);
+    154              ok |= A3G4250D_ReadReg(A3G4250D_OUT_XH_REG, &data[1]);
+    155              ok |= A3G4250D_ReadReg(A3G4250D_OUT_YL_REG, &data[2]);
+    156              ok |= A3G4250D_ReadReg(A3G4250D_OUT_YH_REG, &data[3]);
+    157              ok |= A3G4250D_ReadReg(A3G4250D_OUT_ZL_REG, &data[4]);
+    158              ok |= A3G4250D_ReadReg(A3G4250D_OUT_ZH_REG, &data[5]);
+    159          #endif
+    160            }
+    161            I2C_COMPLETE
+    162          
+    163            if(!ok)
+    164            {
+    165              DBG("A3G4250D: READ FAILED\n");
+    166            //  mtask_start(TASK_A3G4250D, 0, a3g4250d_start);
+    167              return (100);
+    168            }
+    169            is_ready = true;
+    170          
+    171            RollPitchYaw[0] = Gyro_Scaled_X((float) values[0]);
+    172            RollPitchYaw[1] = Gyro_Scaled_Y((float) values[1]);
+    173            RollPitchYaw[2] = Gyro_Scaled_Z((float) values[2]);
+    174          
+    175            if(filter_count<FILTER_PERIOD)filter_count++;
+    176          
+    177            sumDataX= sumDataX- filterbufX[filter_pointer]+ RollPitchYaw[0];
+    178            sumDataY= sumDataY- filterbufY[filter_pointer]+ RollPitchYaw[1];
+    179            sumDataZ= sumDataZ- filterbufZ[filter_pointer]+ RollPitchYaw[2];
+    180          
+    181            filterbufX[filter_pointer] = RollPitchYaw[0];
+    182            filterbufY[filter_pointer] = RollPitchYaw[1];
+    183            filterbufZ[filter_pointer] = RollPitchYaw[2];
+    184          
+    185            filtDataX = sumDataX/filter_count;
+    186            filtDataY = sumDataY/filter_count;
+    187            filtDataZ = sumDataZ/filter_count;
+    188          
+    189            //static float angle;
+    190          
+    191          //
+    192          //   if(!not_moving)
+    193          //   {
+    194          //     angle = angle + (filtDataZ-dreif)*COEFFS_GIRO;// - dreif;//Gyro_Scaled_Z((float) (values[2] &0xFFF0));
+    195          //     filtDataDef = filtDataZ;
+    196          //   }
+    197          //   else
+    198          //   {
+    199          ////    float defirent = filtDataZ; //angle - ex_angle;
+    200          ////    sumDataDef = sumDataDef - filterbufDef[filter_pointer] + defirent;
+    201          ////    filterbufDef[filter_pointer] =defirent;
+    202          //    filtDataDef = filtDataZ;//sumDataDef/filter_count;
+    203          //    //ex_angle = angle;
+    204          //
+    205          //   }
+    206          //
+    207          //
+    208          //   filter_pointer++;
+    209          //   if(filter_pointer>=FILTER_PERIOD)
+    210          //   {
+    211          //     filter_pointer=0;
+    212          //
+    213          ////     if(filtDataZ>0)
+    214          ////       {
+    215          ////         if(filtDataZ>filtDataDef) not_moving = false;
+    216          ////         else {filtDataDef = filtDataZ; not_moving = true;}
+    217          ////       }
+    218          ////     else
+    219          ////       {
+    220          ////         if(filtDataZ<filtDataDef) not_moving = false;
+    221          ////         else {filtDataDef = filtDataZ; not_moving = true;}
+    222          ////       }
+    223          //   }
+    224          //
+    225          //   if((compas_status == COMPAS_CALLIBRATION) || (compas_status == COMP_DEBUG_BUF_READ)) compass_calibration_task(12);
+    226          //
+    227          ////  protocol_log(1,"A3G4250D: X=%.02f;Y=%.02f;Z=%.02f;", RollPitchYaw[0], RollPitchYaw[1], RollPitchYaw[2]);
+    228          //  mtask_start(TASK_A3G4250D, 0, a3g4250d_begin_read);
+    229            return (10);
+    230          }
+    231          
+    232          #endif //A3G4250D
+
+
+ 
+
+ 
+
+
+Errors: none
+Warnings: none

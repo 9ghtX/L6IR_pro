@@ -1,0 +1,278 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:34
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        E:\projects\L6IR\programm\L6_pro\protocol_L6IR_encoder_old.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\protocol_L6IR_encoder_old.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\protocol_L6IR_encoder_old.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\protocol_L6IR_encoder_old.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\protocol_L6IR_encoder_old.c
+      1          #include "protocol.h"
+      2          #include "net.h"
+      3          #include "rfu.h"
+      4          #include "L6IR.h"
+      5          #include "Ball.h"
+      6          
+      7          extern u8 encoder_plus_buf[ALL_ENCODER_FUNC];
+      8          extern u8 encoder_minus_buf[ALL_ENCODER_FUNC];
+      9          extern u8 encoder_func_buf[ALL_ENCODER_FUNC+1];
+     10          extern u8 encoder0_masks_buf[ALL_ENCODER_FUNC+1];   
+     11          extern u8 encoder1_masks_buf[ALL_ENCODER_FUNC+1];
+     12          extern u8 ctrl_unit_masks_buf[ALL_ENCODER_FUNC+1];  
+     13          extern bool fuck_power_off_command;
+     14          extern u8 encoder_func_count;
+     15          extern u16 error_counter;
+     16          extern bool fuck_next_command;
+     17          extern spi_def spi_sets;
+     18          
+     19          
+     20          void encoder1_func_2enc(u8 command)
+     21          {
+     22            u8 keys_q, code, i;
+     23          
+     24              switch(command)
+     25              {
+     26              case GET_KEY_CODE:
+     27               u8 i, keys_q, code;
+     28               keys_q = pop(&RXbuf);
+     29               for(i=0;i<keys_q;i++)
+     30                  {
+     31                    code = pop(&RXbuf);
+     32                    switch(code)
+     33                    {
+     34                     case ENCODER_PLUS_0:
+     35                           senspar.change_par = true;
+     36                           push(&keys.keys_stack, ENCODER_PLUS_1);
+     37                     break;
+     38          
+     39                     case ENCODER_MINUS_0:
+     40                           senspar.change_par = true;
+     41                           push(&keys.keys_stack, ENCODER_MINUS_1);
+     42                     break;
+     43          
+     44                     case KEY_PHOTO://KEY_ENTER:
+     45                          push(&keys.keys_stack, KEY_ENTER);
+     46                     break;
+     47                     
+     48                     case ENCODER_PLUS_PRESS_1:
+     49                       keys.buffer[keys.quant+i] = KEY_ENTER_SPECIAL_MENU;
+     50                     break;
+     51                       
+     52                     case KEY_MENU_ENTER:
+     53                       keys.buffer[keys.quant+i] = KEY_POWER_OFF;
+     54                       
+     55                     break;
+     56                     
+     57                    default:
+     58                      
+     59                    // keys.buffer[keys.quant+i] = code;// KEY_ENTER;
+     60                    break;  
+     61                  }
+     62                 }
+     63              break;
+     64              }
+     65          }
+     66          
+     67          
+     68          void encoder1_t_func_2enc(u8 command)
+     69          {
+     70            u8 keys_q, code, i;
+     71          
+     72              switch(command)
+     73              {
+     74              case GET_KEY_CODE:
+     75               u8 i, keys_q, code;
+     76               keys_q = pop(&RXbuf);
+     77               for(i=0;i<keys_q;i++)
+     78                  {
+     79                    code = pop(&RXbuf);
+     80                    switch(code)
+     81                    {
+     82                     case ENCODER_PLUS_0:
+     83                           push(&keys.keys_stack, KEY_PLUS);//encoder_plus_buf[encoder_func_count-1];
+     84                     break;
+     85          
+     86                     case ENCODER_MINUS_0:
+     87                           push(&keys.keys_stack, KEY_MINUS);//encoder_minus_buf[encoder_func_count-1];
+     88                           
+     89                     break;
+     90          
+     91                     case KEY_PHOTO://KEY_ENTER:
+     92                       push(&keys.keys_stack, KEY_ENTER);
+     93                       /*device_mode++;
+     94                       if(device_mode>=MODES_QUANT)device_mode = 0;
+     95                       set_device_mode(device_mode);*/
+     96                     break;
+     97                     
+     98                     case ENCODER_PLUS_PRESS_1:
+     99                       keys.buffer[keys.quant+i] = KEY_ENTER_SPECIAL_MENU;
+    100                     break;
+    101                       
+    102                     case KEY_MENU_ENTER:
+    103                       keys.buffer[keys.quant+i] = KEY_POWER_OFF;
+    104                       
+    105                     break;
+    106                     
+    107                    default:
+    108                      
+    109                    // keys.buffer[keys.quant+i] = code;// KEY_ENTER;
+    110                    break;  
+    111                  }
+    112                 }
+    113              break;
+    114              }
+    115          }
+    116          
+    117          void encoder0_func_2enc(u8 command)
+    118          {
+    119            u8 keys_q, code, i;
+    120            switch(command)
+    121              {
+    122          
+    123              case GET_KEY_CODE:
+    124                
+    125               keys_q = pop(&RXbuf);
+    126               
+    127               for(i=0;i<keys_q;i++)
+    128                  {
+    129                    code = pop(&RXbuf);
+    130                     error_counter = ERROR_WAITING_TIME;
+    131                    switch(code)
+    132                    {
+    133                     case ENCODER_PLUS_0:
+    134                        //senspar.change_par = true;
+    135                           push(&keys.keys_stack, encoder_plus_buf[encoder_func_count-1]);
+    136                          fuck_next_command = false;
+    137                          fuck_power_off_command = false;
+    138                     break;
+    139          
+    140                     case ENCODER_MINUS_0:
+    141                        //senspar.change_par = true;
+    142                           push(&keys.keys_stack, encoder_minus_buf[encoder_func_count-1]);
+    143                          fuck_next_command = false;
+    144                          fuck_power_off_command = false;
+    145                     break;
+    146          
+    147                     case KEY_PHOTO://KEY_ENTER:
+    148                       if(!fuck_next_command)
+    149                       {
+    150                       if(!(0x08&spi_sets.silar_state))
+    151                       {
+    152                       encoder_func_count++;
+    153                       if(encoder_func_count>ALL_ENCODER_FUNC) encoder_func_count=1;
+    154                       
+    155                       while(!(encoder_func_buf[encoder_func_count]&encoder0_masks_buf[encoder_func_count]))
+    156                       {
+    157                        encoder_func_count++;
+    158                        if(encoder_func_count>ALL_ENCODER_FUNC) encoder_func_count=1;            
+    159                       }
+    160                       }
+    161                        push(&keys.keys_stack, COM_NO_SYMBOL_DISP);
+    162                        push(&keys.keys_stack, encoder_func_buf[encoder_func_count]);
+    163                       }
+    164                       else  push(&keys.keys_stack, NO_ACTION);
+    165                       
+    166                       fuck_next_command = false;
+    167                       fuck_power_off_command = false;
+    168                     break;
+    169                     
+    170                     case ENCODER_PLUS_PRESS_1:
+    171                       push(&keys.keys_stack, KEY_ENTER_SPECIAL_MENU);
+    172                       fuck_next_command = true;
+    173                       fuck_power_off_command = false;
+    174                     break;
+    175                     
+    176                     case ENCODER_MINUS_PRESS_1:
+    177                       if(!fuck_next_command)
+    178                       {
+    179                       push(&keys.keys_stack, KEY_MENU_ENTER);           
+    180                       fuck_next_command=true;
+    181                       }
+    182                       fuck_power_off_command = false;
+    183                     break;
+    184          
+    185                     case KEY_MENU_ENTER:
+    186          
+    187                       push(&keys.keys_stack,code);
+    188                     break;
+    189                    }
+    190                  }
+    191              break;
+    192              }
+    193          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   encoder0_func_2enc
+        16   -> pop
+        16   -> push
+      16   encoder1_func_2enc
+        16   -> pop
+        16   -> push
+      16   encoder1_t_func_2enc
+        16   -> pop
+        16   -> push
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_10
+       4  ??DataTable2_11
+       4  ??DataTable2_12
+       4  ??DataTable2_2
+       4  ??DataTable2_3
+       4  ??DataTable2_4
+       4  ??DataTable2_5
+       4  ??DataTable2_6
+       4  ??DataTable2_7
+       4  ??DataTable2_8
+       4  ??DataTable2_9
+     342  encoder0_func_2enc
+     148  encoder1_func_2enc
+     132  encoder1_t_func_2enc
+
+ 
+ 674 bytes in section .text
+ 
+ 674 bytes of CODE memory
+
+Errors: none
+Warnings: 8

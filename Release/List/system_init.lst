@@ -1,0 +1,615 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:52
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\system_init.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\system_init.c -D USE_STDPERIPH_DRIVER
+#        -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE
+#        -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\system_init.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\system_init.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\system_init.c
+      1          #include <stm32l1xx.h>
+      2          #include "L6IR.h"
+      3          //#include  "spieeprom.h"
+      4          //#include "stm32lxx_exti.h"
+      5          #include "stm32l1xx_dma.h"
+      6          
+      7          void GPIO_Configuration(void)
+      8          {
+      9          	/* Private typedef ---------------------------------------------------------*/
+     10          	GPIO_InitTypeDef GPIO_InitStruct;
+     11          
+     12          
+     13          	/*Enable or disable the AHB peripheral clock */
+     14          	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+     15                  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA , ENABLE);
+     16          //        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+     17          //        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+     18                  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+     19                  
+     20                  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+     21                  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 , ENABLE );
+     22                  RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+     23                  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+     24                  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+     25                  RCC_HSICmd(ENABLE);
+     26          
+     27                  //########## PORT A ###############################
+     28          
+     29                  
+     30                 //****** ADC PINs ********** 
+     31                 GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_6;
+     32                 GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AN;
+     33                 GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     34                 GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+     35                 GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     36                 GPIO_Init(GPIOA, &GPIO_InitStruct);
+     37                 
+     38                  //***** USART PINs **********
+     39          	/*Configure GPIO pin */
+     40          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
+     41          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+     42          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     43          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+     44          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     45          	GPIO_Init(GPIOA, &GPIO_InitStruct);
+     46          
+     47          	/*Configure GPIO pin alternate function */
+     48          	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
+     49          
+     50          	/*Configure GPIO pin alternate function */
+     51          	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
+     52          
+     53                  //*********** OUT PINs ***************
+     54          	/*Configure GPIO pin */
+     55          #ifdef TNM_MODE
+     56                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_11;
+     57          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+     58          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     59          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_DOWN;
+     60          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     61          	GPIO_Init(GPIOA, &GPIO_InitStruct);
+     62          
+     63                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_12;
+     64          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+     65          	GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
+     66          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+     67          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     68          	GPIO_Init(GPIOA, &GPIO_InitStruct);
+     69                  
+     70                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_15;
+     71          #else
+     72          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7|GPIO_Pin_8;
+     73          #endif
+     74          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+     75          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     76          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+     77          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     78          	GPIO_Init(GPIOA, &GPIO_InitStruct);
+     79          
+     80                  //*********** IN PINs *****************
+     81          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_3;//|GPIO_Pin_15;
+     82          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
+     83          	//GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     84          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+     85          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     86          	GPIO_Init(GPIOA, &GPIO_InitStruct);
+     87          
+     88                  
+     89                  //######## PORT B ##########################
+     90          	/*Configure GPIO pin */
+     91              
+     92                  /*Configure IR led pin*/
+     93                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;
+     94          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+     95          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+     96          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+     97          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+     98          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+     99                  
+    100                  GPIO_SetBits(GPIOB, GPIO_Pin_5);  /* указание начального состояния пина*/
+    101                  
+    102          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
+    103          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    104          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    105          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    106          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    107          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    108          
+    109          	/*Configure GPIO pin alternate function */
+    110          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_I2C1);
+    111          
+    112          	/*Configure GPIO pin alternate function */
+    113          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_I2C1);
+    114          
+    115          
+    116          	/*Configure GPIO pin */
+    117          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10;
+    118          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    119          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    120          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    121          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    122          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    123                  
+    124                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_11;
+    125          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    126          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    127          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    128          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    129          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    130          
+    131          	/*Configure GPIO pin alternate function */
+    132          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_I2C2); 
+    133          
+    134          	/*Configure GPIO pin alternate function */
+    135          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_I2C2);
+    136          
+    137          	/** SPI2 GPIO Configuration	
+    138          		 PB13	 ------> SPI2_SCK
+    139          		 PB14	 ------> SPI2_MISO
+    140                           PB15	 ------> SPI2_MOSI
+    141          	*/
+    142          	/*Configure GPIO pin */
+    143          
+    144          
+    145                 /* Configure SPI2 pins: SCK and MOSI */		//	MISO
+    146          
+    147          
+    148                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_15;//| GPIO_Pin_6 ;
+    149          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    150          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    151          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_DOWN;
+    152          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    153          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    154          
+    155          
+    156                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_14;				
+    157          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    158          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    159          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_DOWN;
+    160          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    161                  GPIO_Init(GPIOB, &GPIO_InitStruct);	
+    162          	
+    163          
+    164          	/*Configure GPIO pin alternate function */
+    165          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource13, GPIO_AF_SPI2);
+    166          
+    167          	/*Configure GPIO pin alternate function */
+    168          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource14, GPIO_AF_SPI2);
+    169          
+    170          	/*Configure GPIO pin alternate function */
+    171          	GPIO_PinAFConfig(GPIOB, GPIO_PinSource15, GPIO_AF_SPI2);
+    172          	/*Enable or disable the AHB peripheral clock */
+    173          
+    174          
+    175          
+    176          	/*Configure GPIO pin */
+    177          	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_12;//|GPIO_Pin_8|GPIO_Pin_9;
+    178          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_OUT;
+    179          	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    180          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    181          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    182          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    183                  
+    184                  	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2;//|GPIO_Pin_8|GPIO_Pin_9;
+    185          	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN;
+    186          	//GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
+    187          	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+    188          	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_40MHz;
+    189          	GPIO_Init(GPIOB, &GPIO_InitStruct);
+    190          
+    191          }
+    192          //=============================================================================
+    193          
+    194          //=============================================================================
+    195          void NVIC_Configuration(void)
+    196          {
+    197            NVIC_InitTypeDef NVIC_InitStructure;
+    198          
+    199          #ifdef  VECT_TAB_RAM
+    200            /* Set the Vector Table base location at 0x20000000 */
+    201            NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+    202          #else  /* VECT_TAB_FLASH  */
+    203            /* Set the Vector Table base location at 0x08000000 */
+    204            NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+    205          #endif
+    206          
+    207            /* Configure the NVIC Preemption Priority Bits */
+    208            NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+    209          
+    210            /* Enable the USART1 Interrupt */
+    211            NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;			
+    212            NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    213            NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    214            NVIC_Init(&NVIC_InitStructure);
+    215          
+    216              /* Enable the USART1 Interrupt */
+    217           // NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;			
+    218           // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    219           // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    220           // NVIC_Init(&NVIC_InitStructure);
+    221          
+    222          
+    223              NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+    224              NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+    225              NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
+    226              NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    227          
+    228              NVIC_Init(&NVIC_InitStructure);
+    229          
+    230            //=======================================================
+    231            /* Enable the TIM2 global Interrupt */
+    232          //  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;//TIM2_IRQChannel;
+    233          //  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    234          //  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    235          //  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    236          //  NVIC_Init(&NVIC_InitStructure);
+    237          
+    238          }
+    239          //==============================================================================
+    240          
+    241          
+    242          
+    243          //==============================================================================
+    244          
+    245           void UART_init()
+    246           {
+    247                  USART_InitTypeDef USART_InitStructure;
+    248                  USART_DeInit(USART1);
+    249            	USART_InitStructure.USART_BaudRate = 115200;
+    250            	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    251            	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    252            	USART_InitStructure.USART_Parity = USART_Parity_No;
+    253            	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    254            	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    255          
+    256          	USART_Init(USART1, &USART_InitStructure);
+    257            	USART_ITConfig(USART1, USART_IT_TC, ENABLE);//USART_IT_TXE
+    258          	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);	
+    259          
+    260          	USART_Cmd(USART1, ENABLE);	
+    261          
+    262           }
+    263          
+    264          
+    265          //==============================================================================
+    266          
+    267          void SPI_init_func()
+    268          {
+    269          
+    270            SPI_InitTypeDef SPI_InitStruct;
+    271            SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+    272            SPI_InitStruct.SPI_Mode      = SPI_Mode_Master;
+    273            SPI_InitStruct.SPI_DataSize  = SPI_DataSize_8b;
+    274            SPI_InitStruct.SPI_CPOL      = SPI_CPOL_Low;
+    275            SPI_InitStruct.SPI_CPHA      = SPI_CPHA_1Edge;
+    276            SPI_InitStruct.SPI_NSS       = SPI_NSS_Soft;
+    277            SPI_InitStruct.SPI_BaudRatePrescaler =   SPI_BaudRatePrescaler_4;
+    278            SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_MSB;
+    279            //SPI_InitStruct.SPI_CRCPolynomial = 7;
+    280          
+    281            upCS_silar;
+    282            SPI_Init(SPI2, &SPI_InitStruct);
+    283            SPI_Cmd(SPI2, ENABLE);
+    284          }
+    285          
+    286          
+    287          //==============================================================================
+    288          
+    289          
+    290          extern DMA_InitTypeDef  I2CDMA_InitStructure;
+    291          extern __IO uint32_t I2CDirection;
+    292          extern __IO uint32_t NumbOfBytes1;
+    293          extern __IO uint32_t NumbOfBytes2;
+    294          extern __IO uint8_t Address;
+    295          
+    296          #define  ClockSpeed           100000
+    297          
+    298          #define I2C_DIRECTION_TX 0
+    299          #define I2C_DIRECTION_RX 1
+    300          
+    301          #define OwnAddress1 0x00
+    302          #define OwnAddress2 0x00
+    303          
+    304          static bool is_opened[2];
+    305          void I2C_LowLevel_Init(I2C_TypeDef* I2Cx)
+    306          {
+    307              GPIO_InitTypeDef  GPIO_InitStruct;
+    308              I2C_InitTypeDef  I2C_InitStructure;
+    309          
+    310              /* GPIOB clock enable */
+    311              RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+    312              /* Enable the DMA1 clock */
+    313              RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    314              RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE); 
+    315              if (I2Cx == I2C1)
+    316              {
+    317                  RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);        /* I2C1 clock enable */
+    318          
+    319                  /*Configure GPIO pin */
+    320                  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7;
+    321                  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    322                  GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
+    323                  GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    324                  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_400KHz;
+    325                  GPIO_Init(GPIOB, &GPIO_InitStruct);
+    326                  GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_I2C1); /*Configure GPIO pin alternate function */
+    327                  GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_I2C1); /*Configure GPIO pin alternate function */
+    328                  /* Enable I2C1 reset state */
+    329                  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, ENABLE);
+    330                  /* Release I2C1 from reset state */
+    331                  RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
+    332              }
+    333              else /* I2Cx = I2C2 */
+    334              {
+    335                RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE); /* I2C2 clock enable */
+    336                /*Configure GPIO pin */
+    337          	  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10|GPIO_Pin_11;
+    338          	  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
+    339          	  GPIO_InitStruct.GPIO_OType = GPIO_OType_OD;
+    340          	  GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
+    341          	  GPIO_InitStruct.GPIO_Speed = GPIO_Speed_400KHz;
+    342          	  GPIO_Init(GPIOB, &GPIO_InitStruct);
+    343          	  GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_I2C2); /*Configure GPIO pin alternate function */
+    344          	  GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_I2C2); /*Configure GPIO pin alternate function */
+    345                /* Enable I2C2 reset state */
+    346                RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C2, ENABLE);
+    347                /* Release I2C2 from reset state */
+    348                RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C2, DISABLE);
+    349              }
+    350          
+    351              /* I2C1 and I2C2 configuration */
+    352              I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+    353              I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+    354              I2C_InitStructure.I2C_OwnAddress1 = OwnAddress1;
+    355              I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+    356              I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+    357              I2C_InitStructure.I2C_ClockSpeed = ClockSpeed;
+    358              I2C_Init(I2C1, &I2C_InitStructure);
+    359              I2C_InitStructure.I2C_OwnAddress1 = OwnAddress2;
+    360              I2C_Init(I2C2, &I2C_InitStructure);
+    361          
+    362          //    if (I2Cx == I2C1)
+    363          //
+    364          //    {   /* I2C1 TX DMA Channel configuration */
+    365          //
+    366          //        DMA_DeInit(I2C1_DMA_CHANNEL_TX);
+    367          //        I2CDMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)I2C1_DR_Address;
+    368          //        I2CDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)0;   /* This parameter will be configured durig communication */
+    369          //        I2CDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
+    370          //        I2CDMA_InitStructure.DMA_BufferSize = 0xFFFF;            /* This parameter will be configured durig communication */
+    371          //        I2CDMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    372          //        I2CDMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    373          //        I2CDMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
+    374          //        I2CDMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+    375          //        I2CDMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+    376          //        I2CDMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+    377          //        I2CDMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    378          //        DMA_Init(I2C1_DMA_CHANNEL_TX, &I2CDMA_InitStructure);
+    379          //
+    380          //        /* I2C1 RX DMA Channel configuration */
+    381          //        DMA_DeInit(I2C1_DMA_CHANNEL_RX);
+    382          //        DMA_Init(I2C1_DMA_CHANNEL_RX, &I2CDMA_InitStructure);
+    383          //    }
+    384          //
+    385          //    else /* I2Cx = I2C2 */
+    386          //
+    387          //    {
+    388          //        /* I2C2 TX DMA Channel configuration */
+    389          //        DMA_DeInit(I2C2_DMA_CHANNEL_TX);
+    390          //        I2CDMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)I2C2_DR_Address;
+    391          //        I2CDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)0;   /* This parameter will be configured durig communication */
+    392          //        I2CDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
+    393          //        I2CDMA_InitStructure.DMA_BufferSize = 0xFFFF;            /* This parameter will be configured durig communication */
+    394          //        I2CDMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    395          //        I2CDMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    396          //        I2CDMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
+    397          //        I2CDMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+    398          //        I2CDMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+    399          //        I2CDMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+    400          //        I2CDMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    401          //        DMA_Init(I2C2_DMA_CHANNEL_TX, &I2CDMA_InitStructure);
+    402          //
+    403          //        /* I2C2 RX DMA Channel configuration */
+    404          //        DMA_DeInit(I2C2_DMA_CHANNEL_RX);
+    405          //        DMA_Init(I2C2_DMA_CHANNEL_RX, &I2CDMA_InitStructure);
+    406          //
+    407          //    }
+    408          }
+    409          
+    410          //
+    411          //void i2c_init(void)
+    412          //{
+    413          //  I2C_LowLevel_Init(I2C1);
+    414          //  I2C_LowLevel_Init(I2C2);
+    415          //  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+    416          //  NVIC_SetPriority(I2C1_EV_IRQn, 0x00);
+    417          //  NVIC_EnableIRQ(I2C1_EV_IRQn);
+    418          //  NVIC_SetPriority(I2C1_ER_IRQn, 0x01);
+    419          //  NVIC_EnableIRQ(I2C1_ER_IRQn);
+    420          //  NVIC_SetPriority(I2C2_EV_IRQn, 0x00);
+    421          //  NVIC_EnableIRQ(I2C2_EV_IRQn);
+    422          //  NVIC_SetPriority(I2C2_ER_IRQn, 0x01);
+    423          //  NVIC_EnableIRQ(I2C2_ER_IRQn);
+    424          //  is_opened[0] = false;
+    425          //  is_opened[1] = false;
+    426          //}
+    427          
+    428          void timers_config()
+    429          {
+    430          
+    431          }
+    432          
+    433          
+    434          uint16_t ADCBuffer[] = {0xAAAA, 0xAAAA, 0xAAAA};
+    435          ADC_result ADC_data;
+    436          void ADC_init_func()
+    437          {
+    438            ADC_InitTypeDef  ADC_InitStruct;
+    439            ADC_CommonInitTypeDef ADC_CommonInitStructure; 
+    440            ADC_DeInit(ADC1);
+    441          
+    442              DMA_InitTypeDef DMA_InitStructure;
+    443           
+    444              DMA_DeInit(DMA1_Channel1);
+    445              DMA_InitStructure.DMA_BufferSize = 3;
+    446              DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+    447              DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    448              DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADC_data.battery_ctrl;//ADCBuffer;
+    449              DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+    450              DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    451              DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+    452              DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+    453              DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+    454              DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    455              DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+    456              DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+    457              DMA_Cmd(DMA1_Channel1 , ENABLE ) ;  
+    458            
+    459              ADC_InitStruct.ADC_Resolution = ADC_Resolution_12b;
+    460              ADC_InitStruct.ADC_ScanConvMode = ENABLE;
+    461              ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;
+    462              ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
+    463              ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
+    464              ADC_InitStruct.ADC_NbrOfConversion = 3;
+    465          
+    466              ADC_Init(ADC1, &ADC_InitStruct);
+    467          
+    468            
+    469              ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div4;
+    470              ADC_CommonStructInit(&ADC_CommonInitStructure);
+    471            
+    472              ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_384Cycles);
+    473              ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_384Cycles);
+    474              ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 3, ADC_SampleTime_384Cycles);
+    475              ADC_DelaySelectionConfig(ADC1, ADC_DelayLength_Freeze);
+    476              ADC_ContinuousModeCmd(ADC1, ENABLE);
+    477              ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
+    478              
+    479              ADC_DMACmd(ADC1 , ENABLE ) ;
+    480              DMA_Cmd(DMA1_Channel1 , ENABLE ) ;
+    481              
+    482              ADC_Cmd(ADC1, ENABLE);
+    483              
+    484              while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADONS) == RESET);
+    485          
+    486             
+    487             
+    488             ADC_SoftwareStartConv(ADC1);
+    489          }
+    490          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      80   ADC_init_func
+        80   -> ADC_Cmd
+        80   -> ADC_CommonStructInit
+        80   -> ADC_ContinuousModeCmd
+        80   -> ADC_DMACmd
+        80   -> ADC_DMARequestAfterLastTransferCmd
+        80   -> ADC_DeInit
+        80   -> ADC_DelaySelectionConfig
+        80   -> ADC_GetFlagStatus
+        80   -> ADC_Init
+        80   -> ADC_RegularChannelConfig
+        80   -> ADC_SoftwareStartConv
+        80   -> DMA_Cmd
+        80   -> DMA_DeInit
+        80   -> DMA_Init
+      16   GPIO_Configuration
+        16   -> GPIO_Init
+        16   -> GPIO_PinAFConfig
+        16   -> GPIO_SetBits
+        16   -> RCC_AHBPeriphClockCmd
+        16   -> RCC_APB1PeriphClockCmd
+        16   -> RCC_APB2PeriphClockCmd
+        16   -> RCC_HSICmd
+      32   I2C_LowLevel_Init
+        32   -> GPIO_Init
+        32   -> GPIO_PinAFConfig
+        32   -> I2C_Init
+        32   -> RCC_AHBPeriphClockCmd
+        32   -> RCC_APB1PeriphClockCmd
+        32   -> RCC_APB1PeriphResetCmd
+       8   NVIC_Configuration
+         8   -> NVIC_Init
+         8   -> NVIC_PriorityGroupConfig
+         8   -> NVIC_SetVectorTable
+      24   SPI_init_func
+        24   -> GPIO_SetBits
+        24   -> SPI_Cmd
+        24   -> SPI_Init
+      24   UART_init
+        24   -> USART_Cmd
+        24   -> USART_DeInit
+        24   -> USART_ITConfig
+        24   -> USART_Init
+       0   timers_config
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable4
+       4  ??DataTable4_1
+       4  ??DataTable4_10
+       4  ??DataTable4_2
+       4  ??DataTable4_3
+       4  ??DataTable4_4
+       4  ??DataTable4_5
+       4  ??DataTable4_6
+       4  ??DataTable4_7
+       4  ??DataTable4_8
+       4  ??DataTable4_9
+       8  ADCBuffer
+       8  ADC_data
+     238  ADC_init_func
+     652  GPIO_Configuration
+     282  I2C_LowLevel_Init
+      76  NVIC_Configuration
+      86  SPI_init_func
+      90  UART_init
+       2  timers_config
+
+ 
+     8 bytes in section .bss
+     8 bytes in section .data
+ 1 470 bytes in section .text
+ 
+ 1 470 bytes of CODE memory
+    16 bytes of DATA memory
+
+Errors: none
+Warnings: 1

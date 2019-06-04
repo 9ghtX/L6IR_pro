@@ -1,0 +1,448 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:20
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\i2c.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\i2c.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\i2c.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\i2c.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\i2c.c
+      1          /**
+      2           * @file   i2c.c
+      3           * @date   21 июля 2013 г.
+      4           * @author
+      5           * @brief  i2c
+      6           */
+      7          #include "hal_types.h"
+      8          #include "i2c.h"
+      9          #include "hal_critical_section.h"
+     10          
+     11          uint8_t Buffer_Rx1[16]; /* Buffer of data to be received by I2C1 */
+     12          uint8_t Buffer_Tx1[16]; /* Buffer of data to be transmitted by I2C1 */
+     13          uint8_t Buffer_Rx2[16]; /* Buffer of data to be received by I2C2 */
+     14          uint8_t Buffer_Tx2[16]; /* Buffer of data to be transmitted by I2C2 */
+     15          extern __IO uint8_t Tx_Idx1 , Rx_Idx1;
+     16          extern __IO uint8_t Tx_Idx2 , Rx_Idx2;
+     17          
+     18          
+     19          extern DMA_InitTypeDef  I2CDMA_InitStructure;
+     20          extern __IO uint32_t I2CDirection;
+     21          extern __IO uint32_t NumbOfBytes1;
+     22          extern __IO uint32_t NumbOfBytes2;
+     23          extern __IO uint8_t Address;
+     24          
+     25          static bool is_opened[2];
+     26          
+     27          void i2c_init(void)
+     28          {
+     29          #ifndef TNM_MODE
+     30            I2C_LowLevel_Init(I2C1);
+     31            NVIC_SetPriority(I2C1_EV_IRQn, 0x00);
+     32            NVIC_EnableIRQ(I2C1_EV_IRQn);
+     33            NVIC_SetPriority(I2C1_ER_IRQn, 0x01);
+     34            NVIC_EnableIRQ(I2C1_ER_IRQn);
+     35          #endif
+     36            I2C_LowLevel_Init(I2C2);
+     37            NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+     38          
+     39            NVIC_SetPriority(I2C2_EV_IRQn, 0x00);
+     40            NVIC_EnableIRQ(I2C2_EV_IRQn);
+     41            NVIC_SetPriority(I2C2_ER_IRQn, 0x01);
+     42            NVIC_EnableIRQ(I2C2_ER_IRQn);
+     43            is_opened[0] = false;
+     44            is_opened[1] = false;
+     45          }
+     46          
+     47          bool i2c_open(uint8_t i2c_id)
+     48          {
+     49            bool retval = false;
+     50            i2c_id--;
+     51            enter_critical_section();
+     52            if(!is_opened[i2c_id])
+     53            {
+     54              is_opened[i2c_id] = true;
+     55              retval = true;
+     56            }
+     57            exit_critical_section();
+     58            return (retval);
+     59          }
+     60          
+     61          void i2c_close (uint8_t i2c_id)
+     62          {
+     63            i2c_id--;
+     64            enter_critical_section();
+     65            is_opened[i2c_id] = false;
+     66            exit_critical_section();
+     67          }
+     68          
+     69          
+     70          bool i2c_ReadReg(I2C_TypeDef* I2Cx,
+     71                              uint8_t SlaveAddress,
+     72                              uint8_t      reg,
+     73                              uint8_t* pBuffer,
+     74                              uint32_t NumByteToRead)
+     75          {
+     76              __IO uint32_t temp = 0;
+     77              __IO uint32_t Timeout = 0;
+     78              Timeout = 0xFFFF;
+     79                  /* Send START condition */
+     80                  I2Cx->CR1 |= CR1_START_Set;
+     81                  /* Wait until SB flag is set: EV5 */
+     82                  while ((I2Cx->SR1&0x0001) != 0x0001)
+     83                  {
+     84                      if (Timeout-- == 0)
+     85                          return false;
+     86                  }
+     87          
+     88                  /* Send slave address */
+     89                  /* Reset the address bit0 for write*/
+     90                  SlaveAddress &= OAR1_ADD0_Reset;
+     91                  Address = SlaveAddress;
+     92                  /* Send the slave address */
+     93                  I2Cx->DR = Address;
+     94                  Timeout = 0xFFFF;
+     95                  /* Wait until ADDR is set: EV6 */
+     96                  while ((I2Cx->SR1 &0x0002) != 0x0002)
+     97                  {
+     98                      if (Timeout-- == 0)
+     99                          return false;
+    100                  }
+    101                  /* Clear ADDR flag by reading SR2 register */
+    102                  temp = I2Cx->SR2;
+    103                  /* Write the register address in DR register (EV8_1) */
+    104                  if(NumByteToRead > 1)
+    105                  {
+    106                    reg |= 0x80;
+    107                  }
+    108                  I2Cx->DR = reg;
+    109                  /* EV8_2: Wait until BTF is set before programming the STOP */
+    110                  while ((I2Cx->SR1 & 0x00004) != 0x000004);
+    111                  if (NumByteToRead == 1)
+    112                  {
+    113                      Timeout = 0xFFFF;
+    114                      /* Send START condition */
+    115                      I2Cx->CR1 |= CR1_START_Set;
+    116                      /* Wait until SB flag is set: EV5  */
+    117                      while ((I2Cx->SR1&0x0001) != 0x0001)
+    118                      {
+    119                          if (Timeout-- == 0)
+    120                              return false;
+    121                      }
+    122                      /* Send slave address */
+    123                      /* Reset the address bit0 for read */
+    124                      SlaveAddress |= OAR1_ADD0_Set;
+    125                      Address = SlaveAddress;
+    126                      /* Send the slave address */
+    127                      I2Cx->DR = Address;
+    128                      /* Wait until ADDR is set: EV6_3, then program ACK = 0, clear ADDR
+    129                      and program the STOP just after ADDR is cleared. The EV6_3
+    130                      software sequence must complete before the current byte end of transfer.*/
+    131                      /* Wait until ADDR is set */
+    132                      Timeout = 0xFFFF;
+    133                      while ((I2Cx->SR1&0x0002) != 0x0002)
+    134                      {
+    135                          if (Timeout-- == 0)
+    136                              return false;
+    137                      }
+    138                      /* Clear ACK bit */
+    139                      I2Cx->CR1 &= CR1_ACK_Reset;
+    140                      /* Disable all active IRQs around ADDR clearing and STOP programming because the EV6_3
+    141                      software sequence must complete before the current byte end of transfer */
+    142                      __disable_irq();
+    143                      /* Clear ADDR flag */
+    144                      temp = I2Cx->SR2;
+    145                      /* Program the STOP */
+    146                      I2Cx->CR1 |= CR1_STOP_Set;
+    147                      /* Re-enable IRQs */
+    148                      __enable_irq();
+    149                      /* Wait until a data is received in DR register (RXNE = 1) EV7 */
+    150                      while ((I2Cx->SR1 & 0x00040) != 0x000040);
+    151                      /* Read the data */
+    152                      *pBuffer = I2Cx->DR;
+    153                      /* Make sure that the STOP bit is cleared by Hardware before CR1 write access */
+    154                      while ((I2Cx->CR1&0x200) == 0x200);
+    155                      /* Enable Acknowledgement to be ready for another reception */
+    156                      I2Cx->CR1 |= CR1_ACK_Set;
+    157          
+    158                  }
+    159          
+    160                  else if (NumByteToRead == 2)
+    161                  {
+    162                      /* Set POS bit */
+    163                      I2Cx->CR1 |= CR1_POS_Set;
+    164                      Timeout = 0xFFFF;
+    165                      /* Send START condition */
+    166                      I2Cx->CR1 |= CR1_START_Set;
+    167                      /* Wait until SB flag is set: EV5 */
+    168                      while ((I2Cx->SR1&0x0001) != 0x0001)
+    169                      {
+    170                          if (Timeout-- == 0)
+    171                              return false;
+    172                      }
+    173                      Timeout = 0xFFFF;
+    174                      /* Send slave address */
+    175                      /* Set the address bit0 for read */
+    176                      SlaveAddress |= OAR1_ADD0_Set;
+    177                      Address = SlaveAddress;
+    178                      /* Send the slave address */
+    179                      I2Cx->DR = Address;
+    180                      /* Wait until ADDR is set: EV6 */
+    181                      while ((I2Cx->SR1&0x0002) != 0x0002)
+    182                      {
+    183                          if (Timeout-- == 0)
+    184                              return false;
+    185                      }
+    186                      /* EV6_1: The acknowledge disable should be done just after EV6,
+    187                      that is after ADDR is cleared, so disable all active IRQs around ADDR clearing and
+    188                      ACK clearing */
+    189                      __disable_irq();
+    190                      /* Clear ADDR by reading SR2 register  */
+    191                      temp = I2Cx->SR2;
+    192                      /* Clear ACK */
+    193                      I2Cx->CR1 &= CR1_ACK_Reset;
+    194                      /*Re-enable IRQs */
+    195                      __enable_irq();
+    196                      /* Wait until BTF is set */
+    197                      while ((I2Cx->SR1 & 0x00004) != 0x000004);
+    198                      /* Disable IRQs around STOP programming and data reading because of the limitation ?*/
+    199                      __disable_irq();
+    200                      /* Program the STOP */
+    201                      I2C_GenerateSTOP(I2Cx, ENABLE);
+    202                      /* Read first data */
+    203                      *pBuffer = I2Cx->DR;
+    204                      /* Re-enable IRQs */
+    205                      __enable_irq();
+    206                      /**/
+    207                      pBuffer++;
+    208                      /* Read second data */
+    209                      *pBuffer = I2Cx->DR;
+    210                      /* Make sure that the STOP bit is cleared by Hardware before CR1 write access */
+    211                      while ((I2Cx->CR1&0x200) == 0x200);
+    212                      /* Enable Acknowledgement to be ready for another reception */
+    213                      I2Cx->CR1  |= CR1_ACK_Set;
+    214                      /* Clear POS bit */
+    215                      I2Cx->CR1  &= CR1_POS_Reset;
+    216          
+    217                  }
+    218          
+    219                  else
+    220          
+    221                  {
+    222          
+    223                      Timeout = 0xFFFF;
+    224                      /* Send START condition */
+    225                      I2Cx->CR1 |= CR1_START_Set;
+    226                      /* Wait until SB flag is set: EV5 */
+    227                      while ((I2Cx->SR1&0x0001) != 0x0001)
+    228                      {
+    229                          if (Timeout-- == 0)
+    230                              return false;
+    231                      }
+    232                      Timeout = 0xFFFF;
+    233                      /* Send slave address */
+    234                      /* Reset the address bit0 for write */
+    235                      SlaveAddress |= OAR1_ADD0_Set;;
+    236                      Address = SlaveAddress;
+    237                      /* Send the slave address */
+    238                      I2Cx->DR = Address;
+    239                      /* Wait until ADDR is set: EV6 */
+    240                      while ((I2Cx->SR1&0x0002) != 0x0002)
+    241                      {
+    242                          if (Timeout-- == 0)
+    243                              return false;
+    244                      }
+    245                      /* Clear ADDR by reading SR2 status register */
+    246                      temp = I2Cx->SR2;
+    247                      /* While there is data to be read */
+    248                      while (NumByteToRead)
+    249                      {
+    250                          /* Receive bytes from first byte until byte N-3 */
+    251                          if (NumByteToRead != 3)
+    252                          {
+    253                              /* Poll on BTF to receive data because in polling mode we can not guarantee the
+    254                              EV7 software sequence is managed before the current byte transfer completes */
+    255                              while ((I2Cx->SR1 & 0x00004) != 0x000004);
+    256                              /* Read data */
+    257                              *pBuffer = I2Cx->DR;
+    258                              /* */
+    259                              pBuffer++;
+    260                              /* Decrement the read bytes counter */
+    261                              NumByteToRead--;
+    262                          }
+    263          
+    264                          /* it remains to read three data: data N-2, data N-1, Data N */
+    265                          if (NumByteToRead == 3)
+    266                          {
+    267          
+    268                              /* Wait until BTF is set: Data N-2 in DR and data N -1 in shift register */
+    269                              while ((I2Cx->SR1 & 0x00004) != 0x000004);
+    270                              /* Clear ACK */
+    271                              I2Cx->CR1 &= CR1_ACK_Reset;
+    272          
+    273                              /* Disable IRQs around data reading and STOP programming because of the
+    274                              limitation ? */
+    275                              __disable_irq();
+    276                              /* Read Data N-2 */
+    277                              *pBuffer = I2Cx->DR;
+    278                              /* Increment */
+    279                              pBuffer++;
+    280                              /* Program the STOP */
+    281                              I2Cx->CR1 |= CR1_STOP_Set;
+    282                              /* Read DataN-1 */
+    283                              *pBuffer = I2Cx->DR;
+    284                              /* Re-enable IRQs */
+    285                              __enable_irq();
+    286                              /* Increment */
+    287                              pBuffer++;
+    288                              /* Wait until RXNE is set (DR contains the last data) */
+    289                              while ((I2Cx->SR1 & 0x00040) != 0x000040);
+    290                              /* Read DataN */
+    291                              *pBuffer = I2Cx->DR;
+    292                              /* Reset the number of bytes to be read by master */
+    293                              NumByteToRead = 0;
+    294          
+    295                          }
+    296                      }
+    297                      /* Make sure that the STOP bit is cleared by Hardware before CR1 write access */
+    298                      while ((I2Cx->CR1&0x200) == 0x200);
+    299                      /* Enable Acknowledgement to be ready for another reception */
+    300                      I2Cx->CR1 |= CR1_ACK_Set;
+    301          
+    302                  }
+    303          
+    304            return true;
+    305          }
+    306          
+    307          bool i2c_WriteReg(I2C_TypeDef* I2Cx, uint8_t SlaveAddress, uint8_t reg, uint8_t* pBuffer, uint32_t NumByteToWrite)
+    308          {
+    309              __IO uint32_t temp = 0;
+    310              __IO uint32_t Timeout = 0xFFFF;
+    311              //I2Cx->CR1 |= I2C_CR1_SWRST;
+    312              /* Enable Error IT */
+    313              I2Cx->CR2 |= I2C_IT_ERR;
+    314              I2Cx->CR1 |= CR1_START_Set;/* Send START condition */
+    315              while ((I2Cx->SR1&0x0001) != 0x0001)/* Wait until SB flag is set: EV5 */
+    316              {
+    317                if (Timeout-- == 0)
+    318                  return false;
+    319              }
+    320              /* Send slave address */
+    321              /* Reset the address bit0 for write*/
+    322              SlaveAddress &= OAR1_ADD0_Reset;
+    323              Address = SlaveAddress;
+    324              /* Send the slave address */
+    325              I2Cx->DR = Address;
+    326              Timeout = 0xFFFF;
+    327              /* Wait until ADDR is set: EV6 */
+    328              while ((I2Cx->SR1 &0x0002) != 0x0002)
+    329              {
+    330                if (Timeout-- == 0)
+    331                  return false;
+    332              }
+    333          
+    334              temp = I2Cx->SR2;      /* Clear ADDR flag by reading SR2 register */
+    335              I2Cx->DR = reg;   /* Write the first data in DR register (EV8_1) */
+    336              while (NumByteToWrite--)       /* While there is data to be written */
+    337              { /* Poll on BTF to receive data because in polling mode we can not guarantee the
+    338                   EV8 software sequence is managed before the current byte transfer completes */
+    339                while ((I2Cx->SR1 & 0x00004) != 0x000004);
+    340          
+    341                      I2Cx->DR = *pBuffer;            /* Send the current byte */
+    342                      pBuffer++;                      /* Point to the next byte to be written */
+    343              }
+    344              while ((I2Cx->SR1 & 0x00004) != 0x000004); /* EV8_2: Wait until BTF is set before programming the STOP */
+    345              I2Cx->CR1 |= CR1_STOP_Set;                 /* Send STOP condition */
+    346              while ((I2Cx->CR1&0x200) == 0x200);        /* Make sure that the STOP bit is cleared by Hardware */
+    347              return true;
+    348          }
+    349          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   NVIC_EnableIRQ
+       0   NVIC_SetPriority
+       0   enter_critical_section
+       0   exit_critical_section
+      24   i2c_ReadReg
+        24   -> I2C_GenerateSTOP
+      16   i2c_WriteReg
+       8   i2c_close
+         8   -> enter_critical_section
+         8   -> exit_critical_section
+       8   i2c_init
+         8   -> I2C_LowLevel_Init
+         8   -> NVIC_EnableIRQ
+         8   -> NVIC_PriorityGroupConfig
+         8   -> NVIC_SetPriority
+      16   i2c_open
+        16   -> enter_critical_section
+        16   -> exit_critical_section
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable8
+       4  ??DataTable8_1
+       4  ??DataTable8_2
+       4  ??DataTable8_3
+       4  ??DataTable8_4
+       4  ??DataTable8_5
+       4  ??DataTable8_6
+       4  ??DataTable8_7
+      16  Buffer_Rx1
+      16  Buffer_Rx2
+      16  Buffer_Tx1
+      16  Buffer_Tx2
+      22  NVIC_EnableIRQ
+      38  NVIC_SetPriority
+      28  enter_critical_section
+      28  exit_critical_section
+     578  i2c_ReadReg
+     146  i2c_WriteReg
+      24  i2c_close
+      96  i2c_init
+      42  i2c_open
+       2  is_opened
+
+ 
+    66 bytes in section .bss
+ 1 034 bytes in section .text
+ 
+ 1 034 bytes of CODE memory
+    66 bytes of DATA memory
+
+Errors: none
+Warnings: none

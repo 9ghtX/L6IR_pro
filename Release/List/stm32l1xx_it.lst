@@ -1,0 +1,311 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:46
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\mcu\stm32l1xx_it.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\mcu\stm32l1xx_it.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\stm32l1xx_it.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\stm32l1xx_it.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\mcu\stm32l1xx_it.c
+      1          #include "stm32l1xx_it.h"
+      2          #include "net.h"
+      3          #include "led_control.h"
+      4          
+      5          void NMI_Handler(void){ }
+      6          void HardFault_Handler(void)
+      7          {
+      8          
+      9            while (1)  /* Go to infinite loop when Hard Fault exception occurs */
+     10            {
+     11            }
+     12          }
+     13          
+     14          void MemManage_Handler(void)
+     15          {
+     16            while (1)  /* Go to infinite loop when Memory Manage exception occurs */
+     17            {
+     18            }
+     19          }
+     20          void BusFault_Handler(void)
+     21          {
+     22            while (1)  /* Go to infinite loop when Bus Fault exception occurs */
+     23            {
+     24            }
+     25          }
+     26          
+     27          void UsageFault_Handler(void)
+     28          {
+     29            while (1)  /* Go to infinite loop when Usage Fault exception occurs */
+     30            {
+     31            }
+     32          }
+     33          
+     34          void SVC_Handler(void)
+     35          {
+     36          }
+     37          
+     38          void DebugMon_Handler(void)
+     39          {
+     40          }
+     41          
+     42          void PendSV_Handler(void)
+     43          {
+     44          }
+     45          
+     46          
+     47          
+     48          
+     49          void USART1_IRQHandler(void)
+     50          {
+     51            u8 temp;
+     52          
+     53            if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+     54            {
+     55              /* Read one byte from the receive data register */	
+     56          
+     57          	temp = USART_ReceiveData(USART1);
+     58          //------new------------------------------
+     59                  if(temp == SOH)clean(&RXbuf);
+     60          //------new------------------------------
+     61          	
+     62          	if(!get_full(&RXbuf))//	push(&RXbuf,temp);
+     63          		{
+     64          		push(&RXbuf,temp);
+     65          		if(temp == ETX)
+     66                          {  
+     67                            rs_frame=true;
+     68          		}
+     69                            
+     70                          }
+     71            }
+     72          
+     73            if(USART_GetITStatus(USART1, USART_IT_TC) != RESET) //_TXE
+     74            {
+     75              /* Write one byte to the transmit data register */
+     76          	if(!get_empty(&TXbuf))
+     77          		{
+     78          		  temp = pop(&TXbuf);
+     79                            uDE;//DE = 1;
+     80          		  USART_SendData(USART1, temp);
+     81          		}
+     82          	else	
+     83                          {
+     84                            /* Disable the USART1 Transmit interrupt */
+     85                            //USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+     86                            USART_ITConfig(USART1, USART_IT_TC, DISABLE);
+     87                            dDE;//DE = 0;             //uart input
+     88                          }
+     89          	
+     90            	}
+     91            
+     92             if(USART_GetITStatus(USART1, USART_IT_ERR) != RESET)
+     93               {
+     94                temp =0;
+     95               }
+     96             if(USART_GetITStatus(USART1, USART_IT_PE) != RESET)
+     97               {
+     98                temp =0;
+     99               }
+    100             if(USART_GetITStatus(USART1, USART_IT_CTS) != RESET)
+    101               {
+    102                temp =0;
+    103               }
+    104             if(USART_GetITStatus(USART1, USART_IT_NE) != RESET)
+    105               {
+    106                temp =0;
+    107               }
+    108             if(USART_GetITStatus(USART1, USART_IT_FE) != RESET)
+    109               {
+    110                temp =0;
+    111               }
+    112             if(USART_GetITStatus(USART1, USART_IT_ORE_RX) != RESET)
+    113               {
+    114                temp =0;
+    115                USART_ReceiveData(USART1);
+    116               }
+    117             if(USART_GetITStatus(USART1, USART_IT_ORE_ER) != RESET)
+    118               {
+    119                temp =0;
+    120               }
+    121             if(USART_GetITStatus(USART1, USART_IT_TC) != RESET)
+    122               {
+    123                temp =0;
+    124               }
+    125             if(USART_GetITStatus(USART1, USART_IT_IDLE) != RESET)
+    126               {
+    127                temp =0;
+    128               }
+    129          
+    130            }
+    131          
+    132          
+    133          /**
+    134            * @brief  This function handles SysTick Handler.
+    135            * @param  None
+    136            * @retval None
+    137            */
+    138          
+    139          u16 counter_sys;
+    140          static u8 irled;
+    141          static u8 irledmax=255;
+    142          bool net_fault_flag;
+    143          extern u16 key1_count;
+    144          extern u8 galenic_counter;
+    145          extern u16 error_counter;
+    146          extern u16 expo_timeout;
+    147          extern bool led_pulse_enable;
+    148          extern u8 led_brightnes;
+    149          void SysTick_Handler(void)
+    150          {
+    151          
+    152           system_ticks++;
+    153           if(task_flag)counter_sys++;
+    154           if(galenic_counter) galenic_counter--;
+    155           if(error_counter) error_counter--;
+    156           if(expo_timeout) expo_timeout--;
+    157           //if(encoder.disable_timer!=0)encoder.disable_timer--;
+    158           net_counter();
+    159           spi_sichro_func();
+    160           keys_syncro_func();
+    161           marks_syncro_func();
+    162           sens_synchro_func();
+    163           Operator_present_control();
+    164           if(counter_sys>system_wait_timer)
+    165           {
+    166            counter_sys = 0;
+    167            task_flag = false;
+    168            net_fault_flag = true;
+    169           }
+    170           
+    171           if(key1_count!=0) key1_count--;
+    172           //counter_delay(time);		//(&TimeDelay);
+    173           
+    174           if(led_pulse_enable)   //регулировка яркости ик светодиода 
+    175           {
+    176             irled=irled+10;
+    177             if(irled==irledmax)
+    178               irled=0;
+    179             if(irled<=led_brightnes)
+    180               led_pulse_control();
+    181             else
+    182               led_off();
+    183           }
+    184           else 
+    185             led_off();
+    186           
+    187          
+    188          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   BusFault_Handler
+       0   DebugMon_Handler
+       0   HardFault_Handler
+       0   MemManage_Handler
+       0   NMI_Handler
+       0   PendSV_Handler
+       0   SVC_Handler
+       8   SysTick_Handler
+         8   -> Operator_present_control
+         8   -> keys_syncro_func
+         8   -> led_off
+         8   -> led_pulse_control
+         8   -> marks_syncro_func
+         8   -> net_counter
+         8   -> sens_synchro_func
+         8   -> spi_sichro_func
+       8   USART1_IRQHandler
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+         8   -> USART_GetITStatus
+         8   -> USART_ITConfig
+         8   -> USART_ReceiveData
+         8   -> USART_SendData
+         8   -> clean
+         8   -> get_empty
+         8   -> get_full
+         8   -> pop
+         8   -> push
+       0   UsageFault_Handler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable1
+       4  ??DataTable1_1
+       4  ??DataTable1_10
+       4  ??DataTable1_11
+       4  ??DataTable1_12
+       4  ??DataTable1_13
+       4  ??DataTable1_14
+       4  ??DataTable1_15
+       4  ??DataTable1_16
+       4  ??DataTable1_17
+       4  ??DataTable1_2
+       4  ??DataTable1_3
+       4  ??DataTable1_4
+       4  ??DataTable1_5
+       4  ??DataTable1_6
+       4  ??DataTable1_7
+       4  ??DataTable1_8
+       4  ??DataTable1_9
+       2  BusFault_Handler
+       2  DebugMon_Handler
+       2  HardFault_Handler
+       2  MemManage_Handler
+       2  NMI_Handler
+       2  PendSV_Handler
+       2  SVC_Handler
+     222  SysTick_Handler
+     294  USART1_IRQHandler
+       2  UsageFault_Handler
+       2  counter_sys
+       1  irled
+       1  irledmax
+       1  net_fault_flag
+
+ 
+   4 bytes in section .bss
+   1 byte  in section .data
+ 604 bytes in section .text
+ 
+ 604 bytes of CODE memory
+   5 bytes of DATA memory
+
+Errors: none
+Warnings: none

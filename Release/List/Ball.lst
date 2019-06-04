@@ -1,0 +1,288 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:17
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\Ball.cpp
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\Ball.cpp -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\Ball.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\Ball.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\Ball.cpp
+      1          
+      2          #include <hal_types.h>
+      3          #include <stdio.h>
+      4          #include "Ball.h"
+      5          #include <stdlib.h>
+      6          #include  <math.h>
+      7          
+      8          
+      9          /*
+     10            File: Ball.cpp
+     11          
+     12          */
+     13          
+     14          
+     15          #define M_PI  3.1415926536
+     16          
+     17          //extern Sets Seting;
+     18          
+     19          WeapParam weapon;
+     20          BullParam bullet;
+     21          Sens_param senspar;
+     22          
+     23          void default_ball_ini()
+     24          {
+     25          bullet._V0 = 920;
+     26          bullet.BC = 0.45;
+     27          weapon._Z =100;
+     28          senspar.wind_speed=4;
+     29          senspar.wind_dir =30;
+     30          senspar.temperature = 15;
+     31          weapon._S = 40;
+     32          weapon.Nstep = 10;
+     33          weapon._PR0=750;
+     34          senspar.pressure=752;
+     35          senspar.distance = 100;
+     36          }
+     37          
+     38          
+     39          
+     40          ball_result balCalculate(float in_distance, cam_ballistic ballist)
+     41          {
+     42          
+     43          ball_result ball_res;
+     44          bool correct = false;
+     45          float MOAy, MOAx,MOAd;
+     46          float distance;
+     47          static float pref_correct_g, pref_correct_v;
+     48            	float  x;
+     49                     x= in_distance/0.9144;
+     50          
+     51                     	float	//_WT=105.0,
+     52          			_V0= ballist.bullet_V0/0.3048,            //начальная скорость
+     53          			_C = ballist.bullet_BC,                   //баллистический коэффициент
+     54          			_HZ= 0.0,                                                        //
+     55          			_Z=  ballist.weapon_L0/0.9144,            //дальность пристрелки
+     56          			_VW=(float)senspar.wind_speed/0.44704,    //скорость ветра
+     57          			_WDir=(float)senspar.wind_dir/30.0,       //направление ветра
+     58          			_TC=(float)senspar.temperature,           //температура
+     59          			_AL= 100.0,                               // высота над уровнем моря
+     60          			_PR=(float)senspar.pressure/0.7501,
+     61          			_S=ballist.weapon_H/25.4,
+     62                                   l=ballist.weapon_step/2.54,               //шаг нарезки
+     63          			_MOAValue=1.05,
+     64          			_PR0 = ballist.weapon_P0/0.7501,
+     65          			_MayewskiConst=246.0;
+     66          
+     67                   int V0int = (int)floor(((bullet._V0-300.0)/100.0)+0.5);
+     68                   int BCint = (int)floor(((_C-0.2)*10.0)+0.5);
+     69          
+     70                   float st = stepen[V0int][BCint];
+     71          	     float    	_TE=(_TC*1.8)+32.0,
+     72          			_F=_C*_MayewskiConst*pow(_V0,st),
+     73          			_FC=_F*(460.0+_TE)/(519.0-_AL/280.0)*exp(_AL/31654.0)*(2.0-_PR/_PR0),
+     74          			_DZ=pow(((41.68/_V0)/((1.0/(_Z))-(1.0/(_FC-(0.75+0.00006*_Z)*_N1*_Z)))),2.0);
+     75          	    float C5;
+     76          
+     77          		C5=x;
+     78          		float F5/*DropInches*/= pow(  (41.68/_V0)/((1.0/(C5))-(1.0/(_FC-(0.75+0.00006*C5)*_N1*C5))),2.0);
+     79          		float G5/*PathInches*/=-(F5+_S)+(_DZ+_S+_HZ)*C5/_Z;
+     80          		float H5/*MOAy*/=-G5/C5/_MOAValue*100.0;
+     81          		float I5/*MOAx*/=(79.2*C5*_VW/_V0/(_FC/C5-1.0-_N1))/C5/_MOAValue*100.0*sin(_WDir/12.0*2.0*3.1415926/*M_PI*/);
+     82          
+     83          
+     84          
+     85            MOAy = H5;//(((((pow(Yz,2)+fS+fZ)*dist)/(fZ))-(pow(Yx,2)+fS))/dist)*100;
+     86          
+     87            MOAx = I5;// (((79.2*dist*(fVW/fV0))/((K2/dist)-1-_N1))/dist)*100*sin((fVDIR/12)*2*3.14);
+     88          
+     89            MOAd = (pow(x/0.9144,2)*(6-(l/4)))/(10000000*0.2909);
+     90          
+     91          if(x==0.0)
+     92          {
+     93          MOAy=0.0;
+     94          MOAx=0.0;
+     95          MOAd=0.0;
+     96          }
+     97          
+     98          
+     99          
+    100          
+    101          distance = (MOAy);
+    102          
+    103            if(distance>9999) distance = 9999;
+    104            if(distance<-9999) distance = -9999;
+    105          
+    106            ball_res.MOAySM = distance*0.0290893*0.9144*x;
+    107          
+    108          
+    109            if(pref_correct_v  != distance)correct = true;
+    110          
+    111            pref_correct_v  = distance;
+    112          
+    113            distance = ((MOAx+MOAd));
+    114          
+    115            if(distance>9999)  distance = 9999;
+    116            if(distance<-9999) distance = -9999;
+    117          
+    118            ball_res.MOAxSM = distance*0.0290893*0.9144*x;
+    119          
+    120                if(pref_correct_g != distance)
+    121                {
+    122                ball_res.correct = true;
+    123                // gor_correct_par.change_bit = true;
+    124                }
+    125                pref_correct_g = distance;
+    126          return ball_res;
+    127          }
+    128          
+    129          
+    130          float K3(float x)
+    131          {
+    132           return ((0.75+0.00006*x)*_N1*x);
+    133          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   K3
+        16   -> __aeabi_d2f
+        16   -> __aeabi_dadd
+        16   -> __aeabi_dmul
+        16   -> __aeabi_f2d
+     112   balCalculate
+       112   -> __aeabi_d2f
+       112   -> __aeabi_d2iz
+       112   -> __aeabi_dadd
+       112   -> __aeabi_ddiv
+       112   -> __aeabi_dmul
+       112   -> __aeabi_dsub
+       112   -> __aeabi_f2d
+       112   -> __aeabi_fadd
+       112   -> __aeabi_fdiv
+       112   -> __aeabi_fmul
+       112   -> __aeabi_fsub
+       112   -> exp
+       112   -> floor
+       112   -> pow
+       112   -> sin
+       112 __aeabi_cfcmpeq
+       112 __aeabi_cfcmple
+       112 __aeabi_cfrcmple
+       0   default_ball_ini
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_10
+       4  ??DataTable2_11
+       4  ??DataTable2_12
+       4  ??DataTable2_13
+       4  ??DataTable2_14
+       4  ??DataTable2_15
+       4  ??DataTable2_16
+       4  ??DataTable2_17
+       4  ??DataTable2_18
+       4  ??DataTable2_19
+       4  ??DataTable2_2
+       4  ??DataTable2_20
+       4  ??DataTable2_21
+       4  ??DataTable2_22
+       4  ??DataTable2_23
+       4  ??DataTable2_24
+       4  ??DataTable2_25
+       4  ??DataTable2_26
+       4  ??DataTable2_27
+       4  ??DataTable2_28
+       4  ??DataTable2_29
+       4  ??DataTable2_3
+       4  ??DataTable2_30
+       4  ??DataTable2_31
+       4  ??DataTable2_32
+       4  ??DataTable2_33
+       4  ??DataTable2_34
+       4  ??DataTable2_35
+       4  ??DataTable2_36
+       4  ??DataTable2_37
+       4  ??DataTable2_38
+       4  ??DataTable2_39
+       4  ??DataTable2_4
+       4  ??DataTable2_40
+       4  ??DataTable2_41
+       4  ??DataTable2_42
+       4  ??DataTable2_43
+       4  ??DataTable2_44
+       4  ??DataTable2_45
+       4  ??DataTable2_46
+       4  ??DataTable2_47
+       4  ??DataTable2_48
+       4  ??DataTable2_49
+       4  ??DataTable2_5
+       4  ??DataTable2_50
+       4  ??DataTable2_51
+       4  ??DataTable2_52
+       4  ??DataTable2_53
+       4  ??DataTable2_54
+       4  ??DataTable2_55
+       4  ??DataTable2_56
+       4  ??DataTable2_57
+       4  ??DataTable2_58
+       4  ??DataTable2_59
+       4  ??DataTable2_6
+       4  ??DataTable2_60
+       4  ??DataTable2_7
+       4  ??DataTable2_8
+       4  ??DataTable2_9
+      58  K3
+    1564  balCalculate
+      16  bullet
+     112  default_ball_ini
+       4  pref_correct_g
+       4  pref_correct_v
+      40  senspar
+     200  stepen
+      24  weapon
+
+ 
+    88 bytes in section .bss
+   200 bytes in section .data
+ 1 978 bytes in section .text
+ 
+ 1 978 bytes of CODE memory
+   288 bytes of DATA memory
+
+Errors: none
+Warnings: 1

@@ -1,0 +1,164 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:24
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\LSM6DS33.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\LSM6DS33.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\LSM6DS33.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\LSM6DS33.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\LSM6DS33.c
+      1          #include "LSM6DS33.h"
+      2          
+      3          LSM6DS33_data LSM6DS33_out_data;
+      4          
+      5          //#########     TASK MANAGER ###################################################
+      6          void LSM6DS33_tasks()
+      7          {
+      8           LSM6DS33_out_data.status = LSM6DS33_get_status();
+      9           if(LSM6DS33_out_data.status&XLDA) 
+     10           {
+     11             LSM6DS33_out_data.accelerometer_x = LSM6DS33_read_data_word(OUTX_L_XL);
+     12             LSM6DS33_out_data.accelerometer_y = LSM6DS33_read_data_word(OUTY_L_XL);
+     13             LSM6DS33_out_data.accelerometer_z = LSM6DS33_read_data_word(OUTZ_L_XL);
+     14             LSM6DS33_out_data.accel_ready = true;
+     15             LSM6DS33_out_data.status &=~XLDA;
+     16           }
+     17           
+     18           if(LSM6DS33_out_data.status&TDA)
+     19             {
+     20              LSM6DS33_out_data.temperature = ((LSM6DS33_read_data_word(OUT_TEMP_L))>>4);
+     21              LSM6DS33_out_data.temp_ready = true;
+     22              LSM6DS33_out_data.status&=~TDA;
+     23             }
+     24          }
+     25          
+     26          //#########   DRIVER FUNCTION ##################################################
+     27          void LSM6DS33_wright_data_word(u16 word, u8 addr)
+     28          {
+     29           
+     30          }
+     31          
+     32          u16  LSM6DS33_read_data_word(u8 addr)
+     33          {
+     34           u16 word =0;
+     35           u8*data;
+     36           data = (u8*)(&word);
+     37           i2c_ReadReg(LSM6DS33_I2C, LSM6DS33_ADRESS, addr, data, 1);
+     38           data++;
+     39           addr++;
+     40           i2c_ReadReg(LSM6DS33_I2C, LSM6DS33_ADRESS, addr, data, 1);
+     41          
+     42           return word;
+     43          }
+     44          
+     45          //######### MAIN FUNCTIONS   ###################################################
+     46          
+     47          void LSM6DS33_congig()
+     48          {
+     49           u8 wright_reg;
+     50           
+     51           wright_reg = ODRXL13|FSXL2G|BWXL400HZ; 
+     52           i2c_WriteReg(LSM6DS33_I2C, LSM6DS33_ADRESS, CTRL1_XL, &wright_reg, 1);
+     53          
+     54           
+     55          }
+     56          
+     57          void LSM6DS33_read_accelerometer()
+     58          {
+     59          
+     60          
+     61          }
+     62          
+     63          
+     64          void LSM6DS33_read_gyroscope()
+     65          {
+     66          
+     67          
+     68          }
+     69          
+     70          
+     71          void LSM6DS33_read_temperature()
+     72          {
+     73          
+     74          }
+     75          
+     76          uint8_t LSM6DS33_get_status()
+     77          {
+     78            u8 status_reg;
+     79           i2c_ReadReg(LSM6DS33_I2C, LSM6DS33_ADRESS, STATUS_REG, &status_reg, 1);
+     80           return status_reg;
+     81          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   LSM6DS33_congig
+        16   -> i2c_WriteReg
+      16   LSM6DS33_get_status
+        16   -> i2c_ReadReg
+       0   LSM6DS33_read_accelerometer
+      24   LSM6DS33_read_data_word
+        24   -> i2c_ReadReg
+       0   LSM6DS33_read_gyroscope
+       0   LSM6DS33_read_temperature
+       8   LSM6DS33_tasks
+         8   -> LSM6DS33_get_status
+         8   -> LSM6DS33_read_data_word
+       0   LSM6DS33_wright_data_word
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable3
+       4  ??DataTable3_1
+      28  LSM6DS33_congig
+      26  LSM6DS33_get_status
+      24  LSM6DS33_out_data
+       2  LSM6DS33_read_accelerometer
+      60  LSM6DS33_read_data_word
+       2  LSM6DS33_read_gyroscope
+       2  LSM6DS33_read_temperature
+     108  LSM6DS33_tasks
+       2  LSM6DS33_wright_data_word
+
+ 
+  24 bytes in section .bss
+ 238 bytes in section .text
+ 
+ 238 bytes of CODE memory
+  24 bytes of DATA memory
+
+Errors: none
+Warnings: 3

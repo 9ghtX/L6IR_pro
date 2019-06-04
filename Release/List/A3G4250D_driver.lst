@@ -1,0 +1,137 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:15
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\A3G4250D_driver.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\A3G4250D_driver.c -D
+#        USE_STDPERIPH_DRIVER -D STM32L1XX_MD -D FR14745600 -D nFR11059200 -D
+#        L6IR_CU -D nPT2_MODE -D PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D
+#        nSWIR_MODE -D nA3G4250D -D nLPS331AP -D METEO -D nTEST_MODE -D
+#        nFLASH_ENABLE -lcN E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  
+#        E:\projects\L6IR\programm\L6_pro\Release\List\A3G4250D_driver.lst
+#    Object file  =  
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj\A3G4250D_driver.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\A3G4250D_driver.c
+      1          /**
+      2           * @file   A3G4250D_driver.c
+      3           * @date   14 рту. 2013 у.
+      4           * @author
+      5           * @brief  A3G4250D_driver
+      6           */
+      7          
+      8          #include "hal_mcu.h"
+      9          #include "A3G4250D_driver.h"
+     10          #include "i2c.h"
+     11          //#include "debug.h"
+     12          
+     13          #define I2C_LINE    I2C1
+     14          #define I2C_ADDRESS 0xD3
+     15          
+     16          bool A3G4250D_WriteReg(uint8_t reg, uint8_t  data){ return (i2c_WriteReg(I2C_LINE,I2C_ADDRESS, reg, &data, 1)); }
+     17          bool A3G4250D_ReadReg (uint8_t reg, uint8_t* data){ return (i2c_ReadReg(I2C_LINE,I2C_ADDRESS, reg, data, 1)); }
+     18          
+     19          
+     20          void A3G4250D_I2C_Init(void);
+     21          void A3G4250D_INT1_Config(A3G4250D_IntConfigTypeDef* A3G4250D_IntConfig);
+     22          
+     23          
+     24          
+     25          
+     26          void A3G4250D_I2C_Init(void){}
+     27          
+     28          void A3G4250D_Config(A3G4250D_ConfigTypeDef *A3G4250D_Config, A3G4250D_config4 *A3G4250D_Cfg4)
+     29          {
+     30            uint8_t regval = ( (uint8_t)(A3G4250D_Config->power) +
+     31                               (uint8_t)(A3G4250D_Config->odr)   +
+     32                                (A3G4250D_Config->axis) );
+     33            A3G4250D_WriteReg(A3G4250D_CTRL_REG1,regval);
+     34            regval = A3G4250D_Cfg4->self_test;
+     35              A3G4250D_WriteReg(A3G4250D_CTRL_REG4,regval);
+     36          
+     37          }
+     38          
+     39          void A3G4250D_FilterConfig(A3G4250D_FilterConfigTypeDef* A3G4250D_FilterConfig)
+     40          {
+     41            uint8_t regval = (uint8_t)A3G4250D_FilterConfig->filter_cutoff +
+     42                             (uint8_t)A3G4250D_FilterConfig->filter_mode;
+     43          
+     44            A3G4250D_WriteReg(A3G4250D_CTRL_REG2,regval);
+     45          }
+     46          
+     47          void A3G4250D_FifoConfig(A3G4250D_FifoConfigTypeDef* A3G4250D_FilterConfig)
+     48          {
+     49            uint8_t regval = (uint8_t)A3G4250D_FilterConfig->fifo_mode +
+     50                             (uint8_t)A3G4250D_FilterConfig->fifo_wm;
+     51            A3G4250D_WriteReg(A3G4250D_CTRL_REG3,regval);
+     52          }
+     53          
+     54          
+     55          
+     56          
+     57          
+     58          
+     59          
+     60          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   A3G4250D_Config
+         8   -> A3G4250D_WriteReg
+       8   A3G4250D_FifoConfig
+         8   -> A3G4250D_WriteReg
+       8   A3G4250D_FilterConfig
+         8   -> A3G4250D_WriteReg
+       0   A3G4250D_I2C_Init
+       8   A3G4250D_ReadReg
+         8   -> i2c_ReadReg
+      16   A3G4250D_WriteReg
+        16   -> i2c_WriteReg
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable1
+      34  A3G4250D_Config
+      18  A3G4250D_FifoConfig
+      18  A3G4250D_FilterConfig
+       2  A3G4250D_I2C_Init
+      22  A3G4250D_ReadReg
+      24  A3G4250D_WriteReg
+
+ 
+ 122 bytes in section .text
+ 
+ 122 bytes of CODE memory
+
+Errors: none
+Warnings: none

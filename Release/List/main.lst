@@ -1,0 +1,383 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:26
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\main.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\main.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\main.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\main.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\main.c
+      1          #include <hal_types.h>
+      2          #include "protocol.h"
+      3          #include "Ball.h"
+      4          #include "i2c.h"
+      5          #include "galenic.h"
+      6          
+      7          #ifdef TNM_MODE
+      8          #include "digital_resist.h"
+      9          #endif
+     10          
+     11          
+     12          u8 TXD[192];				//buffer
+     13          u8 RXD[64];				//buffer
+     14           key_struct keys;
+     15          bool key1_pulse = false;
+     16          u16  key1_count = 0;
+     17          bool encoder_ini=false;
+     18          bool flash_is_read = false;
+     19          extern operator_control_consist operator_ctrl_consist;
+     20          u8 galenic_counter =0;
+     21          extern bool cam_power_state;
+     22          extern u8 eoc_brightnes_value;
+     23          bool led_pulse_enable=false;
+     24          void iclinate_analis()
+     25          {
+     26           if(((senspar.declinate - senspar.prev_declinate)>1) || ((senspar.declinate - senspar.prev_declinate)<-1))
+     27             {
+     28               senspar.change_par = true;
+     29          
+     30             }
+     31           if((senspar.inclinate>45) || (senspar.inclinate<-45)||(senspar.declinate>5) || (senspar.declinate<-5))
+     32             {
+     33              if(!senspar.trabl_par)
+     34              {
+     35                senspar.change_par = true;
+     36                senspar.trabl_par  = true;
+     37              }
+     38             }
+     39           else
+     40             {
+     41              if(senspar.trabl_par)
+     42              {
+     43                senspar.change_par = true;
+     44                senspar.trabl_par  = false;
+     45              }
+     46             }
+     47          }
+     48          
+     49          
+     50          
+     51          int main()
+     52          {
+     53                  SystemInit();
+     54                  RCC_PLLConfig(RCC_PLLSource_HSE,RCC_PLLMul_4,RCC_PLLDiv_2);
+     55                  RCC_PLLCmd(ENABLE);
+     56                  RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+     57                  RCC_HCLKConfig(RCC_SYSCLK_Div1);
+     58                  RCC_PCLK2Config(RCC_HCLK_Div1);
+     59                  
+     60                  SystemCoreClockUpdate();
+     61                  system_timer_init();
+     62          	
+     63                  NVIC_Configuration();
+     64          
+     65                  //SysTick_SetReload(23040);
+     66          
+     67                  //SysTick_ITConfig(ENABLE);
+     68          	
+     69          	
+     70                  
+     71                  #ifdef TNM_MODE
+     72                  KEY1_SET;
+     73                  CAM_POWER_OFF;
+     74                  #endif
+     75                  //SPI_EEPROM_Init();
+     76          
+     77                  timers_config();
+     78                
+     79                  
+     80                  //***************
+     81                  #ifndef TNM_MODE
+     82                  #ifndef TEST_MODE
+     83                  system_wait_timer = SECOND_9;//SECOND_0_2;//NO_DELAY;
+     84                  if(system_wait_timer != NO_DELAY)
+     85                  {
+     86                  task_flag =true;     // пауза перед инициализацией
+     87                  while(task_flag);
+     88                  }
+     89                  #endif
+     90                  #endif
+     91                  
+     92                  //***************
+     93                  GPIO_Configuration();
+     94                  UART_init();
+     95                  #ifndef TNM_MODE
+     96                  SPI_init_func();
+     97                  #endif
+     98                  
+     99                  #ifdef TNM_MODE
+    100                  cam_power_state = false;
+    101                  #endif
+    102                  ADC_init_func();
+    103                  i2c_init();
+    104                  //lps331ap_init();
+    105                  LSM6DS33_congig();
+    106          
+    107                  clean(&RXbuf);
+    108                  init_spi_objects();
+    109          
+    110                  IniRingBuf(TXD,sizeof(TXD), &TXbuf);
+    111          	IniRingBuf(RXD,sizeof(RXD), &RXbuf);
+    112                  IniRingBuf(net_status.fifo_buf, sizeof(net_status.fifo_buf), &net_status.fifo_stack);
+    113                  IniRingBuf(keys.buffer, sizeof(keys.buffer), &keys.keys_stack);
+    114                  
+    115                  default_ball_ini();
+    116                  default_cam_sets();
+    117                  
+    118          
+    119          #ifndef TNM_MODE
+    120                  spi_silar_read(STATUS_REG_ADDR);
+    121          
+    122                  spi_read_camers_state();        
+    123                   //system_wait_timer =15000;
+    124                   task_flag =true;        
+    125                   u32 temp_data;
+    126          //         spi_objects[20].sinchro_count = 50;
+    127          //        while(task_flag)
+    128          //         { 
+    129          //           if(!spi_objects[20].sinchro_count)
+    130          //           {
+    131          //            temp_data = spi_silar_read(DISTANCE_ADDR);
+    132          //            if(temp_data != 0) task_flag = false;
+    133          //            spi_objects[20].sinchro_count = 50;
+    134          //           }
+    135          //         }
+    136          
+    137                  while(!flash_is_read)
+    138                  {
+    139                   spi_silar_tasks();
+    140                   if(!task_flag) flash_is_read = true;
+    141                  }
+    142          
+    143                  //flash.cam_type = PT2_CONFIG;
+    144          
+    145          
+    146                  //flash.cam_type = TNV_CONFIG; 
+    147                 // flash.cam_type = TNV_CU_CONFIG;
+    148                  
+    149                  //flash.cam_type = PT6_CONFIG;
+    150                  //flash.cam_type = PT6_AB_CONFIG;
+    151                  
+    152                    //flash.cam_type = PT9_1ENCODER_M_CONFIG;
+    153                    //flash.cam_type = PT9_1ENCODER_BME_CONFIG;
+    154                  //flash.cam_type = PT9_1ENCODER_ME_CONFIG;
+    155                    flash.cam_type = PT9_1ENCODER_E_CONFIG;
+    156                  //flash.cam_type = PT9_1ENCODER_CONFIG;
+    157                  //flash.cam_type = PT9_2ENCODER_B_CONFIG;
+    158                  //flash.cam_type = PT9_2ENCODER_CONFIG;
+    159                  //flash.cam_type = PT9_2ENCODER_CU_CONFIG;
+    160          
+    161                  
+    162                  //flash.cam_type = SWIR_N_EXPO_CONFIG;
+    163                  //flash.cam_type = SWIR_CONFIG;
+    164                  //flash.cam_type = SWIR_BME_CONFIG;
+    165                  // flash.cam_type = SWIR_BM_CONFIG;
+    166          #else
+    167            //     digital_resist_ini();      
+    168                 flash.cam_type = TNP_CONFIG;
+    169          #endif
+    170             
+    171          
+    172                  smart_device_ini();
+    173                  func_buffer_ini();
+    174                  encoder_func_ini();
+    175                  system_wait_timer =500;
+    176                  pref_net_init();
+    177                  senspar.change_par = true;
+    178                  senspar.temp_auto = true;
+    179                  senspar.press_auto = true;
+    180                  operator_ctrl_consist = not_action;
+    181                  #ifndef TNM_MODE
+    182                  
+    183                  redrow_menu_simbol();
+    184                  #else
+    185                  set_device_mode(N_MODE);//N_MODE);
+    186                  #endif
+    187                  
+    188                  while(1)
+    189                  {
+    190                    //GPIO_SetBits(GPIOB, GPIO_Pin_10);
+    191                    //GPIO_SetBits(GPIOB, GPIO_Pin_11);
+    192                    //u8 send_data = eoc_brightnes_value;
+    193                    //i2c_WriteReg(I2C2, DIGITAL_RESIST_ADRESS|WRIGHT_FLAG, WRIGHT_REG_ADR, &send_data, 1);
+    194                   if(rs_frame)
+    195                    {
+    196                     protocol();
+    197                     rs_frame = false;
+    198                    }
+    199                   #ifndef TEST_MODE
+    200                    if(net_sets.net_pr == NET_MASTER) net_task();
+    201                    if(net_fault_flag) net_fault_function();
+    202                   #endif
+    203          
+    204          
+    205                   #ifdef TEST_MODE
+    206                    u32 test_data;
+    207                    if( )
+    208                   #endif
+    209                      
+    210                    if(cam_power_state)
+    211                    {
+    212                      spi_silar_tasks();
+    213                      keys_analis();
+    214                      
+    215                     if(flash.cam_type&CONFIG_BALL_TEST)
+    216                     {
+    217                     #ifndef TABLE_BAL
+    218                    //iclinate_analis();
+    219                    if(cam_sets.syncro_count==0)mark_tasks();
+    220                    #endif
+    221                     }
+    222                    }
+    223                    else
+    224                    {
+    225                      keys_analis_P_O();
+    226                    }
+    227                    i2c_sensors_tasks();
+    228                    //Power_control_func();
+    229                    
+    230            //        oled_control();
+    231                    
+    232                    LSM6DS33_tasks();
+    233                    //if((!galenic_counter)&&(flash.cam_type&CONFIG_GALINIC_TEST))
+    234          #ifdef TNM_MODE
+    235                    if(!galenic_counter){galenic_func(); galenic_counter =40;}
+    236          #endif
+    237           //         Operator_present_control();
+    238          //         if(led_pulse_enable) 
+    239          //            {
+    240          //              led_pulse_control();
+    241          //            }
+    242          //         else led_off();
+    243                    
+    244                  }
+    245            return 0;
+    246          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   iclinate_analis
+         8   -> __aeabi_fsub
+         8 __aeabi_cfcmple
+         8 __aeabi_cfrcmple
+       8   main
+         8   -> ADC_init_func
+         8   -> GPIO_Configuration
+         8   -> IniRingBuf
+         8   -> LSM6DS33_congig
+         8   -> LSM6DS33_tasks
+         8   -> NVIC_Configuration
+         8   -> RCC_HCLKConfig
+         8   -> RCC_PCLK2Config
+         8   -> RCC_PLLCmd
+         8   -> RCC_PLLConfig
+         8   -> RCC_SYSCLKConfig
+         8   -> SPI_init_func
+         8   -> SystemCoreClockUpdate
+         8   -> SystemInit
+         8   -> UART_init
+         8   -> clean
+         8   -> default_ball_ini
+         8   -> default_cam_sets
+         8   -> encoder_func_ini
+         8   -> func_buffer_ini
+         8   -> i2c_init
+         8   -> i2c_sensors_tasks
+         8   -> init_spi_objects
+         8   -> keys_analis
+         8   -> keys_analis_P_O
+         8   -> mark_tasks
+         8   -> net_fault_function
+         8   -> net_task
+         8   -> pref_net_init
+         8   -> protocol
+         8   -> redrow_menu_simbol
+         8   -> smart_device_ini
+         8   -> spi_read_camers_state
+         8   -> spi_silar_read
+         8   -> spi_silar_tasks
+         8   -> system_timer_init
+         8   -> timers_config
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable1
+       4  ??DataTable1_1
+       4  ??DataTable1_10
+       4  ??DataTable1_11
+       4  ??DataTable1_12
+       4  ??DataTable1_13
+       4  ??DataTable1_14
+       4  ??DataTable1_15
+       4  ??DataTable1_16
+       4  ??DataTable1_17
+       4  ??DataTable1_18
+       4  ??DataTable1_19
+       4  ??DataTable1_2
+       4  ??DataTable1_20
+       4  ??DataTable1_21
+       4  ??DataTable1_22
+       4  ??DataTable1_23
+       4  ??DataTable1_24
+       4  ??DataTable1_3
+       4  ??DataTable1_4
+       4  ??DataTable1_5
+       4  ??DataTable1_6
+       4  ??DataTable1_7
+       4  ??DataTable1_8
+       4  ??DataTable1_9
+      64  RXD
+     192  TXD
+       1  encoder_ini
+       1  flash_is_read
+       1  galenic_counter
+     154  iclinate_analis
+       2  key1_count
+       1  key1_pulse
+     116  keys
+       1  led_pulse_enable
+     372  main
+
+ 
+ 379 bytes in section .bss
+ 626 bytes in section .text
+ 
+ 626 bytes of CODE memory
+ 379 bytes of DATA memory
+
+Errors: none
+Warnings: 7

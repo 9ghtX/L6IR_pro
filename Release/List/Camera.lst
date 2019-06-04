@@ -1,0 +1,966 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.70.1.11437/W32 for ARM       18/Apr/2019  18:40:18
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  E:\projects\L6IR\programm\L6_pro\Camera.c
+#    Command line =  
+#        E:\projects\L6IR\programm\L6_pro\Camera.c -D USE_STDPERIPH_DRIVER -D
+#        STM32L1XX_MD -D FR14745600 -D nFR11059200 -D L6IR_CU -D nPT2_MODE -D
+#        PT7_MODE -D nTABLE_BAL -D nTNM_MODE -D nSWIR_MODE -D nA3G4250D -D
+#        nLPS331AP -D METEO -D nTEST_MODE -D nFLASH_ENABLE -lcN
+#        E:\projects\L6IR\programm\L6_pro\Release\List -lb
+#        E:\projects\L6IR\programm\L6_pro\Release\List -o
+#        E:\projects\L6IR\programm\L6_pro\Release\Obj --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --no_clustering --no_scheduling
+#        --debug --endian=little --cpu=Cortex-M3 -e --fpu=None --dlib_config
+#        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        7.5\arm\INC\c\DLib_Config_Normal.h" -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\src\ -I
+#        E:\projects\L6IR\programm\L6_pro\STM32L1xx_StdPeriph_Driver\inc\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\inc\ -I
+#        nE:\projects\L6IR\programm\L6_pro\CMSIS\CM3\CoreSupport\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Device\ST\STM32L1xx\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\mcu\startup\iar\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\include\ -I
+#        E:\projects\L6IR\programm\L6_pro\rfu_stm32\source\ -I
+#        E:\projects\L6IR\programm\L6_pro\CMSIS\Include\ -I
+#        E:\projects\L6IR\programm\L6_pro\ -Ol
+#    Locale       =  Russian_Russia.1251
+#    List file    =  E:\projects\L6IR\programm\L6_pro\Release\List\Camera.lst
+#    Object file  =  E:\projects\L6IR\programm\L6_pro\Release\Obj\Camera.o
+#
+###############################################################################
+
+E:\projects\L6IR\programm\L6_pro\Camera.c
+      1          #include "L6IR.h"
+      2          #include "Ball.h"
+      3          #include "hal_critical_section.h"
+      4          #include "net.h"
+      5          
+      6          spi_object spi_objects[SPI_OBJ_Q];
+      7          spi_def spi_sets;
+      8          #define ZOOM    (spi_sets.silar_state&0x03)
+      9          #define EN_MENU (0x08&spi_sets.silar_state)
+     10          
+     11          u8 spi_task_count;
+     12          cam_settings cam_sets;
+     13          extern bool flash_is_read;
+     14          flash_memory flash;
+     15          uint16_t critcal_section_level=0;
+     16          camera_operation cam_operation;
+     17          //cam_ballistic ballistics_buf[11];
+     18          extern bool key1_pulse;
+     19          extern u16  key1_count;
+     20          extern bool led_pulse_enable;
+     21          extern encoder encoder0;
+     22          
+     23          void init_spi_objects()
+     24          {
+     25            spi_task_count = 0;
+     26            spi_sets.spi_obj_q =34;
+     27            spi_sets.silar_status = 0;
+     28            spi_sets.read_status_zero_count = 0;
+     29            spi_sets.stat_read_enable = false;
+     30            spi_sets.read_sichro_count = READ_SYCHRO_TIME;
+     31            spi_sets.wright_sinchro_count = WRIGHT_SYCHRO_TIME;
+     32            spi_sets.wright_enable = true;
+     33            spi_objects[0].adress  = MARK_0_ADDR;
+     34            spi_objects[0].reg_for_wright = true;
+     35            spi_objects[1].adress  = MARK_1_ADDR;
+     36            spi_objects[1].reg_for_wright = true;
+     37            spi_objects[2].adress  = MARK_2_ADDR;
+     38            spi_objects[2].reg_for_wright = true;
+     39            spi_objects[3].adress  = MARK_3_ADDR;
+     40            spi_objects[3].reg_for_wright = true;
+     41            spi_objects[4].adress  = MARK_4_ADDR;
+     42            spi_objects[4].reg_for_wright = true;
+     43            spi_objects[5].adress  = MARK_5_ADDR;
+     44            spi_objects[5].reg_for_wright = false;
+     45            spi_objects[6].adress  = MARK_6_ADDR;
+     46            spi_objects[6].reg_for_wright = false;
+     47            spi_objects[7].adress  = MARK_7_ADDR;
+     48            spi_objects[7].reg_for_wright = true;
+     49            spi_objects[8].adress  = MARK_8_ADDR;
+     50            spi_objects[8].reg_for_wright = true;
+     51            spi_objects[9].adress  = MARK_9_ADDR;
+     52            spi_objects[9].reg_for_wright = true;
+     53            spi_objects[10].adress = MARK_10_ADDR;
+     54            spi_objects[10].reg_for_wright = true;
+     55            spi_objects[11].adress = MARK_11_ADDR;
+     56            spi_objects[11].reg_for_wright = true;
+     57            spi_objects[12].adress = MARK_12_ADDR;
+     58            spi_objects[12].reg_for_wright = false;
+     59            spi_objects[13].adress = MARK_13_ADDR;
+     60            spi_objects[13].reg_for_wright = false;
+     61            spi_objects[14].adress = MARK_14_ADDR;
+     62            spi_objects[14].reg_for_wright = false;
+     63            spi_objects[15].adress = MARK_15_ADDR;
+     64            spi_objects[15].reg_for_wright = false;
+     65            spi_objects[16].adress = MARK_16_ADDR;
+     66            spi_objects[16].reg_for_wright = true;
+     67            spi_objects[17].adress = FLASH_READING_ADDRES;
+     68            spi_objects[17].reg_for_wright = true;
+     69            spi_objects[18].adress = CAMERA_STATE_ADDR;
+     70            spi_objects[18].reg_for_wright = false;
+     71            spi_objects[19].adress = TEMPERATURE_READ_ADDR;
+     72            spi_objects[19].reg_for_wright = false;
+     73            spi_objects[20].adress = DISTANCE_ADDR;
+     74            spi_objects[20].reg_for_wright = true;
+     75            spi_objects[21].adress = TEMPERATURE_WRIGHT_ADDR;
+     76            spi_objects[21].reg_for_wright = true;
+     77            spi_objects[22].adress = PRESSURE_ADDR;
+     78            spi_objects[22].reg_for_wright = true;
+     79            spi_objects[23].adress = INCLINATE_ADDR;
+     80            spi_objects[23].reg_for_wright = true;
+     81            spi_objects[30].adress = COMMAND_REG_ADDR;
+     82            spi_objects[30].reg_for_wright = true;
+     83          
+     84           for(u8 i=0; i<spi_sets.spi_obj_q; i++)
+     85           {
+     86             spi_objects[i].wright_enable=true;
+     87           spi_objects[i].error_count =0;
+     88           }
+     89            cam_operation = wright;
+     90            clean(&keys.keys_stack);
+     91          }
+     92          #ifdef TNM_MODE
+     93          bool cam_power_state = false;
+     94          #else
+     95          bool cam_power_state = true;
+     96          #endif
+     97          extern u16 system_wait_timer;
+     98          extern bool task_flag;
+     99          extern u8 encoder0_masks_buf[];
+    100          
+    101          void set_device_mode(u8 mode)
+    102          {
+    103          switch(mode)
+    104          {
+    105          case T_MODE:
+    106            
+    107                EOC_POWER_OFF;
+    108                if(cam_power_state==false)
+    109                {
+    110          
+    111                CAM_POWER_ON;
+    112                KEY1_RESET;
+    113                  system_wait_timer = SECOND_9;
+    114                  task_flag =true;     
+    115                  while(task_flag);
+    116                  KEY1_SET;
+    117                SPI_init_func();
+    118                init_spi_objects();
+    119                key1_pulse = false;
+    120                system_wait_timer = 150;
+    121                cam_power_state = true;
+    122                }
+    123                senspar.change_par = false;
+    124                spi_objects[COMMAND_REG_ADDR].wright_data = OLED_ON_COMMAND;
+    125                spi_sets.current_function = OLED_ON_COMMAND;
+    126                while(senspar.change_par != true)spi_silar_tasks();
+    127                senspar.change_par = false;
+    128          //
+    129          //      spi_objects[COMMAND_REG_ADDR].wright_data = VIDEO_OFF_COMMAND;
+    130          //      spi_sets.current_function = VIDEO_OFF_COMMAND;
+    131          //      while(senspar.change_par != true)spi_silar_tasks();
+    132          //      senspar.change_par = false;  
+    133                
+    134                spi_objects[COMMAND_REG_ADDR].wright_data = VIDEO_ON_COMMAND;
+    135                spi_sets.current_function = VIDEO_ON_COMMAND; 
+    136                while(senspar.change_par != true)spi_silar_tasks();
+    137                senspar.change_par = false;
+    138                
+    139                led_pulse_enable=false;
+    140                
+    141                spi_objects[COMMAND_REG_ADDR].wright_data = INFO_ON_COMMAND;
+    142                spi_sets.current_function = INFO_ON_COMMAND;
+    143                while(senspar.change_par != true)spi_silar_tasks();
+    144                senspar.change_par = false;
+    145                encoder0.encoder_func = encoder0_func; 
+    146                if((flash.cam_type&0x0000C000)>=0x00008000)encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    147                else encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_ON;
+    148                encoder0_masks_buf[BRIGHTNES_FUNC_NUM] = MASK_ON;
+    149                encoder0_masks_buf[ZOOM_FUNC_NUM] = MASK_ON;
+    150                encoder0_masks_buf[POS_NEG_FUNC_NUM] = MASK_ON;
+    151                encoder0_masks_buf[POLETTE_FUNC_NUM] = MASK_ON;
+    152                encoder0_masks_buf[LIGIBILITY_FUNC_NUM] = MASK_ON;
+    153                encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    154                encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_OFF;
+    155          break;
+    156          
+    157          case N_MODE:              
+    158            EOC_POWER_ON;
+    159            CAM_POWER_OFF;
+    160            SPI_Cmd(SPI2, DISABLE);
+    161            downCS_silar;
+    162            cam_power_state = false;
+    163          
+    164          if(cam_power_state)
+    165          {
+    166                  spi_objects[COMMAND_REG_ADDR].wright_data = OLED_OFF_COMMAND;
+    167                spi_sets.current_function = OLED_OFF_COMMAND; 
+    168                while(senspar.change_par != true)spi_silar_tasks();
+    169                senspar.change_par = false;   
+    170          }
+    171          
+    172          //        KEY1_RESET;
+    173          //        system_wait_timer = SECOND_12;
+    174          //        task_flag =true;     
+    175          //        while(task_flag);
+    176          //        KEY1_SET;
+    177               led_pulse_enable=false;
+    178                net_sets.net_encoder_0 = true;
+    179              encoder0.adress = ADRESS_ENCODER3;
+    180              encoder0.encoder_func = encoder0_eoc_func; 
+    181              //cam_power_state = false;
+    182          //   spi_objects[COMMAND_REG_ADDR].wright_data = CAMERA_OFF_COMMAND;
+    183          break;
+    184          
+    185          case TN_MODE:             
+    186                EOC_POWER_ON;
+    187                 if(cam_power_state==false)
+    188                {
+    189           
+    190                CAM_POWER_ON;
+    191                KEY1_RESET;
+    192                   system_wait_timer = SECOND_9;
+    193                  task_flag =true;     
+    194                  while(task_flag); 
+    195                  KEY1_SET;
+    196                  key1_pulse = false;  
+    197                  cam_power_state = true;
+    198                  SPI_init_func();
+    199                  init_spi_objects();
+    200                  system_wait_timer = 150;
+    201                }
+    202                senspar.change_par = false;
+    203                spi_objects[COMMAND_REG_ADDR].wright_data = OLED_ON_COMMAND;
+    204                spi_sets.current_function = OLED_ON_COMMAND;
+    205                while(senspar.change_par != true)spi_silar_tasks();
+    206                senspar.change_par = false;      
+    207                
+    208          //      spi_objects[COMMAND_REG_ADDR].wright_data = VIDEO_OFF_COMMAND;
+    209          //      spi_sets.current_function = VIDEO_OFF_COMMAND;
+    210          //      while(senspar.change_par != true)spi_silar_tasks();
+    211          //      senspar.change_par = false; 
+    212                
+    213                led_pulse_enable=false;
+    214                
+    215                spi_objects[COMMAND_REG_ADDR].wright_data = VIDEO_ON_COMMAND;
+    216                spi_sets.current_function = VIDEO_ON_COMMAND;
+    217                while(senspar.change_par != true)spi_silar_tasks();
+    218                senspar.change_par = false;     
+    219                
+    220                spi_objects[COMMAND_REG_ADDR].wright_data = INFO_ON_COMMAND;
+    221                spi_sets.current_function = INFO_ON_COMMAND;
+    222                while(senspar.change_par != true)spi_silar_tasks();
+    223                senspar.change_par = false;
+    224                encoder0.encoder_func = encoder0_func; 
+    225               if((flash.cam_type&0x0000C000)>=0x00008000)encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    226               else encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_ON;
+    227               encoder0_masks_buf[BRIGHTNES_FUNC_NUM] = MASK_ON;
+    228               encoder0_masks_buf[ZOOM_FUNC_NUM] = MASK_OFF;
+    229               encoder0_masks_buf[POS_NEG_FUNC_NUM] = MASK_ON;
+    230               encoder0_masks_buf[POLETTE_FUNC_NUM] = MASK_ON;
+    231               encoder0_masks_buf[LIGIBILITY_FUNC_NUM] = MASK_ON;
+    232               encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    233               encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    234          
+    235          break;
+    236          
+    237          case N_MODE_DISP:      
+    238            
+    239                EOC_POWER_ON;
+    240                if(cam_power_state==false)
+    241                {
+    242          
+    243                CAM_POWER_ON;
+    244                KEY1_RESET;
+    245                   system_wait_timer = SECOND_9;
+    246                  task_flag =true;     
+    247                  while(task_flag); 
+    248                  KEY1_SET;
+    249                  key1_pulse = false;        
+    250                  cam_power_state = true;
+    251                  SPI_init_func();
+    252                  init_spi_objects();
+    253                        system_wait_timer = 150;
+    254                }  
+    255                led_pulse_enable=false;
+    256                senspar.change_par = false;
+    257                spi_objects[COMMAND_REG_ADDR].wright_data = OLED_ON_COMMAND;
+    258                spi_sets.current_function = OLED_ON_COMMAND;
+    259                while(senspar.change_par != true)spi_silar_tasks();
+    260                senspar.change_par = false;
+    261          
+    262                
+    263                spi_objects[COMMAND_REG_ADDR].wright_data = VIDEO_OFF_COMMAND;
+    264                spi_sets.current_function = VIDEO_OFF_COMMAND; 
+    265                while(senspar.change_par != true)spi_silar_tasks();
+    266                senspar.change_par = false;
+    267          
+    268                
+    269                spi_objects[COMMAND_REG_ADDR].wright_data = INFO_ON_COMMAND;
+    270                spi_sets.current_function = INFO_ON_COMMAND;
+    271                while(senspar.change_par != true)spi_silar_tasks();
+    272                senspar.change_par = false;    
+    273                encoder0.encoder_func = encoder0_func; 
+    274               if((flash.cam_type&0x0000C000)>=0x00008000)encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+    275               else encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_ON;
+    276               encoder0_masks_buf[BRIGHTNES_FUNC_NUM] = MASK_OFF;
+    277               encoder0_masks_buf[ZOOM_FUNC_NUM] = MASK_OFF;
+    278               encoder0_masks_buf[POS_NEG_FUNC_NUM] = MASK_OFF;
+    279               encoder0_masks_buf[POLETTE_FUNC_NUM] = MASK_OFF;
+    280               encoder0_masks_buf[LIGIBILITY_FUNC_NUM] = MASK_OFF;
+    281               encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    282               encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_ON;
+    283          break;
+    284          
+    285          case N_MODE_IR:   
+    286               EOC_POWER_ON;
+    287               CAM_POWER_OFF;
+    288               SPI_Cmd(SPI2, DISABLE);
+    289               downCS_silar;
+    290               cam_power_state = false;
+    291               if(cam_power_state)
+    292               {
+    293                spi_objects[COMMAND_REG_ADDR].wright_data = OLED_OFF_COMMAND;
+    294                spi_sets.current_function = OLED_OFF_COMMAND; 
+    295                while(senspar.change_par != true)spi_silar_tasks();
+    296                senspar.change_par = false;   
+    297               }
+    298             led_pulse_enable = true;
+    299             net_sets.net_encoder_0 = true;
+    300             encoder0.adress = ADRESS_ENCODER3;
+    301             encoder0.encoder_func = encoder0_eoc_func; 
+    302          //   cam_power_state = false;
+    303          //   spi_objects[COMMAND_REG_ADDR].wright_data = CAMERA_OFF_COMMAND;
+    304          break; 
+    305          
+    306          }
+    307           if(cam_power_state) redrow_menu_simbol();
+    308          }
+    309          
+    310          
+    311          
+    312          //==============================================================================
+    313          //      SPI TASK MANAGER
+    314          //==============================================================================
+    315          #ifdef TEST_MODE
+    316          u8 spi_test_tasks[4] = {20,21,22,23};
+    317          u8 test_task_count;
+    318          #endif
+    319          
+    320          
+    321          u32 prev_cam_state;
+    322          
+    323          
+    324          void spi_silar_tasks()
+    325          {
+    326          
+    327           bool find_task = false;
+    328           u8  count, temp_task;
+    329           temp_task = spi_task_count;
+    330           u32 prob;
+    331          // if(cam_operation == read)
+    332          // {
+    333          #ifndef TEST_MODE
+    334           if((spi_sets.read_sichro_count==0)&&spi_sets.stat_read_enable)
+    335             {
+    336              spi_sets.silar_status = spi_silar_read(STATUS_REG_ADDR);
+    337          
+    338              for(count=0;count<32;count++)
+    339                 {
+    340                   if((spi_sets.silar_status>>count)&0x00000001)
+    341                   {
+    342                     spi_objects[count].read_data = spi_silar_read(READ_COM|spi_objects[count].adress);
+    343          
+    344                     if((spi_objects[count].read_data != spi_objects[count].last_data)&&(spi_objects[count].reg_for_wright))
+    345                       {
+    346                        if((count <= 16)||(count == 30))              cam_sets.syncro_count = 0;
+    347                        spi_objects[count].wright_data = spi_objects[count].last_data;
+    348                        spi_objects[count].wright_enable = true;
+    349                       }
+    350          
+    351                     if(count==30)
+    352                     {
+    353                       senspar.change_par = true;
+    354                       if(spi_objects[count].last_data == KEY_MENU_CLICK)
+    355                        {
+    356                         if((0x08&spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+    357                        }
+    358                      
+    359                     }
+    360          
+    361                     if((count == 17)&&(!flash_is_read))
+    362                       {
+    363                        flash_reading_process();
+    364                       //spi_objects[count].reg_for_wright = false;
+    365                       }
+    366          
+    367                     if(spi_objects[count].reg_for_wright)
+    368                       {
+    369                        spi_objects[count].wright_enable = true;
+    370                        if(count == 30)spi_sets.stat_read_enable = false;
+    371                       }
+    372                   }
+    373                   else
+    374                   {
+    375                    if(!spi_objects[count].wright_enable)spi_objects[count].error_count++;
+    376                    if(spi_objects[count].error_count>10)
+    377                    {
+    378                     senspar.change_par = true;
+    379                     init_spi_objects();
+    380                    }
+    381                   }
+    382          
+    383                 }
+    384          
+    385              spi_sets.silar_status = 0;
+    386          
+    387          //    spi_sets.silar_state = spi_silar_read(CAMERA_STATE_ADDR);
+    388            //  if((0x08&spi_sets.silar_state) && (prev_cam_state!=spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+    389          //    prev_cam_state = spi_sets.silar_state;
+    390              spi_sets.read_sichro_count = READ_SYCHRO_TIME;
+    391          
+    392             }
+    393          #endif
+    394           //if(((0x08&spi_sets.silar_state)) && (prev_cam_state!=spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;//Прорисовка текущего пункта оперативного меню при выходе из инженерного
+    395           spi_task_count=0;
+    396          
+    397                while(!find_task)
+    398                     {
+    399                      if((spi_objects[spi_task_count].wright_data!=0) && (spi_objects[spi_task_count].wright_enable == true))
+    400                        {
+    401                         find_task = true;
+    402                         if((spi_task_count>=TEMPERATURE_WRIGHT_ADDR)&&(spi_task_count<=INCLINATE_ADDR)) spi_objects[spi_task_count].wright_data &= 0x0FFFFFFF;
+    403                         spi_objects[spi_task_count].wright_enable = false;
+    404                         spi_silar_wright(WRIGHT_COM|spi_objects[spi_task_count].adress,  spi_objects[spi_task_count].wright_data);
+    405                         spi_objects[spi_task_count].sinchro_count = spi_objects[spi_task_count].sinchro_time;
+    406                         spi_objects[spi_task_count].last_data  = spi_objects[spi_task_count].wright_data;
+    407                         if((spi_task_count ==30)&&(spi_objects[spi_task_count].wright_data == CAMERA_OFF_COMMAND))cam_power_state = false;
+    408                         spi_objects[spi_task_count].wright_data=0;
+    409                           
+    410                        }
+    411            spi_task_count++;
+    412            if(spi_task_count>spi_sets.spi_obj_q)find_task = true;
+    413                     }
+    414          
+    415          }
+    416          
+    417          //==============================================================================
+    418          //          SPI READ CAMERA STATE
+    419          //==============================================================================
+    420          void spi_read_camers_state()
+    421          {
+    422              spi_sets.silar_state = spi_silar_read(CAMERA_STATE_ADDR);
+    423            //  if((0x08&spi_sets.silar_state) && (prev_cam_state!=spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+    424              prev_cam_state = spi_sets.silar_state;
+    425          
+    426          }
+    427          
+    428          
+    429          
+    430          
+    431          
+    432          //==============================================================================
+    433          //           SPI SYNCHRO FUNCTION
+    434          //==============================================================================
+    435          
+    436          void spi_sichro_func()
+    437          {
+    438           u8 count;
+    439           if(spi_sets.stat_read_enable && (spi_sets.read_sichro_count!=0))spi_sets.read_sichro_count--;
+    440           if(spi_sets.wright_sinchro_count!=0) spi_sets.wright_sinchro_count--;
+    441           for(count=0;count<spi_sets.spi_obj_q;count++)if(spi_objects[count].sinchro_count!=0) spi_objects[count].sinchro_count--;
+    442          }
+    443          
+    444          
+    445          
+    446          //==============================================================================
+    447          //            SPI READ FUNCTION
+    448          //==============================================================================
+    449          u32 spi_silar_read(u8 addr)
+    450          {
+    451           u32 data=0;
+    452           u8 i,data_byte;
+    453           enter_critical_section();
+    454           downCS_silar;
+    455          
+    456          
+    457              SPI_I2S_SendData(SPI2, addr|READ_COM);
+    458              while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    459              SPI_I2S_ReceiveData(SPI2); //for clear Flag_RXNE
+    460              for(i=0; i<4;i++)
+    461                 {
+    462                  SPI_I2S_SendData(SPI2, 0);
+    463                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    464                  data_byte = SPI_I2S_ReceiveData(SPI2);
+    465                  data = (data<<(8))|((u32)data_byte);
+    466                 }
+    467           upCS_silar;
+    468           exit_critical_section();
+    469           return data;
+    470          }
+    471          
+    472          
+    473          
+    474          
+    475          //==============================================================================
+    476          //             SPI WRIGHT FUNCTION
+    477          //==============================================================================
+    478          void spi_silar_wright(u8 addr, u32 data)
+    479          {
+    480            u8 data_byte;
+    481            u8 i =0;
+    482          
+    483            enter_critical_section();
+    484            downCS_silar;
+    485          
+    486                  SPI_I2S_SendData(SPI2, addr|WRIGHT_COM);
+    487                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    488          
+    489                  data_byte = (u8)(data>>(24));
+    490                  SPI_I2S_SendData(SPI2,data_byte );
+    491                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    492          
+    493                  data_byte = (u8)(data>>(16));
+    494                  SPI_I2S_SendData(SPI2,data_byte );
+    495                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    496          
+    497                  data_byte = (u8)(data>>(8));
+    498                  SPI_I2S_SendData(SPI2,data_byte );
+    499                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    500          
+    501                  data_byte = (u8)(data);
+    502                  SPI_I2S_SendData(SPI2,data_byte );
+    503                  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+    504          exit_critical_section();
+    505           upCS_silar;
+    506          
+    507           spi_sets.wright_enable = false;
+    508           spi_sets.stat_read_enable = true;
+    509           //spi_sets.wright_sinchro_count = WRIGHT_SYCHRO_TIME;
+    510          }
+    511          
+    512          //==============================================================================
+    513          //             CAMERA START SETTINGS
+    514          //==============================================================================
+    515          
+    516          
+    517          //==============================================================================
+    518          //             MARKS DEFAULT VALUES READENG
+    519          //==============================================================================
+    520          void read_marks_state()
+    521          {
+    522           spi_objects[MARK_16_ADDR].read_data = spi_silar_read(READ_COM|spi_objects[MARK_16_ADDR].adress);
+    523          }
+    524          
+    525          
+    526          
+    527          //==============================================================================
+    528          //       BALLISTIC CORRECTION ENTER
+    529          //==============================================================================
+    530          #define NULL_POSSITION_DESCRIPT_1   0x04000000 //1/8 пикселя матрицы, зависит от выверки и дистанции
+    531          #define NULL_POSSITION_DESCRIPT_2   0x08000000 //1/8 пикселя матрицы, зависит от выверки
+    532          #define NULL_POSSITION_DESCRIPT_3   0x0C000000 // пиксель дисплея, не зависит от выверки и дистанции
+    533          
+    534          void correct_enter(u8 mark_addr, float v_angle,float g_angle, u16 offset, float distance, bool redrow, u32 color)
+    535          {
+    536           u32 null_possition;
+    537           u8 step;
+    538           if(mark_addr == MARK_16_ADDR) step =8;
+    539           else    step =8;
+    540           if(color<INVISIBLE)
+    541           {
+    542           if(redrow)
+    543           {
+    544                  null_possition = color|NULL_POSSITION_DESCRIPT_1|REDROW_SCREEN;
+    545           }
+    546           else   null_possition = color|NULL_POSSITION_DESCRIPT_1;
+    547          
+    548           float g_correct_in_pixels, v_correct_in_pixels;
+    549           g_correct_in_pixels = step*g_angle*flash.obj_focus/(flash.pix_size*100*distance);///(2*cam_sets.obj_focus*g_angle*0.0290893)/cam_sets.pix_size;
+    550           v_correct_in_pixels = step*v_angle*flash.obj_focus/(flash.pix_size*100*distance);///(2*cam_sets.obj_focus*v_angle*0.0290893)/cam_sets.pix_size;
+    551           spi_objects[mark_addr].wright_data = null_possition|(0x1fff&((u32)v_correct_in_pixels))|((0x1fff&(((u32)g_correct_in_pixels)+(u32)(offset)))<<13);
+    552           }
+    553           else
+    554           {
+    555             spi_objects[mark_addr].wright_data=0x80000000;
+    556           }
+    557             //spi_objects[MARK_16_ADDR].wright_data = NULL_POSSITION_DESCRIPT
+    558          }
+    559          
+    560          
+    561          //##############################################################################
+    562          //          DEFOULT CAMERA SETS
+    563          //##############################################################################
+    564          
+    565          void default_cam_sets()
+    566          {
+    567            cam_sets.pix_size =  0.017;
+    568            cam_sets.obj_focus = 50.7;
+    569            cam_sets.life_size_snail_val = 1.0;
+    570          
+    571          
+    572          
+    573            if(flash.cam_type&CONFIG_BALL_TEST)spi_objects[MARKS_BLOCK_REG_ADDR].wright_data = AUTO_MARK_MOVENG_BLOCK|AITO_DIST_ENTER_BLOCK;
+    574            else
+    575            {
+    576            spi_objects[MARKS_BLOCK_REG_ADDR].wright_data = 0x04;
+    577          
+    578            cam_sets.mark_quant      = 4;
+    579            cam_sets.dist_mark[0]    = 100;
+    580            cam_sets.dist_mark[1]    = 400;
+    581            cam_sets.dist_mark[2]    = 500;
+    582            cam_sets.dist_mark[3]    = 600;
+    583            cam_sets.dist_mark[4]    = 600;
+    584            cam_sets.dist_mark[5]    = 600;
+    585            cam_sets.marks_offset[0] = 0;
+    586            cam_sets.marks_offset[1] = 0;
+    587            cam_sets.marks_offset[2] = 0;
+    588            cam_sets.marks_offset[3] = 0;
+    589            cam_sets.marks_offset[4] = 275;//380;
+    590            cam_sets.marks_offset[5] = 275;//380;
+    591            cam_sets.marks_offset[6] = 485;//1700;
+    592            cam_sets.marks_offset[7] = 645;//2200;
+    593            cam_sets.marks_offset[8] = 0;
+    594            cam_sets.mark_addres[0]  = 0;
+    595            cam_sets.mark_addres[1]  = 1;
+    596            cam_sets.mark_addres[2]  = 2;
+    597            cam_sets.mark_addres[3]  = 3;
+    598            cam_sets.mark_addres[4]  = 7;  //улитка
+    599            cam_sets.mark_addres[5]  = 8;  //улитка
+    600            cam_sets.mark_addres[6]  = 9;  //индикация завала
+    601            cam_sets.mark_addres[7]  = 10; //индикация завала
+    602            cam_sets.mark_addres[8]  = 11; // дальномерная.
+    603            }
+    604            
+    605          #ifdef FLASH_ENABLE
+    606            flash.reading_count = 0;
+    607            spi_objects[FLASH_READING_ADDRES].wright_data = 0x200;
+    608          #else
+    609            flash.reading_count = true;
+    610            flash_is_read = true;
+    611            default_flash_content();
+    612          #endif
+    613            
+    614          }
+    615          
+    616          
+    617          
+    618          //##############################################################################
+    619          //                         FLASH READING FUNCTION
+    620          //##############################################################################
+    621          
+    622          void flash_reading_process()
+    623          {
+    624          
+    625           if((flash.reading_count>(flash.data_quant+4))&&(flash.reading_count>7))
+    626           {             
+    627             spi_objects[FLASH_READING_ADDRES].reg_for_wright =false;
+    628             flash_is_read = true;
+    629           }
+    630           else
+    631           {
+    632            if(spi_objects[FLASH_READING_ADDRES].read_data != 0)
+    633            {
+    634              if((flash.reading_count ==0)&&(((u8)(spi_objects[FLASH_READING_ADDRES].read_data)) !=FLASH_DATA_TAG)) 
+    635                {
+    636                  flash_is_read = true;
+    637                  spi_objects[FLASH_READING_ADDRES].read_data = 0;
+    638          
+    639                  flash.cam_type = DEFAULT_CONFIG;
+    640                }
+    641              else
+    642              {
+    643               if(flash.reading_count > 0)
+    644               {
+    645               u32* flash_pointer = &flash.data_quant;
+    646               u8* data = (u8*)flash_pointer;
+    647               *(data+flash.reading_count-1) = ((u8)(0xFF&spi_objects[FLASH_READING_ADDRES].read_data));
+    648               }
+    649               if((spi_objects[FLASH_READING_ADDRES].read_data&0x0000ff00) == (0x200+(flash.reading_count<<8)))flash.reading_count++;
+    650               spi_objects[FLASH_READING_ADDRES].wright_data = 0x200+(flash.reading_count<<8);
+    651               spi_objects[FLASH_READING_ADDRES].read_data =0;
+    652          
+    653              }
+    654            }
+    655           }
+    656          
+    657          }
+    658          
+    659          
+    660          
+    661          //##############################################################################
+    662          //                       MARKS CONTROL FUNCTION
+    663          //##############################################################################
+    664          #define MARK_START_POSITION           300//1600
+    665          #define LIFE_SIZE_SNAIL_START_POS     496//2535
+    666          
+    667          //float zoom_val[4] = {1.25, 2.0, 3.0, 4.0};
+    668            float zoom_val[4] = {1.25, 2.5, 3.75, 5.0};
+    669          void marks_syncro_func()
+    670          {
+    671           if(cam_sets.syncro_count!=0) cam_sets.syncro_count--;
+    672          }
+    673          
+    674          #define SCREEN_CENTER 563
+    675          
+    676          void mark_tasks()
+    677          {
+    678            u32 color_mark;
+    679            u8 ball_num;
+    680            float tresholt = flash.pix_size/flash.obj_focus;
+    681            ball_result ball_res;
+    682            spi_read_camers_state();//spi_sets.silar_state = spi_silar_read(CAMERA_STATE_ADDR);
+    683            ball_num = (u8)(0x0f&(spi_sets.silar_state>>4));
+    684            if(senspar.change_par)
+    685              {
+    686               senspar.change_par = false;
+    687          
+    688               if(senspar.trabl_par)color_mark = RED_COLOR;
+    689               else                 color_mark = GREEN_COLOR;//BLUE_COLOR;
+    690          
+    691              // color_mark = INVISIBLE;
+    692          
+    693                u32 vert_possition, gor_possition, null_possition;
+    694          
+    695                // ростовая улитка
+    696                null_possition =  YELLOW_COLOR|NULL_POSSITION_DESCRIPT_3;
+    697                vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*flash.obj_focus*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
+    698                gor_possition  = cam_sets.marks_offset[4];
+    699          
+    700                spi_objects[cam_sets.mark_addres[4]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
+    701          
+    702                null_possition =  YELLOW_COLOR|NULL_POSSITION_DESCRIPT_3;
+    703                vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*flash.obj_focus*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
+    704                gor_possition  = cam_sets.marks_offset[5];
+    705          
+    706                spi_objects[cam_sets.mark_addres[5]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
+    707          
+    708          
+    709                 //#ifdef METEO
+    710                // индикация заклона
+    711                if(senspar.declinate>30) senspar.declinate = 30;
+    712                if(senspar.declinate<-30) senspar.declinate = -30;
+    713           //     if(((s32)(senspar.declinate)) == 0)
+    714           //     {
+    715           //       null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;
+    716           //     }
+    717                null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;
+    718                vert_possition = MARK_START_POSITION - 5*((s32)(senspar.declinate));
+    719                if(tresholt > ZOOM_TRESHOLD)gor_possition  = SCREEN_CENTER - (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][0];
+    720                else                         gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
+    721                
+    722                spi_objects[cam_sets.mark_addres[6]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
+    723          
+    724                null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;//|REDROW_SCREEN;
+    725                vert_possition = MARK_START_POSITION + 5*((s32)(senspar.declinate));
+    726                if(tresholt > ZOOM_TRESHOLD)   gor_possition  = SCREEN_CENTER + (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][1];
+    727                else  gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
+    728                
+    729                spi_objects[cam_sets.mark_addres[7]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
+    730                // #endif
+    731               //Расчет положений марок дальности
+    732               for(u16 i =0; i<cam_sets.mark_quant; i++)
+    733                  {
+    734                    if(senspar.distance>100)correct_enter(cam_sets.mark_addres[i],ball_res.MOAySM,ball_res.MOAxSM, cam_sets.marks_offset[i],(float)cam_sets.dist_mark[i],false/*(i==(cam_sets.mark_quant-1))*/,INVISIBLE);
+    735                    else
+    736                    {
+    737                    ball_res = balCalculate((float)cam_sets.dist_mark[i], flash.ballistics_buf[ball_num]);
+    738                    if(ball_res.correct) correct_enter(cam_sets.mark_addres[i],ball_res.MOAySM,ball_res.MOAxSM, cam_sets.marks_offset[i],(float)cam_sets.dist_mark[i],false/*(i==(cam_sets.mark_quant-1))*/,YELLOW_COLOR);
+    739                    }
+    740                  }
+    741               //
+    742               if(EN_MENU) ball_res = balCalculate(100, flash.ballistics_buf[ball_num]);
+    743               else        ball_res = balCalculate(senspar.distance, flash.ballistics_buf[ball_num]);
+    744               if(ball_res.correct) correct_enter(MARK_16_ADDR,ball_res.MOAySM,ball_res.MOAxSM,0, senspar.distance, true,YELLOW_COLOR);
+    745                cam_sets.syncro_count = MARK_CORRECT_PERIOD;
+    746               }
+    747          
+    748          }
+    749          
+    750          void oled_control()
+    751          {
+    752                    
+    753                   if(display_st == display_make_off) 
+    754                   {
+    755                     display_st = display_off;
+    756                     senspar.change_par = false;
+    757                     spi_objects[COMMAND_REG_ADDR].wright_data = OLED_ON_COMMAND;
+    758                     spi_sets.current_function = OLED_OFF_COMMAND;
+    759                     while(senspar.change_par != true)spi_silar_tasks();
+    760                     senspar.change_par = false; 
+    761                   }
+    762                    
+    763                  if(display_st == display_make_on) 
+    764                   {
+    765                     display_st = display_on;
+    766                     senspar.change_par = false;
+    767                     spi_objects[COMMAND_REG_ADDR].wright_data = OLED_ON_COMMAND;
+    768                     spi_sets.current_function = OLED_ON_COMMAND;
+    769                     while(senspar.change_par != true)spi_silar_tasks();
+    770                     senspar.change_par = false; 
+    771                   }
+    772                    
+    773          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      32   correct_enter
+        32   -> __aeabi_f2uiz
+        32   -> __aeabi_fdiv
+        32   -> __aeabi_fmul
+        32   -> __aeabi_ui2f
+       8   default_cam_sets
+         8   -> default_flash_content
+       0   enter_critical_section
+       0   exit_critical_section
+       0   flash_reading_process
+       8   init_spi_objects
+         8   -> clean
+      80   mark_tasks
+        72   -> __aeabi_d2uiz
+        72   -> __aeabi_dadd
+        72   -> __aeabi_dmul
+        72   -> __aeabi_f2d
+        72   -> __aeabi_f2iz
+        72   -> __aeabi_f2uiz
+        72   -> __aeabi_fdiv
+        72   -> __aeabi_fmul
+        80   -> __aeabi_memcpy4
+        72   -> __aeabi_ui2f
+        72   -> balCalculate
+        72   -> correct_enter
+        72   -> spi_read_camers_state
+        72 __aeabi_cfcmple
+        72 __aeabi_cfrcmple
+       0   marks_syncro_func
+       8   oled_control
+         8   -> spi_silar_tasks
+       8   read_marks_state
+         8   -> spi_silar_read
+       8   set_device_mode
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+         8   -> SPI_Cmd
+         8   -> SPI_init_func
+         8   -> init_spi_objects
+         8   -> redrow_menu_simbol
+         8   -> spi_silar_tasks
+       8   spi_read_camers_state
+         8   -> spi_silar_read
+       0   spi_sichro_func
+      16   spi_silar_read
+        16   -> GPIO_ResetBits
+        16   -> GPIO_SetBits
+        16   -> SPI_I2S_GetFlagStatus
+        16   -> SPI_I2S_ReceiveData
+        16   -> SPI_I2S_SendData
+        16   -> enter_critical_section
+        16   -> exit_critical_section
+      16   spi_silar_tasks
+        16   -> flash_reading_process
+        16   -> init_spi_objects
+        16   -> spi_silar_read
+        16   -> spi_silar_wright
+      16   spi_silar_wright
+        16   -> GPIO_ResetBits
+        16   -> GPIO_SetBits
+        16   -> SPI_I2S_GetFlagStatus
+        16   -> SPI_I2S_SendData
+        16   -> enter_critical_section
+        16   -> exit_critical_section
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable11
+       4  ??DataTable11_1
+       4  ??DataTable11_2
+       4  ??DataTable11_3
+       4  ??DataTable11_4
+       4  ??DataTable12
+       4  ??DataTable13
+       4  ??DataTable13_1
+       4  ??DataTable13_10
+       4  ??DataTable13_2
+       4  ??DataTable13_3
+       4  ??DataTable13_4
+       4  ??DataTable13_5
+       4  ??DataTable13_6
+       4  ??DataTable13_7
+       4  ??DataTable13_8
+       4  ??DataTable13_9
+       4  ??DataTable15
+       4  ??DataTable15_1
+       4  ??DataTable15_10
+       4  ??DataTable15_11
+       4  ??DataTable15_12
+       4  ??DataTable15_13
+       4  ??DataTable15_14
+       4  ??DataTable15_15
+       4  ??DataTable15_16
+       4  ??DataTable15_17
+       4  ??DataTable15_18
+       4  ??DataTable15_19
+       4  ??DataTable15_2
+       4  ??DataTable15_20
+       4  ??DataTable15_21
+       4  ??DataTable15_3
+       4  ??DataTable15_4
+       4  ??DataTable15_5
+       4  ??DataTable15_6
+       4  ??DataTable15_7
+       4  ??DataTable15_8
+       4  ??DataTable15_9
+       4  ??DataTable9
+       4  ??DataTable9_1
+       4  ??DataTable9_2
+       4  ??DataTable9_3
+       1  cam_operation
+       1  cam_power_state
+     108  cam_sets
+     228  correct_enter
+       2  critcal_section_level
+     322  default_cam_sets
+      28  enter_critical_section
+      28  exit_critical_section
+     416  flash
+     210  flash_reading_process
+     634  init_spi_objects
+    1028  mark_tasks
+      26  marks_syncro_func
+     124  oled_control
+       4  prev_cam_state
+      24  read_marks_state
+    1468  set_device_mode
+     980  spi_objects
+      24  spi_read_camers_state
+      28  spi_sets
+     128  spi_sichro_func
+     128  spi_silar_read
+     750  spi_silar_tasks
+     194  spi_silar_wright
+       1  spi_task_count
+      16  zoom_val
+
+ 
+ 1 540 bytes in section .bss
+    17 bytes in section .data
+ 5 516 bytes in section .text
+ 
+ 5 516 bytes of CODE memory
+ 1 557 bytes of DATA memory
+
+Errors: none
+Warnings: 3
