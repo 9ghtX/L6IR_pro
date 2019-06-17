@@ -687,13 +687,14 @@ void mark_tasks()
 
      if(senspar.trabl_par)color_mark = RED_COLOR;
      else                 color_mark = GREEN_COLOR;//BLUE_COLOR;
-
+     
     // color_mark = INVISIBLE;
 
       u32 vert_possition, gor_possition, null_possition;
 
       // ростова€ улитка
       null_possition =  YELLOW_COLOR|NULL_POSSITION_DESCRIPT_3;
+     
       vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*flash.obj_focus*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
       gor_possition  = cam_sets.marks_offset[4];
 
@@ -714,19 +715,36 @@ void mark_tasks()
  //     {
  //       null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;
  //     }
-      null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;
+      
+      null_possition = color_mark|NULL_POSSITION_DESCRIPT_3; 
+      if(flash.cam_type&CONFIG_METEO_TEST)
+      {
       vert_possition = MARK_START_POSITION - 5*((s32)(senspar.declinate));
       if(tresholt > ZOOM_TRESHOLD)gor_possition  = SCREEN_CENTER - (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][0];
       else                         gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
       
       spi_objects[cam_sets.mark_addres[6]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
-
+      }
+      else
+      {
+       spi_objects[cam_sets.mark_addres[6]].wright_data = 0x80000000;
+      }
+      
+      
+     if(flash.cam_type&CONFIG_METEO_TEST)
+      {     
       null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;//|REDROW_SCREEN;
       vert_possition = MARK_START_POSITION + 5*((s32)(senspar.declinate));
       if(tresholt > ZOOM_TRESHOLD)   gor_possition  = SCREEN_CENTER + (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][1];
       else  gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
       
       spi_objects[cam_sets.mark_addres[7]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
+      }
+      else
+      {
+        spi_objects[cam_sets.mark_addres[7]].wright_data = 0x80000000;
+      }
+            
       // #endif
      //–асчет положений марок дальности
      for(u16 i =0; i<cam_sets.mark_quant; i++)

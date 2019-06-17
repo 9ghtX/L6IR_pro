@@ -62,6 +62,7 @@
 #define TNV_CU_CONFIG           0x00004203   
 #define PT2_CONFIG              0x00000302
 #define SWIR_CONFIG             0x00008021
+#define SWIR_BEPT_CONFIG        0x00008071
 #define SWIR_M_CONFIG           0x0000A021
 #define SWIR_BM_CONFIG          0x0000A031
 #define SWIR_BME_CONFIG         0x00009071
@@ -278,6 +279,7 @@
 #define BLUE_COLOR                0x40000000
 #define RED_COLOR                 0x00000000
 #define INVISIBLE                 0x70000000
+#define MAKE_INVISIBLE            0xE3FFFFFF
 
 //#define KEY_M_PLUS_CLICK        16
 //#define KEY_M_MINUS_CLICK       17

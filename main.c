@@ -148,7 +148,7 @@ int main()
          // flash.cam_type = PT9_1ENCODER_BME_CONFIG;
         //flash.cam_type = PT9_1ENCODER_ME_CONFIG;
          // flash.cam_type = PT9_1ENCODER_E_CONFIG;
-        flash.cam_type = PT9_1ENCODER_CONFIG;
+        //flash.cam_type = PT9_1ENCODER_CONFIG;
         //flash.cam_type = PT9_2ENCODER_B_CONFIG;
         //flash.cam_type = PT9_2ENCODER_CONFIG;
         //flash.cam_type = PT9_2ENCODER_CU_CONFIG;
@@ -156,6 +156,7 @@ int main()
         
         //flash.cam_type = SWIR_N_EXPO_CONFIG;
         //flash.cam_type = SWIR_CONFIG;
+        flash.cam_type = SWIR_BEPT_CONFIG;
         //flash.cam_type = SWIR_BME_CONFIG;
         // flash.cam_type = SWIR_BM_CONFIG;
 #else
@@ -179,7 +180,7 @@ int main()
         #else
         set_device_mode(N_MODE);//N_MODE);
         #endif
-        Led_ON;
+        //Led_ON;
         while(1)
         {
           //GPIO_SetBits(GPIOB, GPIO_Pin_10);
@@ -222,7 +223,7 @@ int main()
           //i2c_sensors_tasks();
           Power_control_func();
           
-          oled_control();
+          //oled_control();
           
           //LSM6DS33_tasks();
           //if((!galenic_counter)&&(flash.cam_type&CONFIG_GALINIC_TEST))
