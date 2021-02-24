@@ -1,63 +1,70 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.70.1.11437/W32 for ARM                14/Jun/2019  13:39:32
-# Copyright 2007-2016 IAR Systems AB.
+# IAR ELF Linker V8.30.1.114/W32 for ARM                  05/Feb/2021  18:16:48
+# Copyright 2007-2018 IAR Systems AB.
 #
-#    Output file  =  E:\projects\L6IR\programm\L6IR_pro\Debug\Exe\c.out
-#    Map file     =  E:\projects\L6IR\programm\L6IR_pro\Debug\List\c.map
+#    Output file  =  D:\projects\L6IR\programm\L6IR_pro\Debug\Exe\c.out
+#    Map file     =  D:\projects\L6IR\programm\L6IR_pro\Debug\List\c.map
 #    Command line =  
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Ball.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Buffer.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Camera.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Camera_tasks.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\cbuf.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT7.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT8.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT9.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\digital_resist.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\galenic.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\i2c.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\led_control.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\lps331ap.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\lps331ap_driver.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\LSM6DS33.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\main.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\misc.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\net.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\operator_control.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_cu.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR_encoder_new.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR_encoder_old.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu_ram.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu_stm32L10x.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Sensors.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\settings.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\startup_stm32l1xx_md.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_adc.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_dma.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_exti.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_flash.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_gpio.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_i2c.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_it.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_rcc.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_sdio.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_spi.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_syscfg.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_usart.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_init.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_stm32l1xx.o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_timer.o -o
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\Exe\c.out --redirect
-#        _Printf=_PrintfFull --redirect _Scanf=_ScanfFull --map
-#        E:\projects\L6IR\programm\L6IR_pro\Debug\List\c.map --config
+#        -f C:\Users\admin\AppData\Local\Temp\EW5B92.tmp
+#        (D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Ball.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Buffer.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Camera.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Camera_tasks.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\cbuf.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT7.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT7HR.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT8.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT8HR.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT9.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\default_flash_content_PT9HR.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\digital_resist.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\galenic.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\i2c.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\keys.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\led_control.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\lps331ap.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\lps331ap_driver.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\LSM6DS33.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\main.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\misc.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\net.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\operator_control.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_cu.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR_encoder_new.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\protocol_L6IR_encoder_old.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu_ram.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\rfu_stm32L10x.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\Sensors.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\settings.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\startup_stm32l1xx_md.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_adc.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_dma.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_exti.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_flash.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_gpio.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_i2c.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_it.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_rcc.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_sdio.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_spi.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_syscfg.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\stm32l1xx_usart.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_init.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_stm32l1xx.o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Obj\system_timer.o
+#        --no_out_extension -o
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\Exe\c.out --redirect
+#        _Printf=_PrintfFullNoMb --redirect _Scanf=_ScanfFullNoMb --map
+#        D:\projects\L6IR\programm\L6IR_pro\Debug\List\c.map --config
 #        "C:\Program Files (x86)\IAR Systems\Embedded Workbench
-#        7.5\arm\config\linker\ST\stm32l152xC.icf" --semihosting --entry
+#        8.1\arm\config\linker\ST\stm32l152xC.icf" --semihosting --entry
 #        __iar_program_start "C:\Program Files (x86)\IAR Systems\Embedded
-#        Workbench 7.5\arm\CMSIS\Lib\IAR\iar_cortexM3l_math.a" --vfe
+#        Workbench 8.1\arm\CMSIS\Lib\IAR\iar_cortexM3l_math.a" --vfe --text_out
+#        locale)
 #
 ###############################################################################
 
@@ -67,277 +74,305 @@
 
 CppFlavor       = *
 __SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
 
 
 *******************************************************************************
 *** PLACEMENT SUMMARY
 ***
 
-"A0":  place at 0x08000000 { ro section .intvec };
-"P1":  place in [from 0x08000000 to 0x0803ffff] { ro };
-"P2":  place in [from 0x20000000 to 0x20007fff] { rw, block CSTACK, block HEAP };
+"A0":  place at 0x800'0000 { ro section .intvec };
+"P1":  place in [from 0x800'0000 to 0x803'ffff] { ro };
+define block CSTACK with size = 4K, alignment = 8 { };
+define block HEAP with size = 4K, alignment = 8 { };
+"P2":  place in [from 0x2000'0000 to 0x2000'7fff] {
+          rw, block CSTACK, block HEAP };
 initialize by copy { rw };
 
-  Section             Kind        Address    Size  Object
-  -------             ----        -------    ----  ------
+No sections matched the following patterns:
+
+  section .eeprom  in "P3"
+
+
+  Section            Kind         Address    Size  Object
+  -------            ----         -------    ----  ------
 "A0":                                        0xf4
-  .intvec             ro code  0x08000000    0xf4  startup_stm32l1xx_md.o [1]
-                             - 0x080000f4    0xf4
+  .intvec            ro code   0x800'0000    0xf4  startup_stm32l1xx_md.o [1]
+                             - 0x800'00f4    0xf4
 
-"P1":                                      0x8b94
-  .hex                ro code  0x080000f4  0x1ec2  net.o [1]
-  .text               ro code  0x08001fb8    0x76  ABImemcpy_unaligned.o [5]
-  .hex                ro code  0x0800202e   0x270  Buffer.o [1]
-  .hex                ro code  0x080022a0   0x282  stm32l1xx_usart.o [1]
-  .text               ro code  0x08002524    0x32  I32ToFlt.o [4]
-  .text               ro code  0x08002558    0x4e  FltToDbl.o [4]
-  .text               ro code  0x080025a8   0x1a2  DblMul.o [4]
-  .text               ro code  0x0800274c   0x256  DblDiv.o [4]
-  .text               ro code  0x080029a4    0x90  DblToFlt.o [4]
-  .text               ro code  0x08002a34    0x24  FltCmpLe.o [4]
-  .text               ro code  0x08002a58    0xe6  FltSub.o [4]
-  .text               ro code  0x08002b40    0x84  FltAdd.o [4]
-  .text               ro code  0x08002bc4    0xfc  FltDiv.o [4]
-  .text               ro code  0x08002cc0    0x24  FltCmpGe.o [4]
-  .text               ro code  0x08002ce4    0x24  FltToU32.o [4]
-  .text               ro code  0x08002d08    0x44  FltToS32.o [4]
-  .hex                ro code  0x08002d4c   0xfe8  Camera.o [1]
-  .hex                ro code  0x08003d34   0x248  stm32l1xx_rcc.o [1]
-  .hex                ro code  0x08003f7c   0x10a  stm32l1xx_gpio.o [1]
-  .hex                ro code  0x08004088    0x7c  stm32l1xx_spi.o [1]
-  .text               ro code  0x08004104    0xd8  FltMul.o [4]
-  .hex                ro code  0x080041dc   0x1e4  default_flash_content_PT9.o [1]
-  .text               ro code  0x080043c0    0xe8  DblAdd.o [4]
-  .text               ro code  0x080044a8    0x58  DblToI32.o [4]
-  .hex                ro code  0x08004500   0x7b8  Ball.o [1]
-  .text               ro code  0x08004cb8   0x180  DblSub.o [4]
-  .text               ro code  0x08004e38    0x5e  floor.o [4]
-  .text               ro code  0x08004e98   0x848  pow.o [4]
-  .text               ro code  0x080056e0    0x50  exp.o [4]
-  .text               ro code  0x08005730     0x6  sin.o [4]
-  .text               ro code  0x08005738    0x1c  FltCmpEq.o [4]
-  .text               ro code  0x08005754    0x44  xdnorm.o [4]
-  .text               ro code  0x08005798    0x7a  xdint.o [4]
-  .text               ro code  0x08005814    0x20  DblCmpEq.o [4]
-  .text               ro code  0x08005834     0xc  errno.o [3]
-  .text               ro code  0x08005840    0x2e  DblCmpGe.o [4]
-  .text               ro code  0x08005870    0x2e  DblCmpLe.o [4]
-  .text               ro code  0x080058a0    0x2c  I32ToDbl.o [4]
-  .text               ro code  0x080058cc    0xac  xlog.o [4]
-  .text               ro code  0x08005978   0x2bc  xexp.o [4]
-  .text               ro code  0x08005c34   0x422  xsin.o [4]
-  .text               ro code  0x08006056     0x2  xtls.o [3]
-  .text               ro code  0x08006058    0x32  xdtest.o [4]
-  .text               ro code  0x0800608c   0x10c  xdscale.o [4]
-  .text               ro code  0x08006198   0x160  xquad.o [4]
-  .text               ro code  0x080062f8   0x1a8  fmod.o [4]
-  .text               ro code  0x080064a0     0xc  iarEdom.o [5]
-  .hex                ro code  0x080064ac   0x80c  protocol_L6IR.o [1]
-  .hex                ro code  0x08006cb8    0x30  rfu.o [1]
-  .hex                ro code  0x08006ce8     0x4  settings.o [1]
-  RFU_CODE            ro code  0x08006cec   0x548  rfu_ram.o [1]
-  .text               ro code  0x08007234     0x6  ABImemclr4.o [5]
-  RFU_CODE            ro code  0x0800723c   0x174  rfu_stm32L10x.o [1]
-  .text               ro code  0x080073b0    0x32  ABImemset48.o [5]
-  .hex                ro code  0x080073e4    0x30  stm32l1xx_flash.o [1]
-  .hex                ro code  0x08007414   0x49c  system_init.o [1]
-  .hex                ro code  0x080078b0    0x9c  misc.o [1]
-  .hex                ro code  0x0800794c   0x2e0  stm32l1xx_adc.o [1]
-  .hex                ro code  0x08007c2c   0x19c  stm32l1xx_dma.o [1]
-  .hex                ro code  0x08007dc8   0x2d8  protocol_L6IR_encoder_new.o [1]
-  .hex                ro code  0x080080a0   0x26c  stm32l1xx_it.o [1]
-  .hex                ro code  0x0800830c    0x1c  Sensors.o [1]
-  .hex                ro code  0x08008328    0x1c  led_control.o [1]
-  .hex                ro code  0x08008344   0x238  system_stm32l1xx.o [1]
-  .hex                ro code  0x0800857c   0x1b8  main.o [1]
-  .hex                ro code  0x08008734    0x98  system_timer.o [1]
-  .hex                ro code  0x080087cc   0x18c  protocol_L6IR_encoder_old.o [1]
-  .text               ro code  0x08008958    0x40  zero_init3.o [5]
-  .text               ro code  0x08008998    0x38  packbits_init_single.o [5]
-  .text               ro code  0x080089d0    0x28  data_init.o [5]
-  .iar.init_table     const    0x080089f8    0x20  - Linker created -
-  .text               ro code  0x08008a18    0x1a  cmain.o [5]
-  .text               ro code  0x08008a32     0x4  low_level_init.o [3]
-  .text               ro code  0x08008a36     0x4  exit.o [3]
-  .text               ro code  0x08008a3c     0xa  cexit.o [5]
-  .text               ro code  0x08008a48    0x14  exit.o [6]
-  .text               ro code  0x08008a5c    0x10  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a6c     0xc  cstartup_M.o [5]
-  .text               ro code  0x08008a78     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a7c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a80     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a84     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a88     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a8c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a90     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a94     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a98     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008a9c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008aa0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008aa4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008aa8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008aac     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ab0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ab4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ab8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008abc     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ac0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ac4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ac8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008acc     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ad0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ad4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ad8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008adc     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ae0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ae4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008ae8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008aec     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008af0     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008af4     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008af8     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008afc     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b00     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b04     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b08     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b0c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b10     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b14     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b18     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b1c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b20     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b24     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b28     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b2c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b30     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b34     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b38     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b3c     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b40     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b44     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b48     0x4  startup_stm32l1xx_md.o [1]
-  .text               ro code  0x08008b4c     0x4  startup_stm32l1xx_md.o [1]
-  .rodata             const    0x08008b50     0x0  zero_init3.o [5]
-  .rodata             const    0x08008b50     0x0  packbits_init_single.o [5]
-  Initializer bytes   const    0x08008b50   0x138  <for P2-1>
-                             - 0x08008c88  0x8b94
+"P1":                                      0x8717
+  .hex               ro code   0x800'00f4  0x1bfe  net.o [1]
+  .text              ro code   0x800'1cf2    0x3a  zero_init3.o [4]
+  .text              ro code   0x800'1d2c    0xa6  ABImemcpy.o [4]
+  .hex               ro code   0x800'1dd2   0x274  Buffer.o [1]
+  .hex               ro code   0x800'2048   0x280  stm32l1xx_usart.o [1]
+  .text              ro code   0x800'22c8    0x1c  U32ToFlt.o [3]
+  .text              ro code   0x800'22e4    0x80  FltSub.o [3]
+  .text              ro code   0x800'2364    0xe2  FltAdd.o [3]
+  .text              ro code   0x800'2448    0xfc  FltDiv.o [3]
+  .text              ro code   0x800'2544    0x24  FltCmpLe.o [3]
+  .text              ro code   0x800'2568    0x22  FltToU32.o [3]
+  .text              ro code   0x800'258c    0x2a  FltToS32.o [3]
+  .hex               ro code   0x800'25b6    0x68  keys.o [1]
+  .hex               ro code   0x800'2620   0xe84  Camera.o [1]
+  .hex               ro code   0x800'34a4   0x14e  stm32l1xx_gpio.o [1]
+  .text              ro code   0x800'35f4    0x24  FltCmpGe.o [3]
+  .text              ro code   0x800'3618    0x24  S32ToFlt.o [3]
+  .hex               ro code   0x800'363c   0x250  stm32l1xx_rcc.o [1]
+  .hex               ro code   0x800'388c    0x78  stm32l1xx_spi.o [1]
+  .text              ro code   0x800'3904    0xd8  FltMul.o [3]
+  .hex               ro code   0x800'39dc   0x14c  default_flash_content_PT9.o [1]
+  .text              ro code   0x800'3b28    0x1c  FltCmpEq.o [3]
+  .text              ro code   0x800'3b44    0x48  FltToDbl.o [3]
+  .text              ro code   0x800'3b8c   0x1a2  DblMul.o [3]
+  .text              ro code   0x800'3d30   0x17a  DblAdd.o [3]
+  .text              ro code   0x800'3eac    0x28  DblToU32.o [3]
+  .hex               ro code   0x800'3ed4   0x7a0  Ball.o [1]
+  .text              ro code   0x800'4674    0xe2  DblSub.o [3]
+  .text              ro code   0x800'4758   0x246  DblDiv.o [3]
+  .text              ro code   0x800'49a0    0x68  DblToFlt.o [3]
+  .text              ro code   0x800'4a08    0x58  floor.o [3]
+  .text              ro code   0x800'4a60    0x3a  DblToS32.o [3]
+  .text              ro code   0x800'4aa0   0xb60  pow64.o [3]
+  .text              ro code   0x800'5600    0x30  exp64.o [3]
+  .text              ro code   0x800'5630   0x420  cos_sin64.o [3]
+  .text              ro code   0x800'5a50    0x20  DblCmpEq.o [3]
+  .text              ro code   0x800'5a70    0x70  frexp.o [3]
+  .text              ro code   0x800'5ae0    0x2e  DblCmpLe.o [3]
+  .text              ro code   0x800'5b10   0x13a  ldexp.o [3]
+  .text              ro code   0x800'5c4c    0x22  S32ToDbl.o [3]
+  .text              ro code   0x800'5c70    0x2e  DblCmpGe.o [3]
+  .text              ro code   0x800'5ca0   0x394  iar_Exp64.o [3]
+  .hex               ro code   0x800'6034   0x780  protocol_L6IR.o [1]
+  .hex               ro code   0x800'67b4    0x3c  rfu.o [1]
+  .hex               ro code   0x800'67f0     0x4  settings.o [1]
+  RFU_CODE           ro code   0x800'67f4   0x550  rfu_ram.o [1]
+  .text              ro code   0x800'6d44     0x6  ABImemclr4.o [4]
+  RFU_CODE           ro code   0x800'6d4c   0x15a  rfu_stm32L10x.o [1]
+  .text              ro code   0x800'6ea8    0x32  ABImemset48.o [4]
+  .hex               ro code   0x800'6edc    0x2c  stm32l1xx_flash.o [1]
+  .hex               ro code   0x800'6f08   0x488  system_init.o [1]
+  .hex               ro code   0x800'7390    0x9c  misc.o [1]
+  .hex               ro code   0x800'742c   0x320  stm32l1xx_adc.o [1]
+  .hex               ro code   0x800'774c   0x184  stm32l1xx_dma.o [1]
+  .hex               ro code   0x800'78d0   0x2d8  protocol_L6IR_encoder_new.o [1]
+  .hex               ro code   0x800'7ba8   0x298  stm32l1xx_it.o [1]
+  .hex               ro code   0x800'7e40    0x14  Sensors.o [1]
+  .hex               ro code   0x800'7e54    0x1c  led_control.o [1]
+  .hex               ro code   0x800'7e70   0x278  main.o [1]
+  .hex               ro code   0x800'80e8   0x1f8  system_stm32l1xx.o [1]
+  .hex               ro code   0x800'82e0    0x9c  system_timer.o [1]
+  .hex               ro code   0x800'837c   0x190  protocol_L6IR_encoder_old.o [1]
+  .text              ro code   0x800'850c    0x38  packbits_init_single.o [4]
+  .text              ro code   0x800'8544    0x28  data_init.o [4]
+  .iar.init_table    const     0x800'856c    0x20  - Linker created -
+  .text              ro code   0x800'858c    0x1e  cmain.o [4]
+  .text              ro code   0x800'85aa     0x4  low_level_init.o [2]
+  .text              ro code   0x800'85ae     0x4  exit.o [2]
+  .text              ro code   0x800'85b4     0xa  cexit.o [4]
+  .text              ro code   0x800'85c0    0x14  exit.o [5]
+  .text              ro code   0x800'85d4    0x10  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'85e4     0xc  cstartup_M.o [4]
+  .text              ro code   0x800'85f0     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'85f4     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'85f8     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'85fc     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8600     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8604     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8608     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'860c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8610     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8614     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8618     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'861c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8620     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8624     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8628     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'862c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8630     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8634     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8638     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'863c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8640     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8644     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8648     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'864c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8650     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8654     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8658     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'865c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8660     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8664     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8668     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'866c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8670     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8674     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8678     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'867c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8680     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8684     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8688     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'868c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8690     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8694     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'8698     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'869c     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86a0     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86a4     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86a8     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86ac     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86b0     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86b4     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86b8     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86bc     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86c0     0x4  startup_stm32l1xx_md.o [1]
+  .text              ro code   0x800'86c4     0x4  startup_stm32l1xx_md.o [1]
+  .rodata            const     0x800'86c8     0x0  zero_init3.o [4]
+  .rodata            const     0x800'86c8     0x0  packbits_init_single.o [4]
+  Initializer bytes  const     0x800'86c8   0x143  <for P2-1>
+                             - 0x800'880b  0x8717
 
-"P2", part 1 of 3:                          0x164
-  P2-1                         0x20000000   0x164  <Init block>
-    .data             inited   0x20000000    0xc8  Ball.o [1]
-    .data             inited   0x200000c8    0x10  Camera.o [1]
-    .data             inited   0x200000d8     0xc  protocol_L6IR.o [1]
-    .data             inited   0x200000e4     0xc  protocol_L6IR.o [1]
-    .data             inited   0x200000f0     0xc  protocol_L6IR.o [1]
-    .data             inited   0x200000fc     0xc  protocol_L6IR.o [1]
-    .data             inited   0x20000108     0xc  protocol_L6IR.o [1]
-    .data             inited   0x20000114     0xc  protocol_L6IR.o [1]
-    .data             inited   0x20000120     0xc  stm32l1xx_rcc.o [1]
-    .data             inited   0x2000012c    0x10  stm32l1xx_rcc.o [1]
-    .data             inited   0x2000013c     0x4  system_stm32l1xx.o [1]
-    .data             inited   0x20000140     0xc  system_stm32l1xx.o [1]
-    .data             inited   0x2000014c    0x10  system_stm32l1xx.o [1]
-    __DLIB_PERTHREAD  inited   0x2000015c     0x4  errno.o [3]
-    .data             inited   0x20000160     0x1  Camera.o [1]
-    .data             inited   0x20000161     0x1  net.o [1]
-    .data             inited   0x20000162     0x1  protocol_L6IR.o [1]
-    .data             inited   0x20000163     0x1  stm32l1xx_it.o [1]
-                             - 0x20000164   0x164
+"P2", part 1 of 3:                          0x171
+  P2-1                        0x2000'0000   0x171  <Init block>
+    .data            inited   0x2000'0000    0xc8  Ball.o [1]
+    .data            inited   0x2000'00c8    0x10  Camera.o [1]
+    .data            inited   0x2000'00d8     0xc  protocol_L6IR.o [1]
+    .data            inited   0x2000'00e4     0xc  protocol_L6IR.o [1]
+    .data            inited   0x2000'00f0    0x10  protocol_L6IR.o [1]
+    .data            inited   0x2000'0100    0x10  protocol_L6IR.o [1]
+    .data            inited   0x2000'0110    0x10  protocol_L6IR.o [1]
+    .data            inited   0x2000'0120    0x10  protocol_L6IR.o [1]
+    .data            inited   0x2000'0130     0xc  stm32l1xx_rcc.o [1]
+    .data            inited   0x2000'013c    0x10  stm32l1xx_rcc.o [1]
+    .data            inited   0x2000'014c     0x4  system_stm32l1xx.o [1]
+    .data            inited   0x2000'0150     0xc  system_stm32l1xx.o [1]
+    .data            inited   0x2000'015c    0x10  system_stm32l1xx.o [1]
+    .data            inited   0x2000'016c     0x1  Camera.o [1]
+    .data            inited   0x2000'016d     0x1  main.o [1]
+    .data            inited   0x2000'016e     0x1  net.o [1]
+    .data            inited   0x2000'016f     0x1  protocol_L6IR.o [1]
+    .data            inited   0x2000'0170     0x1  stm32l1xx_it.o [1]
+                            - 0x2000'0171   0x171
 
-"P2", part 2 of 3:                         0x1000
-  CSTACK                       0x20000168  0x1000  <Block>
-    CSTACK            uninit   0x20000168  0x1000  <Block tail>
-                             - 0x20001168  0x1000
+"P2", part 2 of 3:                          0xa98
+  .bss               zero     0x2000'0174   0x3d4  Camera.o [1]
+  .bss               zero     0x2000'0548   0x1a0  Camera.o [1]
+  .bss               zero     0x2000'06e8    0xc0  main.o [1]
+  .bss               zero     0x2000'07a8    0xb4  net.o [1]
+  .bss               zero     0x2000'085c    0x74  main.o [1]
+  .bss               zero     0x2000'08d0    0x6c  Camera.o [1]
+  .bss               zero     0x2000'093c    0x44  net.o [1]
+  .bss               zero     0x2000'0980    0x40  main.o [1]
+  .bss               zero     0x2000'09c0    0x28  Ball.o [1]
+  .bss               zero     0x2000'09e8    0x28  net.o [1]
+  .bss               zero     0x2000'0a10    0x28  net.o [1]
+  .bss               zero     0x2000'0a38    0x1c  Camera.o [1]
+  .bss               zero     0x2000'0a54    0x1c  net.o [1]
+  .bss               zero     0x2000'0a70    0x18  Ball.o [1]
+  .bss               zero     0x2000'0a88    0x10  Ball.o [1]
+  .bss               zero     0x2000'0a98    0x10  net.o [1]
+  .bss               zero     0x2000'0aa8     0xc  net.o [1]
+  .bss               zero     0x2000'0ab4     0xc  net.o [1]
+  .bss               zero     0x2000'0ac0     0xc  net.o [1]
+  .bss               zero     0x2000'0acc     0xc  net.o [1]
+  .bss               zero     0x2000'0ad8     0xc  net.o [1]
+  .bss               zero     0x2000'0ae4     0xc  net.o [1]
+  .bss               zero     0x2000'0af0     0xc  net.o [1]
+  .bss               zero     0x2000'0afc     0xc  net.o [1]
+  .bss               zero     0x2000'0b08     0xc  net.o [1]
+  .bss               zero     0x2000'0b14     0xc  net.o [1]
+  .bss               zero     0x2000'0b20     0xc  net.o [1]
+  .bss               zero     0x2000'0b2c     0xc  net.o [1]
+  .bss               zero     0x2000'0b38     0xc  net.o [1]
+  .bss               zero     0x2000'0b44     0xc  net.o [1]
+  .bss               zero     0x2000'0b50     0xc  net.o [1]
+  .bss               zero     0x2000'0b5c     0xc  net.o [1]
+  .bss               zero     0x2000'0b68     0xc  net.o [1]
+  .bss               zero     0x2000'0b74     0xc  net.o [1]
+  .bss               zero     0x2000'0b80     0xc  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0b8c     0xc  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0b98     0xc  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0ba4     0xc  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0bb0     0x8  main.o [1]
+  .bss               zero     0x2000'0bb8     0x8  Sensors.o [1]
+  .bss               zero     0x2000'0bc0     0x8  system_init.o [1]
+  .bss               zero     0x2000'0bc8     0x4  Ball.o [1]
+  .bss               zero     0x2000'0bcc     0x4  Ball.o [1]
+  .bss               zero     0x2000'0bd0     0x4  Camera.o [1]
+  .bss               zero     0x2000'0bd4     0x4  net.o [1]
+  .bss               zero     0x2000'0bd8     0x4  net.o [1]
+  .bss               zero     0x2000'0bdc     0x4  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0be0     0x4  system_timer.o [1]
+  .bss               zero     0x2000'0be4     0x2  Camera.o [1]
+  .bss               zero     0x2000'0be6     0x2  main.o [1]
+  .bss               zero     0x2000'0be8     0x2  net.o [1]
+  .bss               zero     0x2000'0bea     0x2  net.o [1]
+  .bss               zero     0x2000'0bec     0x2  net.o [1]
+  .bss               zero     0x2000'0bee     0x2  net.o [1]
+  .bss               zero     0x2000'0bf0     0x2  net.o [1]
+  .bss               zero     0x2000'0bf2     0x2  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0bf4     0x2  stm32l1xx_it.o [1]
+  .bss               zero     0x2000'0bf6     0x1  Camera.o [1]
+  .bss               zero     0x2000'0bf7     0x1  Camera.o [1]
+  .bss               zero     0x2000'0bf8     0x1  Camera.o [1]
+  .bss               zero     0x2000'0bf9     0x1  main.o [1]
+  .bss               zero     0x2000'0bfa     0x1  main.o [1]
+  .bss               zero     0x2000'0bfb     0x1  main.o [1]
+  .bss               zero     0x2000'0bfc     0x1  net.o [1]
+  .bss               zero     0x2000'0bfd     0x1  net.o [1]
+  .bss               zero     0x2000'0bfe     0x1  net.o [1]
+  .bss               zero     0x2000'0bff     0x1  net.o [1]
+  .bss               zero     0x2000'0c00     0x1  operator_control.o [1]
+  .bss               zero     0x2000'0c01     0x1  operator_control.o [1]
+  .bss               zero     0x2000'0c02     0x1  operator_control.o [1]
+  .bss               zero     0x2000'0c03     0x1  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0c04     0x1  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0c05     0x1  protocol_L6IR.o [1]
+  .bss               zero     0x2000'0c06     0x1  stm32l1xx_it.o [1]
+  .bss               zero     0x2000'0c07     0x1  stm32l1xx_it.o [1]
+  .bss               zero     0x2000'0c08     0x1  stm32l1xx_it.o [1]
+                            - 0x2000'0c09   0xa95
 
-"P2", part 3 of 3:                          0xa78
-  .bss                zero     0x20001168   0x3d4  Camera.o [1]
-  .bss                zero     0x2000153c   0x1a0  Camera.o [1]
-  .bss                zero     0x200016dc    0xc0  main.o [1]
-  .bss                zero     0x2000179c    0xb4  net.o [1]
-  .bss                zero     0x20001850    0x74  main.o [1]
-  .bss                zero     0x200018c4    0x6c  Camera.o [1]
-  .bss                zero     0x20001930    0x44  net.o [1]
-  .bss                zero     0x20001974    0x40  main.o [1]
-  .bss                zero     0x200019b4    0x28  Ball.o [1]
-  .bss                zero     0x200019dc    0x28  net.o [1]
-  .bss                zero     0x20001a04    0x28  net.o [1]
-  .bss                zero     0x20001a2c    0x1c  Camera.o [1]
-  .bss                zero     0x20001a48    0x1c  net.o [1]
-  .bss                zero     0x20001a64    0x18  Ball.o [1]
-  .bss                zero     0x20001a7c    0x10  Ball.o [1]
-  .bss                zero     0x20001a8c     0xc  net.o [1]
-  .bss                zero     0x20001a98     0xc  net.o [1]
-  .bss                zero     0x20001aa4     0xc  net.o [1]
-  .bss                zero     0x20001ab0     0xc  net.o [1]
-  .bss                zero     0x20001abc     0xc  net.o [1]
-  .bss                zero     0x20001ac8     0xc  net.o [1]
-  .bss                zero     0x20001ad4     0xc  net.o [1]
-  .bss                zero     0x20001ae0     0xc  net.o [1]
-  .bss                zero     0x20001aec     0xc  net.o [1]
-  .bss                zero     0x20001af8     0xc  net.o [1]
-  .bss                zero     0x20001b04     0xc  net.o [1]
-  .bss                zero     0x20001b10     0xc  net.o [1]
-  .bss                zero     0x20001b1c     0xc  net.o [1]
-  .bss                zero     0x20001b28     0xc  net.o [1]
-  .bss                zero     0x20001b34     0xc  net.o [1]
-  .bss                zero     0x20001b40     0xc  net.o [1]
-  .bss                zero     0x20001b4c     0xc  net.o [1]
-  .bss                zero     0x20001b58     0xc  net.o [1]
-  .bss                zero     0x20001b64     0xc  protocol_L6IR.o [1]
-  .bss                zero     0x20001b70     0xc  protocol_L6IR.o [1]
-  .bss                zero     0x20001b7c     0xc  protocol_L6IR.o [1]
-  .bss                zero     0x20001b88     0xc  protocol_L6IR.o [1]
-  .bss                zero     0x20001b94     0x8  Sensors.o [1]
-  .bss                zero     0x20001b9c     0x8  system_init.o [1]
-  .bss                zero     0x20001ba4     0x4  Ball.o [1]
-  .bss                zero     0x20001ba8     0x4  Ball.o [1]
-  .bss                zero     0x20001bac     0x4  Camera.o [1]
-  .bss                zero     0x20001bb0     0x4  net.o [1]
-  .bss                zero     0x20001bb4     0x4  net.o [1]
-  .bss                zero     0x20001bb8     0x4  system_timer.o [1]
-  .bss                zero     0x20001bbc     0x2  Camera.o [1]
-  .bss                zero     0x20001bbe     0x2  main.o [1]
-  .bss                zero     0x20001bc0     0x2  net.o [1]
-  .bss                zero     0x20001bc2     0x2  net.o [1]
-  .bss                zero     0x20001bc4     0x2  net.o [1]
-  .bss                zero     0x20001bc6     0x2  net.o [1]
-  .bss                zero     0x20001bc8     0x2  net.o [1]
-  .bss                zero     0x20001bca     0x2  protocol_L6IR.o [1]
-  .bss                zero     0x20001bcc     0x2  stm32l1xx_it.o [1]
-  .bss                zero     0x20001bce     0x1  Camera.o [1]
-  .bss                zero     0x20001bcf     0x1  Camera.o [1]
-  .bss                zero     0x20001bd0     0x1  main.o [1]
-  .bss                zero     0x20001bd1     0x1  main.o [1]
-  .bss                zero     0x20001bd2     0x1  main.o [1]
-  .bss                zero     0x20001bd3     0x1  net.o [1]
-  .bss                zero     0x20001bd4     0x1  net.o [1]
-  .bss                zero     0x20001bd5     0x1  net.o [1]
-  .bss                zero     0x20001bd6     0x1  net.o [1]
-  .bss                zero     0x20001bd7     0x1  operator_control.o [1]
-  .bss                zero     0x20001bd8     0x1  operator_control.o [1]
-  .bss                zero     0x20001bd9     0x1  protocol_L6IR.o [1]
-  .bss                zero     0x20001bda     0x1  protocol_L6IR.o [1]
-  .bss                zero     0x20001bdb     0x1  protocol_L6IR.o [1]
-  .bss                zero     0x20001bdc     0x1  stm32l1xx_it.o [1]
-  .bss                zero     0x20001bdd     0x1  stm32l1xx_it.o [1]
-                             - 0x20001bde   0xa76
+"P2", part 3 of 3:                         0x1000
+  CSTACK                      0x2000'0c10  0x1000  <Block>
+    CSTACK           uninit   0x2000'0c10  0x1000  <Block tail>
+                            - 0x2000'1c10  0x1000
+
+Unused ranges:
+
+         From           To      Size
+         ----           --      ----
+   0x800'880b   0x803'ffff  0x3'77f5
+  0x2000'0171  0x2000'0173       0x3
+  0x2000'0c0c  0x2000'0c0f       0x4
+  0x2000'1c10  0x2000'7fff    0x63f0
 
 
 *******************************************************************************
 *** INIT TABLE
 ***
 
-          Address     Size
-          -------     ----
+          Address      Size
+          -------      ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0xa76:
-          0x20001168  0xa76
+    1 destination range, total size 0xa95:
+          0x2000'0174  0xa95
 
 Copy/packbits (__iar_packbits_init_single3)
-    1 source range, total size 0x138 (87% of destination):
-          0x08008b50  0x138
-    1 destination range, total size 0x164:
-          0x20000000  0x164
+    1 source range, total size 0x143 (87% of destination):
+           0x800'86c8  0x143
+    1 destination range, total size 0x171:
+          0x2000'0000  0x171
 
 
 
@@ -347,457 +382,472 @@ Copy/packbits (__iar_packbits_init_single3)
 
     Module                       ro code  ro data  rw data
     ------                       -------  -------  -------
-E:\projects\L6IR\programm\L6IR_pro\Debug\Obj: [1]
-    Ball.o                         1 976      175      288
-    Buffer.o                         624
-    Camera.o                       4 072       15    1 557
-    Sensors.o                         28                 8
-    default_flash_content_PT9.o      484
-    led_control.o                     28
-    main.o                           440               377
-    misc.o                           156
-    net.o                          7 874        1      595
-    operator_control.o                                   2
-    protocol_L6IR.o                2 060       64      126
-    protocol_L6IR_encoder_new.o      728
-    protocol_L6IR_encoder_old.o      396
-    rfu.o                             48
-    rfu_ram.o                      1 352
-    rfu_stm32L10x.o                  372
-    settings.o                         4
-    startup_stm32l1xx_md.o           476
-    stm32l1xx_adc.o                  736
-    stm32l1xx_dma.o                  412
-    stm32l1xx_flash.o                 48
-    stm32l1xx_gpio.o                 266
-    stm32l1xx_it.o                   620        1        5
-    stm32l1xx_rcc.o                  584       24       28
-    stm32l1xx_spi.o                  124
-    stm32l1xx_usart.o                642
-    system_init.o                  1 180                 8
-    system_stm32l1xx.o               568       28       32
-    system_timer.o                   152                 4
-    ------------------------------------------------------
-    Total:                        26 450      308    3 030
-
-command line: [2]
+command line/config:
     ------------------------------------------------------
     Total:
 
-dl7M_tln.a: [3]
-    errno.o                           12        4        4
+D:\projects\L6IR\programm\L6IR_pro\Debug\Obj: [1]
+    Ball.o                         1 952      175      288
+    Buffer.o                         628
+    Camera.o                       3 716       15    1 558
+    Sensors.o                         20                 8
+    default_flash_content_PT9.o      332
+    keys.o                           104
+    led_control.o                     28
+    main.o                           632        1      386
+    misc.o                           156
+    net.o                          7 166        1      611
+    operator_control.o                                   3
+    protocol_L6IR.o                1 920       78      146
+    protocol_L6IR_encoder_new.o      728
+    protocol_L6IR_encoder_old.o      400
+    rfu.o                             60
+    rfu_ram.o                      1 360
+    rfu_stm32L10x.o                  346
+    settings.o                         4
+    startup_stm32l1xx_md.o           476
+    stm32l1xx_adc.o                  800
+    stm32l1xx_dma.o                  388
+    stm32l1xx_flash.o                 44
+    stm32l1xx_gpio.o                 334
+    stm32l1xx_it.o                   664        1        6
+    stm32l1xx_rcc.o                  592       24       28
+    stm32l1xx_spi.o                  120
+    stm32l1xx_usart.o                640
+    system_init.o                  1 160                 8
+    system_stm32l1xx.o               504       28       32
+    system_timer.o                   156                 4
+    ------------------------------------------------------
+    Total:                        25 430      323    3 078
+
+dl7M_tln.a: [2]
     exit.o                             4
     low_level_init.o                   4
-    xtls.o                             2
     ------------------------------------------------------
-    Total:                            22        4        4
+    Total:                             8
 
-m7M_tl.a: [4]
-    DblAdd.o                         232
+m7M_tl.a: [3]
+    DblAdd.o                         378
     DblCmpEq.o                        32
     DblCmpGe.o                        46
     DblCmpLe.o                        46
-    DblDiv.o                         598
+    DblDiv.o                         582
     DblMul.o                         418
-    DblSub.o                         384
-    DblToFlt.o                       144
-    DblToI32.o                        88
-    FltAdd.o                         132
+    DblSub.o                         226
+    DblToFlt.o                       104
+    DblToS32.o                        58
+    DblToU32.o                        40
+    FltAdd.o                         226
     FltCmpEq.o                        28
     FltCmpGe.o                        36
     FltCmpLe.o                        36
     FltDiv.o                         252
     FltMul.o                         216
-    FltSub.o                         230
-    FltToDbl.o                        78
-    FltToS32.o                        68
-    FltToU32.o                        36
-    I32ToDbl.o                        44
-    I32ToFlt.o                        50
-    exp.o                             80
-    floor.o                           94
-    fmod.o                           424
-    pow.o                          2 120
-    sin.o                              6
-    xdint.o                          122
-    xdnorm.o                          68
-    xdscale.o                        268
-    xdtest.o                          50
-    xexp.o                           700
-    xlog.o                           172
-    xquad.o                          352
-    xsin.o                         1 058
+    FltSub.o                         128
+    FltToDbl.o                        72
+    FltToS32.o                        42
+    FltToU32.o                        34
+    S32ToDbl.o                        34
+    S32ToFlt.o                        36
+    U32ToFlt.o                        28
+    cos_sin64.o                    1 056
+    exp64.o                           48
+    floor.o                           88
+    frexp.o                          112
+    iar_Exp64.o                      916
+    ldexp.o                          314
+    pow64.o                        2 912
     ------------------------------------------------------
-    Total:                         8 708
+    Total:                         8 544
 
-rt7M_tl.a: [5]
+rt7M_tl.a: [4]
     ABImemclr4.o                       6
-    ABImemcpy_unaligned.o            118
+    ABImemcpy.o                      166
     ABImemset48.o                     50
     cexit.o                           10
-    cmain.o                           26
+    cmain.o                           30
     cstartup_M.o                      12
     data_init.o                       40
-    iarEdom.o                         12
     packbits_init_single.o            56
-    zero_init3.o                      64
+    zero_init3.o                      58
     ------------------------------------------------------
-    Total:                           394
+    Total:                           428
 
-shb_l.a: [6]
+shb_l.a: [5]
     exit.o                            20
     ------------------------------------------------------
     Total:                            20
 
-    Gaps                              38
+    Gaps                              42
     Linker created                             32    4 096
 ----------------------------------------------------------
-    Grand Total:                  35 632      344    7 130
+    Grand Total:                  34 472      355    7 174
 
 
 *******************************************************************************
 *** ENTRY LIST
 ***
 
-Entry                      Address   Size  Type      Object
------                      -------   ----  ----      ------
-.iar.init_table$$Base   0x080089f8          --   Gb  - Linker created -
-.iar.init_table$$Limit  0x08008a18          --   Gb  - Linker created -
-?main                   0x08008a19         Code  Gb  cmain.o [5]
-ADC_Cmd                 0x080079c3   0x1a  Code  Gb  stm32l1xx_adc.o [1]
-ADC_CommonStructInit    0x080079bd    0x6  Code  Gb  stm32l1xx_adc.o [1]
-ADC_ContinuousModeCmd   0x08007bc5   0x1a  Code  Gb  stm32l1xx_adc.o [1]
-ADC_DMACmd              0x08007bdf   0x1a  Code  Gb  stm32l1xx_adc.o [1]
+Entry                       Address    Size  Type      Object
+-----                       -------    ----  ----      ------
+.iar.init_table$$Base    0x800'856c           --   Gb  - Linker created -
+.iar.init_table$$Limit   0x800'858c           --   Gb  - Linker created -
+?main                    0x800'858d          Code  Gb  cmain.o [4]
+ADC_Cmd                  0x800'749f    0x1c  Code  Gb  stm32l1xx_adc.o [1]
+ADC_CommonStructInit     0x800'7499     0x6  Code  Gb  stm32l1xx_adc.o [1]
+ADC_ContinuousModeCmd    0x800'76dd    0x1c  Code  Gb  stm32l1xx_adc.o [1]
+ADC_DMACmd               0x800'76f9    0x1c  Code  Gb  stm32l1xx_adc.o [1]
 ADC_DMARequestAfterLastTransferCmd
-                        0x08007bf9   0x1a  Code  Gb  stm32l1xx_adc.o [1]
-ADC_DeInit              0x0800794d   0x20  Code  Gb  stm32l1xx_adc.o [1]
+                         0x800'7715    0x1c  Code  Gb  stm32l1xx_adc.o [1]
+ADC_DeInit               0x800'742d    0x20  Code  Gb  stm32l1xx_adc.o [1]
 ADC_DelaySelectionConfig
-                        0x080079dd   0x12  Code  Gb  stm32l1xx_adc.o [1]
-ADC_GetFlagStatus       0x08007c13   0x1a  Code  Gb  stm32l1xx_adc.o [1]
-ADC_Init                0x0800796d   0x50  Code  Gb  stm32l1xx_adc.o [1]
+                         0x800'74bb    0x16  Code  Gb  stm32l1xx_adc.o [1]
+ADC_GetFlagStatus        0x800'7731    0x1c  Code  Gb  stm32l1xx_adc.o [1]
+ADC_Init                 0x800'744d    0x4c  Code  Gb  stm32l1xx_adc.o [1]
 ADC_RegularChannelConfig
-                        0x080079fd  0x1be  Code  Gb  stm32l1xx_adc.o [1]
-ADC_SoftwareStartConv   0x08007bbb    0xa  Code  Gb  stm32l1xx_adc.o [1]
-ADC_data                0x20001b9c    0x8  Data  Gb  system_init.o [1]
-ADC_init_func           0x0800779f   0xee  Code  Gb  system_init.o [1]
-AHBPrescTable           0x2000014c   0x10  Data  Gb  system_stm32l1xx.o [1]
-APBAHBPrescTable        0x2000012c   0x10  Data  Lc  stm32l1xx_rcc.o [1]
-BusFault_Handler        0x080080a7    0x2  Code  Gb  stm32l1xx_it.o [1]
-CSTACK$$Base            0x20000168          --   Gb  - Linker created -
-CSTACK$$Limit           0x20001168          --   Gb  - Linker created -
-DATA_EEPROM_Unlock      0x080073e5   0x20  Code  Gb  stm32l1xx_flash.o [1]
-DMA_Cmd                 0x08007d75   0x1c  Code  Gb  stm32l1xx_dma.o [1]
-DMA_DeInit              0x08007c2d  0x10a  Code  Gb  stm32l1xx_dma.o [1]
-DMA_Init                0x08007d37   0x3e  Code  Gb  stm32l1xx_dma.o [1]
-DebugMon_Handler        0x080080ad    0x2  Code  Gb  stm32l1xx_it.o [1]
-GPIO_Configuration      0x08007415  0x28c  Code  Gb  system_init.o [1]
-GPIO_Init               0x08003f7d   0xa8  Code  Gb  stm32l1xx_gpio.o [1]
-GPIO_PinAFConfig        0x0800402d   0x5a  Code  Gb  stm32l1xx_gpio.o [1]
-GPIO_ResetBits          0x08004029    0x4  Code  Gb  stm32l1xx_gpio.o [1]
-GPIO_SetBits            0x08004025    0x4  Code  Gb  stm32l1xx_gpio.o [1]
-HardFault_Handler       0x080080a3    0x2  Code  Gb  stm32l1xx_it.o [1]
-IniRingBuf              0x0800202f   0x16  Code  Gb  Buffer.o [1]
-MemManage_Handler       0x080080a5    0x2  Code  Gb  stm32l1xx_it.o [1]
-NMI_Handler             0x080080a1    0x2  Code  Gb  stm32l1xx_it.o [1]
-NVIC_Configuration      0x080076a1   0x4c  Code  Gb  system_init.o [1]
-NVIC_Init               0x080078bb   0x6a  Code  Gb  misc.o [1]
+                         0x800'74dd   0x1f6  Code  Gb  stm32l1xx_adc.o [1]
+ADC_SoftwareStartConv    0x800'76d3     0xa  Code  Gb  stm32l1xx_adc.o [1]
+ADC_data                0x2000'0bc0     0x8  Data  Gb  system_init.o [1]
+ADC_init_func            0x800'727b    0xf2  Code  Gb  system_init.o [1]
+AHBPrescTable           0x2000'015c    0x10  Data  Gb  system_stm32l1xx.o [1]
+APBAHBPrescTable        0x2000'013c    0x10  Data  Lc  stm32l1xx_rcc.o [1]
+BusFault_Handler         0x800'7baf     0x2  Code  Gb  stm32l1xx_it.o [1]
+CSTACK$$Base            0x2000'0c10           --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'1c10           --   Gb  - Linker created -
+DATA_EEPROM_Unlock       0x800'6edd    0x1c  Code  Gb  stm32l1xx_flash.o [1]
+DMA_Cmd                  0x800'787b    0x1e  Code  Gb  stm32l1xx_dma.o [1]
+DMA_DeInit               0x800'774d    0xf2  Code  Gb  stm32l1xx_dma.o [1]
+DMA_Init                 0x800'783f    0x3c  Code  Gb  stm32l1xx_dma.o [1]
+DebugMon_Handler         0x800'7bb5     0x2  Code  Gb  stm32l1xx_it.o [1]
+GPIO_Configuration       0x800'6f09   0x274  Code  Gb  system_init.o [1]
+GPIO_Init                0x800'34a5    0xc8  Code  Gb  stm32l1xx_gpio.o [1]
+GPIO_PinAFConfig         0x800'3591    0x62  Code  Gb  stm32l1xx_gpio.o [1]
+GPIO_ReadInputDataBit    0x800'356d    0x1c  Code  Gb  stm32l1xx_gpio.o [1]
+GPIO_ResetBits           0x800'358d     0x4  Code  Gb  stm32l1xx_gpio.o [1]
+GPIO_SetBits             0x800'3589     0x4  Code  Gb  stm32l1xx_gpio.o [1]
+HardFault_Handler        0x800'7bab     0x2  Code  Gb  stm32l1xx_it.o [1]
+IniRingBuf               0x800'1dd3    0x16  Code  Gb  Buffer.o [1]
+Init_key                 0x800'25b7     0xe  Code  Gb  keys.o [1]
+MemManage_Handler        0x800'7bad     0x2  Code  Gb  stm32l1xx_it.o [1]
+NMI_Handler              0x800'7ba9     0x2  Code  Gb  stm32l1xx_it.o [1]
+NVIC_Configuration       0x800'717d    0x4c  Code  Gb  system_init.o [1]
+NVIC_Init                0x800'739b    0x68  Code  Gb  misc.o [1]
 NVIC_PriorityGroupConfig
-                        0x080078b1    0xa  Code  Gb  misc.o [1]
-NVIC_SetPriority        0x08008735   0x26  Code  Lc  system_timer.o [1]
-NVIC_SetVectorTable     0x08007925    0xc  Code  Gb  misc.o [1]
-PLLMulTable             0x20000120    0xc  Data  Lc  stm32l1xx_rcc.o [1]
-PLLMulTable             0x20000140    0xc  Data  Gb  system_stm32l1xx.o [1]
-PendSV_Handler          0x080080af    0x2  Code  Gb  stm32l1xx_it.o [1]
-Power_control_func      0x08000cd5  0x130  Code  Gb  net.o [1]
-RCC_AHBPeriphClockCmd   0x08003eb3   0x1e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_APB1PeriphClockCmd  0x08003eef   0x1e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_APB1PeriphResetCmd  0x08003f2b   0x1e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_APB2PeriphClockCmd  0x08003ed1   0x1e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_APB2PeriphResetCmd  0x08003f0d   0x1e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_GetClocksFreq       0x08003da5  0x10e  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_HCLKConfig          0x08003d73   0x18  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_HSICmd              0x08003d35    0xa  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_PCLK2Config         0x08003d8b   0x1a  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_PLLCmd              0x08003d51    0xa  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_PLLConfig           0x08003d3f   0x12  Code  Gb  stm32l1xx_rcc.o [1]
-RCC_SYSCLKConfig        0x08003d5b   0x18  Code  Gb  stm32l1xx_rcc.o [1]
-RFU_CODE_init$$Base     0x00000000          --   Gb  - Linker created -
-RFU_CODE_init$$Length   0x00000000          --   Gb  - Linker created -
-RFU_FLASH_ClearFlag     0x08007321    0x6  Code  Gb  rfu_stm32L10x.o [1]
+                         0x800'7391     0xa  Code  Gb  misc.o [1]
+NVIC_SetVectorTable      0x800'7403     0xc  Code  Gb  misc.o [1]
+PLLMulTable             0x2000'0130     0xc  Data  Lc  stm32l1xx_rcc.o [1]
+PLLMulTable             0x2000'0150     0xc  Data  Gb  system_stm32l1xx.o [1]
+PendSV_Handler           0x800'7bb7     0x2  Code  Gb  stm32l1xx_it.o [1]
+Power_control_func       0x800'0999    0xd0  Code  Gb  net.o [1]
+RCC_AHBPeriphClockCmd    0x800'37cb    0x1c  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_APB1PeriphClockCmd   0x800'3803    0x1c  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_APB1PeriphResetCmd   0x800'383b    0x1c  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_APB2PeriphClockCmd   0x800'37e7    0x1c  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_APB2PeriphResetCmd   0x800'381f    0x1c  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_GetClocksFreq        0x800'369d   0x12e  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_HCLKConfig           0x800'3679    0x12  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_HSICmd               0x800'363d     0xc  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_PCLK2Config          0x800'368b    0x12  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_PLLCmd               0x800'365b     0xc  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_PLLConfig            0x800'3649    0x12  Code  Gb  stm32l1xx_rcc.o [1]
+RCC_SYSCLKConfig         0x800'3667    0x12  Code  Gb  stm32l1xx_rcc.o [1]
+RFU_CODE_init$$Base             0x0           --   Gb  - Linker created -
+RFU_CODE_init$$Length           0x0           --   Gb  - Linker created -
+RFU_FLASH_ClearFlag      0x800'6e21     0x6  Code  Gb  rfu_stm32L10x.o [1]
 RFU_FLASH_EraseAllPages
-                        0x080072c9   0x2e  Code  Gb  rfu_stm32L10x.o [1]
-RFU_FLASH_ErasePage     0x0800726f   0x5a  Code  Gb  rfu_stm32L10x.o [1]
+                         0x800'6dc9    0x2c  Code  Gb  rfu_stm32L10x.o [1]
+RFU_FLASH_ErasePage      0x800'6d7b    0x4e  Code  Gb  rfu_stm32L10x.o [1]
 RFU_FLASH_FastProgramWord
-                        0x080072f7   0x2a  Code  Gb  rfu_stm32L10x.o [1]
-RFU_FLASH_GetStatus     0x08007327   0x36  Code  Gb  rfu_stm32L10x.o [1]
-RFU_FLASH_Lock          0x08007261    0xe  Code  Gb  rfu_stm32L10x.o [1]
-RFU_FLASH_Unlock        0x0800723d   0x24  Code  Gb  rfu_stm32L10x.o [1]
+                         0x800'6df5    0x2c  Code  Gb  rfu_stm32L10x.o [1]
+RFU_FLASH_GetStatus      0x800'6e27    0x2a  Code  Gb  rfu_stm32L10x.o [1]
+RFU_FLASH_Lock           0x800'6d6f     0xc  Code  Gb  rfu_stm32L10x.o [1]
+RFU_FLASH_Unlock         0x800'6d4d    0x22  Code  Gb  rfu_stm32L10x.o [1]
 RFU_FLASH_WaitForLastOperation
-                        0x08007375   0x3c  Code  Gb  rfu_stm32L10x.o [1]
-RXD                     0x20001974   0x40  Data  Gb  main.o [1]
-RXbuf                   0x20001b70    0xc  Data  Gb  protocol_L6IR.o [1]
-Region$$Table$$Base     0x080089f8          --   Gb  - Linker created -
-Region$$Table$$Limit    0x08008a18          --   Gb  - Linker created -
-RfuOverlay$$Base        0x00000000          --   Gb  - Linker created -
-SPI_Cmd                 0x080040c9   0x1c  Code  Gb  stm32l1xx_spi.o [1]
-SPI_I2S_GetFlagStatus   0x080040ed   0x18  Code  Gb  stm32l1xx_spi.o [1]
-SPI_I2S_ReceiveData     0x080040e5    0x4  Code  Gb  stm32l1xx_spi.o [1]
-SPI_I2S_SendData        0x080040e9    0x4  Code  Gb  stm32l1xx_spi.o [1]
-SPI_Init                0x08004089   0x40  Code  Gb  stm32l1xx_spi.o [1]
-SPI_init_func           0x08007747   0x56  Code  Gb  system_init.o [1]
-SVC_Handler             0x080080ab    0x2  Code  Gb  stm32l1xx_it.o [1]
-SetSysClock             0x08008473   0xcc  Code  Lc  system_stm32l1xx.o [1]
-SysTick_Config          0x0800875b   0x30  Code  Lc  system_timer.o [1]
-SysTick_Handler         0x080081e9   0xda  Code  Gb  stm32l1xx_it.o [1]
-SystemCoreClock         0x2000013c    0x4  Data  Gb  system_stm32l1xx.o [1]
-SystemCoreClockUpdate   0x08008397   0xdc  Code  Gb  system_stm32l1xx.o [1]
-SystemInit              0x08008345   0x52  Code  Gb  system_stm32l1xx.o [1]
-TXD                     0x200016dc   0xc0  Data  Gb  main.o [1]
-TXbuf                   0x20001b64    0xc  Data  Gb  protocol_L6IR.o [1]
-UART_init               0x080076ed   0x5a  Code  Gb  system_init.o [1]
-USART1_IRQHandler       0x080080b1  0x138  Code  Gb  stm32l1xx_it.o [1]
-USART_Cmd               0x08002431   0x1c  Code  Gb  stm32l1xx_usart.o [1]
-USART_DeInit            0x080022a1   0x90  Code  Gb  stm32l1xx_usart.o [1]
-USART_GetITStatus       0x080024b3   0x70  Code  Gb  stm32l1xx_usart.o [1]
-USART_ITConfig          0x0800245d   0x56  Code  Gb  stm32l1xx_usart.o [1]
-USART_Init              0x08002331   0xe8  Code  Gb  stm32l1xx_usart.o [1]
-USART_ReceiveData       0x08002455    0x8  Code  Gb  stm32l1xx_usart.o [1]
-USART_SendData          0x0800244d    0x8  Code  Gb  stm32l1xx_usart.o [1]
-UsageFault_Handler      0x080080a9    0x2  Code  Gb  stm32l1xx_it.o [1]
-__aeabi_cdcmpeq         0x08005815         Code  Gb  DblCmpEq.o [4]
-__aeabi_cdcmple         0x08005871         Code  Gb  DblCmpLe.o [4]
-__aeabi_cdrcmple        0x08005841         Code  Gb  DblCmpGe.o [4]
-__aeabi_cfcmpeq         0x08005739         Code  Gb  FltCmpEq.o [4]
-__aeabi_cfcmple         0x08002a35         Code  Gb  FltCmpLe.o [4]
-__aeabi_cfrcmple        0x08002cc1         Code  Gb  FltCmpGe.o [4]
-__aeabi_d2f             0x080029a5         Code  Gb  DblToFlt.o [4]
-__aeabi_d2iz            0x080044a9         Code  Gb  DblToI32.o [4]
-__aeabi_d2uiz           0x080044d5         Code  Gb  DblToI32.o [4]
-__aeabi_dadd            0x080043c1         Code  Gb  DblAdd.o [4]
-__aeabi_ddiv            0x0800274d         Code  Gb  DblDiv.o [4]
-__aeabi_dmul            0x080025a9         Code  Gb  DblMul.o [4]
-__aeabi_dsub            0x08004cb9         Code  Gb  DblSub.o [4]
-__aeabi_errno_addr      0x08005835    0x6  Code  Gb  errno.o [3]
-__aeabi_f2d             0x08002559         Code  Gb  FltToDbl.o [4]
-__aeabi_f2iz            0x08002d09         Code  Gb  FltToS32.o [4]
-__aeabi_f2uiz           0x08002ce5         Code  Gb  FltToU32.o [4]
-__aeabi_fadd            0x08002b41         Code  Gb  FltAdd.o [4]
-__aeabi_fdiv            0x08002bc5         Code  Gb  FltDiv.o [4]
-__aeabi_fmul            0x08004105         Code  Gb  FltMul.o [4]
-__aeabi_fsub            0x08002a59         Code  Gb  FltSub.o [4]
-__aeabi_i2d             0x080058a1         Code  Gb  I32ToDbl.o [4]
-__aeabi_i2f             0x08002525         Code  Gb  I32ToFlt.o [4]
-__aeabi_memclr4         0x08007235         Code  Gb  ABImemclr4.o [5]
-__aeabi_ui2f            0x08002539         Code  Gb  I32ToFlt.o [4]
-__cmain                 0x08008a19         Code  Gb  cmain.o [5]
-__exit                  0x08008a49   0x14  Code  Gb  exit.o [6]
-__iar_Dint              0x08005799   0x7a  Code  Gb  xdint.o [4]
-__iar_Dnorm             0x08005755   0x44  Code  Gb  xdnorm.o [4]
-__iar_Dscale            0x0800608d  0x10c  Code  Gb  xdscale.o [4]
-__iar_Dtest             0x08006059   0x32  Code  Gb  xdtest.o [4]
-__iar_Errno             0x2000015c    0x4  Data  Gb  errno.o [3]
-__iar_Exp               0x08005979  0x2b6  Code  Gb  xexp.o [4]
-__iar_Logpoly           0x080058cd   0x70  Code  Gb  xlog.o [4]
-__iar_Memset4_word      0x080073b1         Code  Gb  ABImemset48.o [5]
-__iar_Memset8_word      0x080073b1         Code  Gb  ABImemset48.o [5]
-__iar_Quad              0x08006199  0x160  Code  Gb  xquad.o [4]
-__iar_Sin               0x08005c35  0x41c  Code  Gb  xsin.o [4]
-__iar_d2uiz             0x080044e1         Code  Gb  DblToI32.o [4]
-__iar_dadd              0x080043d5         Code  Gb  DblAdd.o [4]
-__iar_data_init3        0x080089d1   0x28  Code  Gb  data_init.o [5]
-__iar_dlib_perthread_access
-                        0x08006057    0x2  Code  Gb  xtls.o [3]
-__iar_dsub              0x08004ccd         Code  Gb  DblSub.o [4]
-__iar_dsubStart         0x08004cdf         Code  Gb  DblSub.o [4]
-__iar_edom              0x080064a1         Code  Gb  iarEdom.o [5]
-__iar_fadd              0x08002b51         Code  Gb  FltAdd.o [4]
-__iar_floor             0x08004e39         Code  Gb  floor.o [4]
-__iar_floorl            0x08004e39         Code  Gb  floor.o [4]
-__iar_fmod              0x080062f9         Code  Gb  fmod.o [4]
-__iar_fmodl             0x080062f9         Code  Gb  fmod.o [4]
-__iar_fsub              0x08002a69         Code  Gb  FltSub.o [4]
-__iar_fsubStart         0x08002a79         Code  Gb  FltSub.o [4]
+                         0x800'6e6d    0x3a  Code  Gb  rfu_stm32L10x.o [1]
+RXD                     0x2000'0980    0x40  Data  Gb  main.o [1]
+RXbuf                   0x2000'0b8c     0xc  Data  Gb  protocol_L6IR.o [1]
+Region$$Table$$Base      0x800'856c           --   Gb  - Linker created -
+Region$$Table$$Limit     0x800'858c           --   Gb  - Linker created -
+RfuOverlay$$Base                0x0           --   Gb  - Linker created -
+SPI_Cmd                  0x800'38cb    0x1e  Code  Gb  stm32l1xx_spi.o [1]
+SPI_I2S_GetFlagStatus    0x800'38f1    0x14  Code  Gb  stm32l1xx_spi.o [1]
+SPI_I2S_ReceiveData      0x800'38e9     0x4  Code  Gb  stm32l1xx_spi.o [1]
+SPI_I2S_SendData         0x800'38ed     0x4  Code  Gb  stm32l1xx_spi.o [1]
+SPI_Init                 0x800'388d    0x3e  Code  Gb  stm32l1xx_spi.o [1]
+SPI_init_func            0x800'7221    0x58  Code  Gb  system_init.o [1]
+SVC_Handler              0x800'7bb3     0x2  Code  Gb  stm32l1xx_it.o [1]
+SetSysClock              0x800'81fd    0xa6  Code  Lc  system_stm32l1xx.o [1]
+SysTick_Config           0x800'830d    0x30  Code  Lc  system_timer.o [1]
+SysTick_Handler          0x800'7cf9    0xf0  Code  Gb  stm32l1xx_it.o [1]
+SystemCoreClock         0x2000'014c     0x4  Data  Gb  system_stm32l1xx.o [1]
+SystemCoreClockUpdate    0x800'812b    0xd2  Code  Gb  system_stm32l1xx.o [1]
+SystemInit               0x800'80e9    0x42  Code  Gb  system_stm32l1xx.o [1]
+TXD                     0x2000'06e8    0xc0  Data  Gb  main.o [1]
+TXbuf                   0x2000'0b80     0xc  Data  Gb  protocol_L6IR.o [1]
+UART_init                0x800'71c9    0x58  Code  Gb  system_init.o [1]
+USART1_IRQHandler        0x800'7bb9   0x140  Code  Gb  stm32l1xx_it.o [1]
+USART_Cmd                0x800'21c1    0x1e  Code  Gb  stm32l1xx_usart.o [1]
+USART_DeInit             0x800'2049    0x90  Code  Gb  stm32l1xx_usart.o [1]
+USART_GetITStatus        0x800'225f    0x6a  Code  Gb  stm32l1xx_usart.o [1]
+USART_ITConfig           0x800'21ef    0x70  Code  Gb  stm32l1xx_usart.o [1]
+USART_Init               0x800'20d9    0xd0  Code  Gb  stm32l1xx_usart.o [1]
+USART_ReceiveData        0x800'21e7     0x8  Code  Gb  stm32l1xx_usart.o [1]
+USART_SendData           0x800'21df     0x8  Code  Gb  stm32l1xx_usart.o [1]
+UsageFault_Handler       0x800'7bb1     0x2  Code  Gb  stm32l1xx_it.o [1]
+__NVIC_SetPriority       0x800'82e1    0x2c  Code  Lc  system_timer.o [1]
+__aeabi_cdcmpeq          0x800'5a51          Code  Gb  DblCmpEq.o [3]
+__aeabi_cdcmple          0x800'5ae1          Code  Gb  DblCmpLe.o [3]
+__aeabi_cdrcmple         0x800'5c71          Code  Gb  DblCmpGe.o [3]
+__aeabi_cfcmpeq          0x800'3b29          Code  Gb  FltCmpEq.o [3]
+__aeabi_cfcmple          0x800'2545          Code  Gb  FltCmpLe.o [3]
+__aeabi_cfrcmple         0x800'35f5          Code  Gb  FltCmpGe.o [3]
+__aeabi_d2f              0x800'49a1          Code  Gb  DblToFlt.o [3]
+__aeabi_d2iz             0x800'4a61          Code  Gb  DblToS32.o [3]
+__aeabi_d2uiz            0x800'3ead          Code  Gb  DblToU32.o [3]
+__aeabi_dadd             0x800'3d31          Code  Gb  DblAdd.o [3]
+__aeabi_ddiv             0x800'4759          Code  Gb  DblDiv.o [3]
+__aeabi_dmul             0x800'3b8d          Code  Gb  DblMul.o [3]
+__aeabi_dsub             0x800'4675          Code  Gb  DblSub.o [3]
+__aeabi_f2d              0x800'3b45          Code  Gb  FltToDbl.o [3]
+__aeabi_f2iz             0x800'258d          Code  Gb  FltToS32.o [3]
+__aeabi_f2uiz            0x800'2569          Code  Gb  FltToU32.o [3]
+__aeabi_fadd             0x800'2365          Code  Gb  FltAdd.o [3]
+__aeabi_fdiv             0x800'2449          Code  Gb  FltDiv.o [3]
+__aeabi_fmul             0x800'3905          Code  Gb  FltMul.o [3]
+__aeabi_fsub             0x800'22e5          Code  Gb  FltSub.o [3]
+__aeabi_i2d              0x800'5c4d          Code  Gb  S32ToDbl.o [3]
+__aeabi_i2f              0x800'3619          Code  Gb  S32ToFlt.o [3]
+__aeabi_memclr4          0x800'6d45          Code  Gb  ABImemclr4.o [4]
+__aeabi_memcpy           0x800'1d2d          Code  Gb  ABImemcpy.o [4]
+__aeabi_memcpy4          0x800'1d4d          Code  Gb  ABImemcpy.o [4]
+__aeabi_memcpy8          0x800'1d4d          Code  Gb  ABImemcpy.o [4]
+__aeabi_ui2f             0x800'22c9          Code  Gb  U32ToFlt.o [3]
+__cmain                  0x800'858d          Code  Gb  cmain.o [4]
+__exit                   0x800'85c1    0x14  Code  Gb  exit.o [5]
+__iar_Exp64              0x800'5ca1   0x340  Code  Gb  iar_Exp64.o [3]
+__iar_Memset4_word       0x800'6ea9          Code  Gb  ABImemset48.o [4]
+__iar_Memset8_word       0x800'6ea9          Code  Gb  ABImemset48.o [4]
+__iar_Pow64              0x800'4aa1   0x6a8  Code  Lc  pow64.o [3]
+__iar_Sin64              0x800'5631   0x390  Code  Lc  cos_sin64.o [3]
+__iar_dadd               0x800'4685          Code  Gb  DblSub.o [3]
+__iar_data_init3         0x800'8545    0x28  Code  Gb  data_init.o [4]
+__iar_dsub               0x800'3d41          Code  Gb  DblAdd.o [3]
+__iar_dsubStart          0x800'3d53          Code  Gb  DblAdd.o [3]
+__iar_exp64              0x800'5601    0x30  Code  Gb  exp64.o [3]
+__iar_exp_medium         0x800'5601    0x30  Code  Gb  exp64.o [3]
+__iar_exp_medium64       0x800'5601    0x30  Code  Gb  exp64.o [3]
+__iar_exp_mediuml        0x800'5601    0x30  Code  Gb  exp64.o [3]
+__iar_fadd               0x800'22f1          Code  Gb  FltSub.o [3]
+__iar_floor64            0x800'4a09          Code  Gb  floor.o [3]
+__iar_frexp              0x800'5a7d          Code  Gb  frexp.o [3]
+__iar_frexp64            0x800'5a71          Code  Gb  frexp.o [3]
+__iar_frexpl             0x800'5a7d          Code  Gb  frexp.o [3]
+__iar_fsub               0x800'2371          Code  Gb  FltAdd.o [3]
+__iar_fsubStart          0x800'2381          Code  Gb  FltAdd.o [3]
+__iar_ldexp64            0x800'5b11          Code  Gb  ldexp.o [3]
 __iar_packbits_init_single3
-                        0x08008999   0x38  Code  Gb  packbits_init_single.o [5]
-__iar_program_start     0x08008a6d         Code  Gb  cstartup_M.o [5]
-__iar_ui2d              0x080058b5         Code  Gb  I32ToDbl.o [4]
-__iar_ui2f              0x0800253d         Code  Gb  I32ToFlt.o [4]
-__iar_unaligned___aeabi_memcpy
-                        0x08001fb9         Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_unaligned___aeabi_memcpy4
-                        0x08001fd9         Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_unaligned___aeabi_memcpy8
-                        0x08001fd9         Code  Gb  ABImemcpy_unaligned.o [5]
-__iar_zero_init3        0x08008959   0x40  Code  Gb  zero_init3.o [5]
-__low_level_init        0x08008a33    0x4  Code  Gb  low_level_init.o [3]
-__vector_table          0x08000000         Data  Gb  startup_stm32l1xx_md.o [1]
-_call_main              0x08008a25         Code  Gb  cmain.o [5]
-_exit                   0x08008a3d         Code  Gb  cexit.o [5]
-_main                   0x08008a2f         Code  Gb  cmain.o [5]
-balCalculate            0x08004571  0x652  Code  Gb  Ball.o [1]
+                         0x800'850d    0x38  Code  Gb  packbits_init_single.o [4]
+__iar_pow64              0x800'51d1     0xc  Code  Gb  pow64.o [3]
+__iar_pow_medium         0x800'51d1     0xc  Code  Gb  pow64.o [3]
+__iar_pow_medium64       0x800'51d1     0xc  Code  Gb  pow64.o [3]
+__iar_pow_mediuml        0x800'51d1     0xc  Code  Gb  pow64.o [3]
+__iar_program_start      0x800'85e5          Code  Gb  cstartup_M.o [4]
+__iar_scalbln64          0x800'5b11          Code  Gb  ldexp.o [3]
+__iar_scalbn64           0x800'5b11          Code  Gb  ldexp.o [3]
+__iar_sin64              0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+__iar_sin_medium         0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+__iar_sin_medium64       0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+__iar_sin_mediuml        0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+__iar_zero_init3         0x800'1cf3    0x3a  Code  Gb  zero_init3.o [4]
+__low_level_init         0x800'85ab     0x4  Code  Gb  low_level_init.o [2]
+__vector_table           0x800'0000          Data  Gb  startup_stm32l1xx_md.o [1]
+_call_main               0x800'8599          Code  Gb  cmain.o [4]
+_exit                    0x800'85b5          Code  Gb  cexit.o [4]
+_main                    0x800'85a7          Code  Gb  cmain.o [4]
+balCalculate             0x800'3f21   0x65e  Code  Gb  Ball.o [1]
 balCalculate::pref_correct_g
-                        0x20001ba4    0x4  Data  Lc  Ball.o [1]
+                        0x2000'0bc8     0x4  Data  Lc  Ball.o [1]
 balCalculate::pref_correct_v
-                        0x20001ba8    0x4  Data  Lc  Ball.o [1]
-bullet                  0x20001a7c   0x10  Data  Gb  Ball.o [1]
-calibrate_compass       0x20001ac8    0xc  Data  Gb  net.o [1]
-cam_operation           0x20001bcf    0x1  Data  Gb  Camera.o [1]
-cam_power_state         0x20000160    0x1  Data  Gb  Camera.o [1]
-cam_sets                0x200018c4   0x6c  Data  Gb  Camera.o [1]
-check_crc               0x0800223b   0x34  Code  Gb  Buffer.o [1]
-clean                   0x08002089    0xe  Code  Gb  Buffer.o [1]
-correct_enter           0x080034fd  0x108  Code  Gb  Camera.o [1]
-counter_sys             0x20001bcc    0x2  Data  Gb  stm32l1xx_it.o [1]
-critcal_section_level   0x20001bbc    0x2  Data  Gb  Camera.o [1]
-ctrl_unit_masks_buf     0x20000114    0xc  Data  Gb  protocol_L6IR.o [1]
-cu_get_keys             0x20001a98    0xc  Data  Gb  net.o [1]
-cu_get_net_condition    0x20001aa4    0xc  Data  Gb  net.o [1]
-current_buff_summ       0x20001bb4    0x4  Data  Gb  net.o [1]
-default_ball_ini        0x08004501   0x70  Code  Gb  Ball.o [1]
-default_cam_sets        0x08003609  0x142  Code  Gb  Camera.o [1]
-default_flash_content   0x080041dd  0x1e4  Code  Gb  default_flash_content_PT9.o [1]
-del_stsp                0x08002167   0x54  Code  Gb  Buffer.o [1]
-disp_buff               0x20001a04   0x28  Data  Gb  net.o [1]
-display_st              0x20001bd7    0x1  Data  Gb  operator_control.o [1]
-dow_crc                 0x080021bb   0x80  Code  Gb  Buffer.o [1]
-encoder0                0x20001b7c    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder0_func           0x08007ee9  0x17e  Code  Gb  protocol_L6IR_encoder_new.o [1]
-encoder0_func_2enc      0x080087cd  0x15e  Code  Gb  protocol_L6IR_encoder_old.o [1]
-encoder0_masks_buf      0x200000fc    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder1                0x20001b88    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder1_func           0x08007dc9   0x9c  Code  Gb  protocol_L6IR_encoder_new.o [1]
-encoder1_masks_buf      0x20000108    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder1_t_func         0x08007e65   0x84  Code  Gb  protocol_L6IR_encoder_new.o [1]
-encoder_func_buf        0x200000f0    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder_func_count      0x20001bda    0x1  Data  Gb  protocol_L6IR.o [1]
-encoder_func_ini        0x080065b7   0x36  Code  Gb  protocol_L6IR.o [1]
-encoder_minus_buf       0x200000e4    0xc  Data  Gb  protocol_L6IR.o [1]
-encoder_plus_buf        0x200000d8    0xc  Data  Gb  protocol_L6IR.o [1]
-enter_critical_section  0x08002d4d   0x1c  Code  Lc  Camera.o [1]
-error_counter           0x20001bca    0x2  Data  Gb  protocol_L6IR.o [1]
-exit                    0x08008a37    0x4  Code  Gb  exit.o [3]
-exit_critical_section   0x08002d69   0x1c  Code  Lc  Camera.o [1]
-exp                     0x080056e1   0x50  Code  Gb  exp.o [4]
-expo_timeout            0x20001bc8    0x2  Data  Gb  net.o [1]
-expossition_value       0x20001bd6    0x1  Data  Gb  net.o [1]
-extern_master_find      0x20001a8c    0xc  Data  Gb  net.o [1]
-eye_buff                0x200019dc   0x28  Data  Gb  net.o [1]
-eye_buff_point          0x20001bd4    0x1  Data  Gb  net.o [1]
-eye_buff_quant          0x20001bd5    0x1  Data  Gb  net.o [1]
-eye_buff_sum            0x20001bb0    0x4  Data  Gb  net.o [1]
-eye_sens_par            0x20001b58    0xc  Data  Gb  net.o [1]
-flash                   0x2000153c  0x1a0  Data  Gb  Camera.o [1]
-flash_is_read           0x20001bd0    0x1  Data  Gb  main.o [1]
-flash_reading_process   0x08003751   0xd2  Code  Gb  Camera.o [1]
-floor                   0x08004e39         Code  Gb  floor.o [4]
-floorl                  0x08004e39         Code  Gb  floor.o [4]
-fmod                    0x080062f9         Code  Gb  fmod.o [4]
-fmodl                   0x080062f9         Code  Gb  fmod.o [4]
-fuck_next_command       0x20001bdb    0x1  Data  Gb  protocol_L6IR.o [1]
-fuck_power_off_command  0x20000162    0x1  Data  Gb  protocol_L6IR.o [1]
-func_buffer_ini         0x080064ad  0x10a  Code  Gb  protocol_L6IR.o [1]
-galenic_counter         0x20001bd1    0x1  Data  Gb  main.o [1]
-get                     0x080020fd    0x8  Code  Gb  Buffer.o [1]
-get_compass             0x20001abc    0xc  Data  Gb  net.o [1]
-get_compass_status      0x20001ad4    0xc  Data  Gb  net.o [1]
-get_declinate           0x20001b04    0xc  Data  Gb  net.o [1]
-get_empty               0x08002045    0x4  Code  Gb  Buffer.o [1]
-get_encoder_0           0x20001b1c    0xc  Data  Gb  net.o [1]
-get_encoder_1           0x20001b28    0xc  Data  Gb  net.o [1]
-get_fill                0x0800204d   0x3c  Code  Gb  Buffer.o [1]
-get_full                0x08002049    0x4  Code  Gb  Buffer.o [1]
-get_gps                 0x20001ab0    0xc  Data  Gb  net.o [1]
-get_inclinate           0x20001af8    0xc  Data  Gb  net.o [1]
-get_pressure            0x20001aec    0xc  Data  Gb  net.o [1]
-get_temperature         0x20001ae0    0xc  Data  Gb  net.o [1]
-init_spi_objects        0x08002d85  0x27a  Code  Gb  Camera.o [1]
-insert_crc              0x0800226f   0x30  Code  Gb  Buffer.o [1]
-insert_stsp             0x08002105   0x62  Code  Gb  Buffer.o [1]
-internal_Pow            0x08004e99  0x412  Code  Lc  pow.o [4]
-irled                   0x20001bdc    0x1  Data  Lc  stm32l1xx_it.o [1]
-irledmax                0x20000163    0x1  Data  Lc  stm32l1xx_it.o [1]
-key1_count              0x20001bbe    0x2  Data  Gb  main.o [1]
-keys                    0x20001850   0x74  Data  Gb  main.o [1]
-keys_analis             0x08000fd5  0xfb0  Code  Gb  net.o [1]
-keys_analis_P_O         0x08001fb5    0x2  Code  Gb  net.o [1]
-keys_syncro_count       0x20001bc2    0x2  Data  Gb  net.o [1]
-keys_syncro_func        0x08000f0d   0x14  Code  Gb  net.o [1]
-led_brightnes           0x20000161    0x1  Data  Gb  net.o [1]
-led_off                 0x08008335    0xc  Code  Gb  led_control.o [1]
-led_pulse_control       0x08008329    0xc  Code  Gb  led_control.o [1]
-led_pulse_enable        0x20001bd2    0x1  Data  Gb  main.o [1]
-lnbias                  0x080052c0  0x420  Data  Lc  pow.o [4]
-lpd_requests            0x08000e11   0xa2  Code  Gb  net.o [1]
-main                    0x0800857d  0x168  Code  Gb  main.o [1]
-make_request            0x08000c47   0x34  Code  Gb  net.o [1]
-mark_tasks              0x08003855  0x48c  Code  Gb  Camera.o [1]
-marks_syncro_func       0x08003829   0x1a  Code  Gb  Camera.o [1]
-net_counter             0x08000b37   0x4e  Code  Gb  net.o [1]
-net_fault_flag          0x20001bdd    0x1  Data  Gb  stm32l1xx_it.o [1]
-net_fault_function      0x08000c7b   0x3e  Code  Gb  net.o [1]
-net_global_count        0x20001bc6    0x2  Data  Gb  net.o [1]
-net_init                0x080004b5  0x682  Code  Gb  net.o [1]
-net_set_default         0x080003af   0x10  Code  Gb  net.o [1]
-net_sets                0x20001a48   0x1c  Data  Gb  net.o [1]
-net_status              0x20001930   0x44  Data  Gb  net.o [1]
-net_task                0x08000b85   0xc2  Code  Gb  net.o [1]
-obj_in_net              0x20001bc0    0x2  Data  Gb  net.o [1]
-operator_ctrl_consist   0x20001bd8    0x1  Data  Gb  operator_control.o [1]
-pop                     0x080020c7   0x36  Code  Gb  Buffer.o [1]
-pow                     0x080052b1    0xe  Code  Gb  pow.o [4]
-power_off               0x20001b10    0xc  Data  Gb  net.o [1]
-pref_net_init           0x080003bf   0xf6  Code  Gb  net.o [1]
-prev_cam_state          0x20001bac    0x4  Data  Gb  Camera.o [1]
-protocol                0x080065ed  0x5b8  Code  Gb  protocol_L6IR.o [1]
-push                    0x08002097   0x30  Code  Gb  Buffer.o [1]
-redrow_menu_simbol      0x08006ba5   0xa4  Code  Gb  protocol_L6IR.o [1]
-rf_get_distance         0x20001b4c    0xc  Data  Gb  net.o [1]
-rf_get_status           0x20001b40    0xc  Data  Gb  net.o [1]
-rf_start_messure        0x20001b34    0xc  Data  Gb  net.o [1]
-rfu_main                0x08006e0b  0x40e  Code  Gb  rfu_ram.o [1]
-rfu_start               0x08006cb9   0x30  Code  Gb  rfu.o [1]
-rs_frame                0x20001bd9    0x1  Data  Gb  protocol_L6IR.o [1]
-send                    0x08006d05   0xaa  Code  Gb  rfu_ram.o [1]
-send_char               0x08006ced   0x18  Code  Gb  rfu_ram.o [1]
-send_ec                 0x08006daf   0x20  Code  Gb  rfu_ram.o [1]
-send_u32                0x08006dcf   0x3c  Code  Gb  rfu_ram.o [1]
-sens_synchro_func       0x0800830d   0x16  Code  Gb  Sensors.o [1]
-sens_synchro_time       0x20001b94    0x8  Data  Lc  Sensors.o [1]
-senspar                 0x200019b4   0x28  Data  Gb  Ball.o [1]
+                        0x2000'0bcc     0x4  Data  Lc  Ball.o [1]
+bullet                  0x2000'0a88    0x10  Data  Gb  Ball.o [1]
+calibrate_compass       0x2000'0ae4     0xc  Data  Gb  net.o [1]
+cam_operation           0x2000'0bf7     0x1  Data  Gb  Camera.o [1]
+cam_power_state         0x2000'016c     0x1  Data  Gb  Camera.o [1]
+cam_sets                0x2000'08d0    0x6c  Data  Gb  Camera.o [1]
+check_crc                0x800'1fdf    0x36  Code  Gb  Buffer.o [1]
+clean                    0x800'1e25     0xe  Code  Gb  Buffer.o [1]
+correct_enter            0x800'2c3f   0x100  Code  Gb  Camera.o [1]
+counter_sys             0x2000'0bf4     0x2  Data  Gb  stm32l1xx_it.o [1]
+critcal_section_level   0x2000'0be4     0x2  Data  Gb  Camera.o [1]
+ctrl_unit_masks_buf     0x2000'0120    0x10  Data  Gb  protocol_L6IR.o [1]
+cu_get_keys             0x2000'0ab4     0xc  Data  Gb  net.o [1]
+cu_get_net_condition    0x2000'0ac0     0xc  Data  Gb  net.o [1]
+current_buff_summ       0x2000'0bd8     0x4  Data  Gb  net.o [1]
+currient_focus          0x2000'0bdc     0x4  Data  Gb  protocol_L6IR.o [1]
+default_ball_ini         0x800'3ed5    0x4c  Code  Gb  Ball.o [1]
+default_cam_sets         0x800'2d3f    0xc4  Code  Gb  Camera.o [1]
+default_flash_content    0x800'39dd   0x14c  Code  Gb  default_flash_content_PT9.o [1]
+del_stsp                 0x800'1f09    0x58  Code  Gb  Buffer.o [1]
+disp_buff               0x2000'0a10    0x28  Data  Gb  net.o [1]
+display_st              0x2000'0c00     0x1  Data  Gb  operator_control.o [1]
+dow_crc                  0x800'1f61    0x7e  Code  Gb  Buffer.o [1]
+encoder0                0x2000'0b98     0xc  Data  Gb  protocol_L6IR.o [1]
+encoder0_func            0x800'79f3   0x17c  Code  Gb  protocol_L6IR_encoder_new.o [1]
+encoder0_func_2enc       0x800'837d   0x162  Code  Gb  protocol_L6IR_encoder_old.o [1]
+encoder0_masks_buf      0x2000'0100    0x10  Data  Gb  protocol_L6IR.o [1]
+encoder1                0x2000'0ba4     0xc  Data  Gb  protocol_L6IR.o [1]
+encoder1_func            0x800'78d1    0x98  Code  Gb  protocol_L6IR_encoder_new.o [1]
+encoder1_masks_buf      0x2000'0110    0x10  Data  Gb  protocol_L6IR.o [1]
+encoder1_t_func          0x800'7969    0x8a  Code  Gb  protocol_L6IR_encoder_new.o [1]
+encoder_func_buf        0x2000'00f0    0x10  Data  Gb  protocol_L6IR.o [1]
+encoder_func_count      0x2000'0c04     0x1  Data  Gb  protocol_L6IR.o [1]
+encoder_func_ini         0x800'60d3    0x26  Code  Gb  protocol_L6IR.o [1]
+encoder_minus_buf       0x2000'00e4     0xc  Data  Gb  protocol_L6IR.o [1]
+encoder_plus_buf        0x2000'00d8     0xc  Data  Gb  protocol_L6IR.o [1]
+enter_critical_section   0x800'2621    0x14  Code  Lc  Camera.o [1]
+error_counter           0x2000'0bf2     0x2  Data  Gb  protocol_L6IR.o [1]
+exit                     0x800'85af     0x4  Code  Gb  exit.o [2]
+exit_critical_section    0x800'2635    0x14  Code  Lc  Camera.o [1]
+exp                      0x800'5601    0x30  Code  Gb  exp64.o [3]
+expl                     0x800'5601    0x30  Code  Gb  exp64.o [3]
+expo_timeout            0x2000'0bf0     0x2  Data  Gb  net.o [1]
+expossition_value       0x2000'0bfd     0x1  Data  Gb  net.o [1]
+extern_master_find      0x2000'0aa8     0xc  Data  Gb  net.o [1]
+eye_buff                0x2000'09e8    0x28  Data  Gb  net.o [1]
+eye_buff_point          0x2000'0bfe     0x1  Data  Gb  net.o [1]
+eye_buff_quant          0x2000'0bff     0x1  Data  Gb  net.o [1]
+eye_buff_sum            0x2000'0bd4     0x4  Data  Gb  net.o [1]
+eye_sens_par            0x2000'0a98    0x10  Data  Gb  net.o [1]
+eye_sens_set_level       0x800'33db    0x56  Code  Gb  Camera.o [1]
+eye_sens_set_level_count
+                        0x2000'0bf8     0x1  Data  Gb  Camera.o [1]
+eye_sens_state          0x2000'0c02     0x1  Data  Gb  operator_control.o [1]
+flash                   0x2000'0548   0x1a0  Data  Gb  Camera.o [1]
+flash_is_read           0x2000'0bf9     0x1  Data  Gb  main.o [1]
+flash_reading_process    0x800'2e11    0x9e  Code  Gb  Camera.o [1]
+floor                    0x800'4a09          Code  Gb  floor.o [3]
+floorl                   0x800'4a09          Code  Gb  floor.o [3]
+frexp                    0x800'5a71          Code  Gb  frexp.o [3]
+frexpl                   0x800'5a71          Code  Gb  frexp.o [3]
+fuck_next_command       0x2000'0c05     0x1  Data  Gb  protocol_L6IR.o [1]
+fuck_power_off_command  0x2000'016f     0x1  Data  Gb  protocol_L6IR.o [1]
+func_buffer_ini          0x800'6035    0x9e  Code  Gb  protocol_L6IR.o [1]
+galenic_counter         0x2000'0bfa     0x1  Data  Gb  main.o [1]
+get                      0x800'1e9b     0x8  Code  Gb  Buffer.o [1]
+get_compass             0x2000'0ad8     0xc  Data  Gb  net.o [1]
+get_compass_status      0x2000'0af0     0xc  Data  Gb  net.o [1]
+get_declinate           0x2000'0b20     0xc  Data  Gb  net.o [1]
+get_empty                0x800'1de9     0x4  Code  Gb  Buffer.o [1]
+get_encoder_0           0x2000'0b38     0xc  Data  Gb  net.o [1]
+get_encoder_1           0x2000'0b44     0xc  Data  Gb  net.o [1]
+get_fill                 0x800'1df1    0x34  Code  Gb  Buffer.o [1]
+get_focus               0x2000'0b74     0xc  Data  Gb  net.o [1]
+get_full                 0x800'1ded     0x4  Code  Gb  Buffer.o [1]
+get_gps                 0x2000'0acc     0xc  Data  Gb  net.o [1]
+get_inclinate           0x2000'0b14     0xc  Data  Gb  net.o [1]
+get_key_event            0x800'25e7    0x38  Code  Gb  keys.o [1]
+get_pressure            0x2000'0b08     0xc  Data  Gb  net.o [1]
+get_temperature         0x2000'0afc     0xc  Data  Gb  net.o [1]
+iclinate_analis          0x800'7e71    0x7e  Code  Gb  main.o [1]
+init_spi_objects         0x800'2649   0x192  Code  Gb  Camera.o [1]
+insert_crc               0x800'2015    0x32  Code  Gb  Buffer.o [1]
+insert_stsp              0x800'1ea3    0x66  Code  Gb  Buffer.o [1]
+irled                   0x2000'0c06     0x1  Data  Lc  stm32l1xx_it.o [1]
+irledmax                0x2000'0170     0x1  Data  Lc  stm32l1xx_it.o [1]
+key1_count              0x2000'0be6     0x2  Data  Gb  main.o [1]
+key_menu                0x2000'0bb0     0x8  Data  Gb  main.o [1]
+keys                    0x2000'085c    0x74  Data  Gb  main.o [1]
+keys_analis              0x800'0c51  0x106e  Code  Gb  net.o [1]
+keys_analis_P_O          0x800'1cf1     0x2  Code  Gb  net.o [1]
+keys_counter            0x2000'0c08     0x1  Data  Gb  stm32l1xx_it.o [1]
+keys_syncro_count       0x2000'0bea     0x2  Data  Gb  net.o [1]
+keys_syncro_func         0x800'0b75    0x10  Code  Gb  net.o [1]
+ldexp                    0x800'5b11          Code  Gb  ldexp.o [3]
+ldexpl                   0x800'5b11          Code  Gb  ldexp.o [3]
+led_brightnes           0x2000'016e     0x1  Data  Gb  net.o [1]
+led_off                  0x800'7e61     0xc  Code  Gb  led_control.o [1]
+led_pulse_control        0x800'7e55     0xc  Code  Gb  led_control.o [1]
+led_pulse_enable        0x2000'0bfb     0x1  Data  Gb  main.o [1]
+lnbias                   0x800'51e0   0x420  Data  Lc  pow64.o [3]
+lpd_requests             0x800'0a69    0xac  Code  Gb  net.o [1]
+main                     0x800'7eef   0x18e  Code  Gb  main.o [1]
+main_net_count          0x2000'016d     0x1  Data  Gb  main.o [1]
+make_request             0x800'0925    0x34  Code  Gb  net.o [1]
+mark_tasks               0x800'2ee1   0x48c  Code  Gb  Camera.o [1]
+marks_syncro_func        0x800'2eaf    0x12  Code  Gb  Camera.o [1]
+net_counter              0x800'082d    0x46  Code  Gb  net.o [1]
+net_fault_flag          0x2000'0c07     0x1  Data  Gb  stm32l1xx_it.o [1]
+net_fault_function       0x800'0959    0x40  Code  Gb  net.o [1]
+net_global_count        0x2000'0bee     0x2  Data  Gb  net.o [1]
+net_init                 0x800'041f   0x40e  Code  Gb  net.o [1]
+net_set_default          0x800'037f     0xc  Code  Gb  net.o [1]
+net_sets                0x2000'0a54    0x1c  Data  Gb  net.o [1]
+net_status              0x2000'093c    0x44  Data  Gb  net.o [1]
+net_task                 0x800'0873    0xb2  Code  Gb  net.o [1]
+obj_in_net              0x2000'0be8     0x2  Data  Gb  net.o [1]
+oled_control             0x800'336d    0x6e  Code  Gb  Camera.o [1]
+operator_ctrl_consist   0x2000'0c01     0x1  Data  Gb  operator_control.o [1]
+pop                      0x800'1e63    0x38  Code  Gb  Buffer.o [1]
+pow                      0x800'51d1     0xc  Code  Gb  pow64.o [3]
+power_off               0x2000'0b2c     0xc  Data  Gb  net.o [1]
+powl                     0x800'51d1     0xc  Code  Gb  pow64.o [3]
+pref_net_init            0x800'038b    0x94  Code  Gb  net.o [1]
+prev_cam_state          0x2000'0bd0     0x4  Data  Gb  Camera.o [1]
+protocol                 0x800'60f9   0x5c6  Code  Gb  protocol_L6IR.o [1]
+push                     0x800'1e33    0x30  Code  Gb  Buffer.o [1]
+redrow_menu_simbol       0x800'66bf    0x82  Code  Gb  protocol_L6IR.o [1]
+rf_get_distance         0x2000'0b68     0xc  Data  Gb  net.o [1]
+rf_get_status           0x2000'0b5c     0xc  Data  Gb  net.o [1]
+rf_start_messure        0x2000'0b50     0xc  Data  Gb  net.o [1]
+rfu_main                 0x800'6923   0x406  Code  Gb  rfu_ram.o [1]
+rfu_start                0x800'67b5    0x3c  Code  Gb  rfu.o [1]
+rs_frame                0x2000'0c03     0x1  Data  Gb  protocol_L6IR.o [1]
+scalbln                  0x800'5b11          Code  Gb  ldexp.o [3]
+scalblnl                 0x800'5b11          Code  Gb  ldexp.o [3]
+scalbn                   0x800'5b11          Code  Gb  ldexp.o [3]
+scalbnl                  0x800'5b11          Code  Gb  ldexp.o [3]
+send                     0x800'680d    0xb6  Code  Gb  rfu_ram.o [1]
+send_char                0x800'67f5    0x18  Code  Gb  rfu_ram.o [1]
+send_ec                  0x800'68c3    0x1e  Code  Gb  rfu_ram.o [1]
+send_u32                 0x800'68e1    0x42  Code  Gb  rfu_ram.o [1]
+sens_synchro_func        0x800'7e41    0x10  Code  Gb  Sensors.o [1]
+sens_synchro_time       0x2000'0bb8     0x8  Data  Lc  Sensors.o [1]
+senspar                 0x2000'09c0    0x28  Data  Gb  Ball.o [1]
 settings_device_address
-                        0x08006ce9    0x4  Code  Gb  settings.o [1]
-sin                     0x08005731    0x6  Code  Gb  sin.o [4]
-smart_device_ini        0x080000f5  0x2ba  Code  Gb  net.o [1]
-spi_objects             0x20001168  0x3d4  Data  Gb  Camera.o [1]
-spi_read_camers_state   0x08003301   0x18  Code  Gb  Camera.o [1]
-spi_sets                0x20001a2c   0x1c  Data  Gb  Camera.o [1]
-spi_sichro_func         0x08003319   0x78  Code  Gb  Camera.o [1]
-spi_silar_read          0x08003391   0x84  Code  Gb  Camera.o [1]
-spi_silar_tasks         0x08002fff  0x302  Code  Gb  Camera.o [1]
-spi_silar_wright        0x08003415   0xd8  Code  Gb  Camera.o [1]
-spi_task_count          0x20001bce    0x1  Data  Gb  Camera.o [1]
-stepen                  0x20000000   0xc8  Data  Lc  Ball.o [1]
-system_ticks            0x20001bb8    0x4  Data  Gb  system_timer.o [1]
-system_timer_init       0x0800878b   0x24  Code  Gb  system_timer.o [1]
-system_wait_timer       0x20001bc4    0x2  Data  Gb  net.o [1]
-task_flag               0x20001bd3    0x1  Data  Gb  net.o [1]
-timers_config           0x0800779d    0x2  Code  Gb  system_init.o [1]
-uart_obj_buf            0x2000179c   0xb4  Data  Gb  net.o [1]
-weapon                  0x20001a64   0x18  Data  Gb  Ball.o [1]
-wright_data_to_cam      0x08000eb3   0x54  Code  Gb  net.o [1]
-zoom_val                0x200000c8   0x10  Data  Gb  Camera.o [1]
+                         0x800'67f1     0x4  Code  Gb  settings.o [1]
+sin                      0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+sinl                     0x800'5a4d     0x4  Code  Gb  cos_sin64.o [3]
+smart_device_ini         0x800'00f5   0x28a  Code  Gb  net.o [1]
+spi_objects             0x2000'0174   0x3d4  Data  Gb  Camera.o [1]
+spi_read_camers_state    0x800'2a73    0x18  Code  Gb  Camera.o [1]
+spi_sets                0x2000'0a38    0x1c  Data  Gb  Camera.o [1]
+spi_sichro_func          0x800'2a8b    0x64  Code  Gb  Camera.o [1]
+spi_silar_read           0x800'2aef    0x84  Code  Gb  Camera.o [1]
+spi_silar_tasks          0x800'27db   0x298  Code  Gb  Camera.o [1]
+spi_silar_wright         0x800'2b73    0xcc  Code  Gb  Camera.o [1]
+spi_task_count          0x2000'0bf6     0x1  Data  Gb  Camera.o [1]
+stepen                  0x2000'0000    0xc8  Data  Lc  Ball.o [1]
+system_ticks            0x2000'0be0     0x4  Data  Gb  system_timer.o [1]
+system_timer_init        0x800'833d    0x24  Code  Gb  system_timer.o [1]
+system_wait_timer       0x2000'0bec     0x2  Data  Gb  net.o [1]
+task_flag               0x2000'0bfc     0x1  Data  Gb  net.o [1]
+test_key                 0x800'25c5    0x22  Code  Gb  keys.o [1]
+timers_config            0x800'7279     0x2  Code  Gb  system_init.o [1]
+uart_obj_buf            0x2000'07a8    0xb4  Data  Gb  net.o [1]
+weapon                  0x2000'0a70    0x18  Data  Gb  Ball.o [1]
+wright_data_to_cam       0x800'0b1d    0x54  Code  Gb  net.o [1]
+zoom_val                0x2000'00c8    0x10  Data  Gb  Camera.o [1]
 
 
-[1] = E:\projects\L6IR\programm\L6IR_pro\Debug\Obj
-[2] = command line
-[3] = dl7M_tln.a
-[4] = m7M_tl.a
-[5] = rt7M_tl.a
-[6] = shb_l.a
+[1] = D:\projects\L6IR\programm\L6IR_pro\Debug\Obj
+[2] = dl7M_tln.a
+[3] = m7M_tl.a
+[4] = rt7M_tl.a
+[5] = shb_l.a
 
-  35 632 bytes of readonly  code memory
-     344 bytes of readonly  data memory
-   7 130 bytes of readwrite data memory
+  34 472 bytes of readonly  code memory
+     355 bytes of readonly  data memory
+   7 174 bytes of readwrite data memory
 
 Errors: none
 Warnings: none

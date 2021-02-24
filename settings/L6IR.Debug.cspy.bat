@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\common\bin\cspybat" -f "E:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.general.xcl" --backend -f "E:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.1\common\bin\cspybat" -f "D:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.general.xcl" --backend -f "D:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\common\bin\cspybat" -f "E:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.general.xcl" "--debug_file=%~1" --backend -f "E:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.1\common\bin\cspybat" -f "D:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.general.xcl" "--debug_file=%~1" --backend -f "D:\projects\L6IR\programm\L6IR_pro\settings\L6IR.Debug.driver.xcl" 
 
 @echo off 
 :end

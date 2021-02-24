@@ -1,7 +1,7 @@
 #include "stm32l1xx_it.h"
 #include "net.h"
 #include "led_control.h"
-
+#include "keys.h"
 void NMI_Handler(void){ }
 void HardFault_Handler(void)
 {
@@ -44,7 +44,7 @@ void PendSV_Handler(void)
 }
 
 
-
+ extern u8 last_com;
 
 void USART1_IRQHandler(void)
 {
@@ -68,6 +68,7 @@ void USART1_IRQHandler(void)
 		}
                   
                 }
+        
   }
 
   if(USART_GetITStatus(USART1, USART_IT_TC) != RESET) //_TXE
@@ -146,6 +147,10 @@ extern u16 error_counter;
 extern u16 expo_timeout;
 extern bool led_pulse_enable;
 extern u8 led_brightnes;
+extern u8 eye_sens_set_level_count;
+extern Kes_type key_menu;
+u8 keys_counter;
+extern u8 main_net_count;
 void SysTick_Handler(void)
 {
 
@@ -168,9 +173,18 @@ void SysTick_Handler(void)
   net_fault_flag = true;
  }
  
+ if(keys_counter>30)
+ {
+   keys_counter =0;
+   test_key(&key_menu);
+ }
+ else keys_counter++;
+ 
+ if(eye_sens_set_level_count<100)eye_sens_set_level_count++;
+ 
  if(key1_count!=0) key1_count--;
  //counter_delay(time);		//(&TimeDelay);
- 
+ if((main_net_count !=0)) main_net_count--;
  if(led_pulse_enable)   //регулировка яркости ик светодиода 
  {
    irled=irled+10;

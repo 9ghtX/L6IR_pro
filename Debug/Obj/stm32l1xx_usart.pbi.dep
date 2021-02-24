@@ -1,0 +1,41 @@
+stm32l1xx_usart.pbi: \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_usart.c \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_usart.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\CMSIS\Device\ST\STM32L1xx\Include\stm32l1xx.h \
+  D:\Programs\IAR\arm\CMSIS\Core\Include\core_cm3.h \
+  D:\Programs\IAR\arm\inc\c\stdint.h D:\Programs\IAR\arm\inc\c\ycheck.h \
+  D:\Programs\IAR\arm\inc\c\yvals.h \
+  D:\Programs\IAR\arm\inc\c\DLib_Defaults.h \
+  D:\Programs\IAR\arm\inc\c\DLib_Config_Normal.h \
+  D:\Programs\IAR\arm\inc\c\DLib_Product.h \
+  D:\Programs\IAR\arm\CMSIS\Core\Include/cmsis_version.h \
+  D:\Programs\IAR\arm\CMSIS\Core\Include/cmsis_compiler.h \
+  D:\Programs\IAR\arm\CMSIS\Core\Include\cmsis_iccarm.h \
+  D:\Programs\IAR\arm\inc\c\iccarm_builtin.h \
+  D:\Programs\IAR\arm\CMSIS\Core\Include/mpu_armv7.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\CMSIS\Device\ST\STM32L1xx\Include/system_stm32l1xx.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\mcu\system_timer.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\mcu\hal_types.h \
+  D:\Programs\IAR\arm\inc\c\stdbool.h D:\Programs\IAR\arm\inc\c\stddef.h \
+  D:\Programs\IAR\arm\inc\c\ysizet.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\mcu\stm32l1xx_conf.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_adc.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_crc.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_comp.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_dac.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_dbgmcu.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_dma.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_exti.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_flash.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_gpio.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_syscfg.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_i2c.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_iwdg.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_lcd.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_pwr.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_rcc.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_rtc.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_spi.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_tim.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\STM32L1xx_StdPeriph_Driver\inc\stm32l1xx_wwdg.h \
+  G:\Проекты\РЕПО\L6IR_pro_last\mcu\inc\misc.h

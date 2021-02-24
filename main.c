@@ -3,7 +3,7 @@
 #include "Ball.h"
 #include "i2c.h"
 #include "galenic.h"
-
+#include "keys.h"
 #ifdef TNM_MODE
 #include "digital_resist.h"
 #endif
@@ -20,7 +20,12 @@ extern operator_control_consist operator_ctrl_consist;
 u8 galenic_counter =0;
 extern bool cam_power_state;
 extern u8 eoc_brightnes_value;
+extern operator_control_state eye_sens_state;
 bool led_pulse_enable=false;
+u8 main_net_count = 25;
+
+Kes_type key_menu;
+
 
 void iclinate_analis()
 {
@@ -62,6 +67,7 @@ int main()
         system_timer_init();
 	
         NVIC_Configuration();
+        
 
         #ifdef TNM_MODE
         KEY1_SET;
@@ -85,7 +91,7 @@ int main()
         #endif
         
         //***************
-        GPIO_Configuration();
+         GPIO_Configuration();
         UART_init();
         #ifndef TNM_MODE
         SPI_init_func();
@@ -109,7 +115,7 @@ int main()
         
         default_ball_ini();
         default_cam_sets();
-        
+        Init_key(GPIOA, GPIO_Pin_15, &key_menu);
 
 #ifndef TNM_MODE
         spi_silar_read(STATUS_REG_ADDR);
@@ -138,25 +144,26 @@ int main()
         //flash.cam_type = PT2_CONFIG;
 
 
-        //flash.cam_type = TNV_CONFIG; 
-       // flash.cam_type = TNV_CU_CONFIG;
+       // flash.cam_type = TNV_CONFIG; 
+        // flash.cam_type = TNV_CU_CONFIG;
         
         //flash.cam_type = PT6_CONFIG;
         //flash.cam_type = PT6_AB_CONFIG;
         
-          //flash.cam_type = PT9_1ENCODER_M_CONFIG;
-         // flash.cam_type = PT9_1ENCODER_BME_CONFIG;
+        //flash.cam_type = PT9_1ENCODER_M_CONFIG;
+        flash.cam_type = PT9_1ENCODER_BME_CONFIG|CONFIG_AUTO_FOCUS_TEST;//|CONFIG_EYE_SENS_TEST;
         //flash.cam_type = PT9_1ENCODER_ME_CONFIG;
-         // flash.cam_type = PT9_1ENCODER_E_CONFIG;
-        //flash.cam_type = PT9_1ENCODER_CONFIG;
+        //  flash.cam_type = PT9_1ENCODER_E_CONFIG;
+       // flash.cam_type = PT9_1ENCODER_CONFIG|CONFIG_EYE_SENS_TEST;
         //flash.cam_type = PT9_2ENCODER_B_CONFIG;
         //flash.cam_type = PT9_2ENCODER_CONFIG;
+        //  flash.cam_type = W1PN140_CONFIG;
         //flash.cam_type = PT9_2ENCODER_CU_CONFIG;
-
+        //  flash.cam_type = PT9_2ENCODER_BME_CONFIG|CONFIG_AUTO_FOCUS_TEST;
         
         //flash.cam_type = SWIR_N_EXPO_CONFIG;
         //flash.cam_type = SWIR_CONFIG;
-        flash.cam_type = SWIR_BEPT_CONFIG;
+        //flash.cam_type = SWIR_BEPT_CONFIG;
         //flash.cam_type = SWIR_BME_CONFIG;
         // flash.cam_type = SWIR_BM_CONFIG;
 #else
@@ -174,6 +181,7 @@ int main()
         senspar.temp_auto = true;
         senspar.press_auto = true;
         operator_ctrl_consist = not_action;
+        eye_sens_state = eye_sensor_off;
         #ifndef TNM_MODE
         
         redrow_menu_simbol();
@@ -193,7 +201,13 @@ int main()
            rs_frame = false;
           }
          #ifndef TEST_MODE
-          if(net_sets.net_pr == NET_MASTER) net_task();
+          if(net_sets.net_pr == NET_MASTER) 
+          {
+            if(main_net_count==0)
+            {
+              net_task();
+              main_net_count=20;
+            }}
           if(net_fault_flag) net_fault_function();
          #endif
 
@@ -208,10 +222,10 @@ int main()
             spi_silar_tasks();
             keys_analis();
             
-           if(flash.cam_type&CONFIG_BALL_TEST)
+           if((flash.cam_type&CONFIG_BALL_TEST)||(flash.cam_type&CONFIG_METEO_TEST))
            {
            #ifndef TABLE_BAL
-          //iclinate_analis();
+          iclinate_analis();
           if(cam_sets.syncro_count==0)mark_tasks();
           #endif
            }
@@ -221,21 +235,17 @@ int main()
             keys_analis_P_O();
           }
           //i2c_sensors_tasks();
-          Power_control_func();
-          
-          //oled_control();
+          if((eye_sens_state!=eye_sensor_off))Power_control_func();// &&(operator_ctrl_consist==pulse_adc3))
+           // if(eye_sens_state!=eye_sensor_off)         Operator_present_control();
+            oled_control();
+         
           
           //LSM6DS33_tasks();
           //if((!galenic_counter)&&(flash.cam_type&CONFIG_GALINIC_TEST))
 #ifdef TNM_MODE
           if(!galenic_counter){galenic_func(); galenic_counter =40;}
 #endif
- //         Operator_present_control();
-//         if(led_pulse_enable) 
-//            {
-//              led_pulse_control();
-//            }
-//         else led_off();
+
           
         }
   return 0;

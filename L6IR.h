@@ -47,13 +47,15 @@
                    Default configurations
 ##############################################################################*/
 #define PT9_2ENCODER_CONFIG     0x00008001
+#define W1PN140_CONFIG          0x00008001
 #define PT9_2ENCODER_CU_CONFIG  0x00008201
 #define PT9_2ENCODER_B_CONFIG   0x00008011
 #define PT9_2ENCODER_M_CONFIG   0x0000A001
+#define PT9_2ENCODER_BME_CONFIG 0x00009051
 #define PT9_1ENCODER_CONFIG     0x00004001
 #define PT9_1ENCODER_E_CONFIG   0x00004041
 #define PT9_1ENCODER_M_CONFIG   0x00006001
-#define PT9_1ENCODER_ME_CONFIG  0x00006041
+#define PT9_1ENCODER_ME_CONFIG  0x00005041
 #define PT9_1ENCODER_BME_CONFIG 0x00005051
 #define PT6_CONFIG              0x00003F11   
 #define PT6_AB_CONFIG           0x00001F11 
@@ -99,14 +101,17 @@
 #define CONFIG_RADIO_TEST      0x00000400
 #define CONFIG_GPS_TEST        0x00000800
 #define CONFIG_METEO_TEST      0x00003000
-#define CONFIG_RANGE_TEST      0x00000100
+//#define CONFIG_RANGE_TEST      0x00000100
 #define CONFIG_GALINIC_TEST    0x00010000
 #define CONFIG_EOC_TEST        0x00020000
 #define CONFIG_CU_KEYS_TEST    0x00000100
 #define CONFIG_BALL_TEST       0x00000010
 #define CONFIG_EXPO_TEST       0x00000020
+#define CONFIG_AUTO_FOCUS_TEST 0x00000080
 #define CONFIG_CAM_TYPE_TEST   0x00000007
 #define CONFIG_TEMP_PRESS_TEST 0x00000040
+#define CONFIG_EYE_SENS_TEST   0x00800000
+//#define CONFIG_EYE_SENS_TEST   0x00800000
 #define TPABCmeteo             0x00001000
 #define TPmeteo                0x00002000
 #define TPCmeteo               0x00003000
@@ -116,6 +121,51 @@
 #define CAM_IS_MEDICAL       0x00000004
 
 
+/*##############################################################################
+                        ZOOM CONSTANT'S
+
+##############################################################################*/
+
+#ifdef BRDOWN640
+#define ZOOM1 1.25
+#define ZOOM2 2.5
+#define ZOOM3 3.75
+#define ZOOM4 5.0
+
+#define MARK_START_POSITION           300//1600
+#define LIFE_SIZE_SNAIL_START_POS     496//2535
+#define SCREEN_CENTER 563
+#define DECLINE_SCALE_COEFF          1.1088
+#endif
+
+
+#ifdef CIVIL640
+#define ZOOM1 1.25
+#define ZOOM2 2.0
+#define ZOOM3 3.0
+#define ZOOM4 4.0
+
+#define MARK_START_POSITION           1550//1600
+#define LIFE_SIZE_SNAIL_START_POS     496//2535
+#define SCREEN_CENTER 1940
+#define DECLINE_SCALE_COEFF          4.4
+
+#endif
+
+
+#ifdef CIVIL1024
+#define ZOOM1 (1/1.28)
+#define ZOOM2 (2/1.28)
+#define ZOOM3 (3/1.28)
+#define ZOOM4 (4/1.28)
+
+
+#define MARK_START_POSITION           2800//1600
+#define LIFE_SIZE_SNAIL_START_POS     483//2535
+#define SCREEN_CENTER 3512
+#define DECLINE_SCALE_COEFF          8.8 // but not -> tg(15*6000/360)*8/0.012 = 10.47
+
+#endif
 
 /*#############################################################################
                     SPI commands and address space
@@ -186,9 +236,14 @@
 //******************************************************************************
 //        CAMERA COMMANDS
 //******************************************************************************
-
+#ifdef ENCODER_LEFT_TO_RIGHT
 #define KEY_PLUS_CLICK             1
 #define KEY_MINUS_CLICK            2
+#else
+#define KEY_PLUS_CLICK             2
+#define KEY_MINUS_CLICK            1
+#endif
+
 #define KEY_ENTER_CLICK            3
 #define KEY_PLUS_PRESS             5
 #define KEY_MINUS_PRESS            6
@@ -223,6 +278,8 @@
 #define KEY_TEMPERATURE_MINUS      253
 #define KEY_PRESSURE_PLUS          254
 #define KEY_PRESSURE_MINUS         255
+#define KEY_EYE_SENS_PLUS          251
+#define KEY_EYE_SENS_MINUS         250
 
 
 #define COM_NO_SYMBOL_DISP         32
@@ -244,6 +301,7 @@
 
 #define COM_TEMPERATURE_DISP       43
 #define COM_PRESSURE_DISP          44
+#define COM_EYE_SENS_DISP          71
 
 #define CAMERA_OFF_COMMAND         50
 #define OLED_OFF_COMMAND           51
@@ -252,6 +310,19 @@
 #define VIDEO_ON_COMMAND           54
 #define INFO_ON_COMMAND            57
 #define INFO_OFF_COMMAND           58
+
+#ifdef ENCODER_LEFT_TO_RIGHT
+#define KEY_ENCODER2_PLUS          84
+#define KEY_ENCODER2_MINUS         85
+#else
+#define KEY_ENCODER2_PLUS          85
+#define KEY_ENCODER2_MINUS         84
+#endif
+
+#define KEY_ENCODER2_CLICK         86
+#define KEY_ENCODER2_LONG_PLUS     87
+#define KEY_ENCODER2_LONG_MINUS    88
+#define KEY_ENCODER2_PRESS         89
 
 #define COM_SET_EOC_BR_VALUE       0x003B0000
 #define COM_SET_EXPOSIT_VALUE      0x00430000
@@ -268,6 +339,7 @@
 #define EXPOSSITION_FUNC_NUM       9  // Ввод времени экспозиции
 #define TEMP_ENTER_FUNC_NUM        10 // Ввод значения температуры
 #define PRESS_ENTER_FUNC_NUM       11 // Ввод значения давления
+#define EYE_SENSOR_ON_FUNC_NUM     12 // Включение/выключение датчика глаза
 
 #define NO_ACTION               99
 
@@ -340,8 +412,14 @@ typedef enum
  pulse_adc2 = 2,
  pulse_adc3 = 3,
  end_of_pulse =4,
- not_action =5
+ not_action =5 
 } operator_control_consist;
+
+typedef enum
+{
+ eye_sensor_on=0, 
+eye_sensor_off = 1
+} operator_control_state;
 
 typedef enum
 {
@@ -413,6 +491,7 @@ typedef struct
  float current_sens;
  float eye_photo_data;
  float eye_norn_data;
+ float eye_threshold;
 }
 eye_sens_struct;
 extern eye_sens_struct eye_sens_par;
@@ -468,6 +547,7 @@ void set_device_mode(u8);
 void redrow_menu_simbol();
 void oled_control();
 void default_flash_content();
+void eye_sens_set_level();
 //void EXTI_config(FunctionalState state, EXTITrigger_TypeDef type);
 #endif
 

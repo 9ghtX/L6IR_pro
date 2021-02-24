@@ -5,30 +5,33 @@
 
 
 
-#define ADRESS_EXT_MASTER 0x01
-#define ADRESS_L6IR       0x11
-#define ADRESS_METEO      0x00
-#define ADRESS_LPD        0x08
-#define ADRESS_CU         0x04
-#define ADRESS_KEYS       0x05
-#define ADRESS_GPS        0x60
+#define ADRESS_EXT_MASTER  0x01
+#define ADRESS_L6IR        0x11
+#define ADRESS_METEO       0x00
+#define ADRESS_LPD         0x08
+#define ADRESS_CU          0x04
+#define ADRESS_KEYS        0x05
+#define ADRESS_GPS         0x60
 
-#define ADRESS_ENCODER0   0x30
-#define ADRESS_ENCODER1   0x31
-#define ADRESS_ENCODER2   0x32
-#define ADRESS_ENCODER3   0x33
-#define ADRESS_ENCODER4   0x34
-#define ADRESS_ENCODER5   0x35
-#define ADRESS_ENCODER6   0x36
-#define ADRESS_ENCODER7   0x37
-#define ADRESS_ENCODER8   0x38
-#define ADRESS_ENCODER9   0x39
-#define ADRESS_ENCODERA   0x3A
-#define ADRESS_ENCODERB   0x3B
-#define ADRESS_ENCODERC   0x3C
-#define ADRESS_ENCODERD   0x3D
-#define ADRESS_ENCODERE   0x3E
-#define ADRESS_ENCODERF   0x3F
+#define ADRESS_ENCODER0    0x30
+#define ADRESS_ENCODER1    0x31
+#define ADRESS_ENCODER2    0x32
+#define ADRESS_ENCODER3    0x33
+#define ADRESS_ENCODER4    0x34
+#define ADRESS_ENCODER5    0x35
+#define ADRESS_ENCODER6    0x36
+#define ADRESS_ENCODER7    0x37
+#define ADRESS_ENCODER8    0x38
+#define ADRESS_ENCODER9    0x39
+#define ADRESS_ENCODERA    0x3A
+#define ADRESS_ENCODERB    0x3B
+#define ADRESS_ENCODERC    0x3C
+#define ADRESS_ENCODERD    0x3D
+#define ADRESS_ENCODERE    0x3E
+#define ADRESS_ENCODERF    0x3F
+
+#define ADRESS_WIND_SENSOR 0x40
+#define ADRESS_OBJ_FOCUS   0x50 //for objective focus sensor and autofocus devices //19.08.2020 
 
 
 /*##############################################################################
@@ -81,7 +84,7 @@
 #define KEY_POWER_OFF   0xf0
 
 
-#define ALL_ENCODER_FUNC 11
+#define ALL_ENCODER_FUNC 12
 
 //########  PERSEY CONTROL UNIT #############
 #ifdef CONTROL_UNIT
@@ -133,7 +136,7 @@
 #define EXT_MASTER_REQUEST         0x01
 #define EXT_MASTER_RFU_START       0xFF
 
-
+#define GET_FOCUS_F_REQUEST        0x01
 
 extern  Buf_Head	 TXbuf,RXbuf,keyBuf;
 extern bool     rs_frame;

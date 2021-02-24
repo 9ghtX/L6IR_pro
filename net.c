@@ -1,5 +1,6 @@
 #include "net.h"
 #include "Ball.h"
+#include "keys.h"
 
 #ifdef TNM_MODE
 #include "digital_resist.h"
@@ -36,8 +37,34 @@ extern encoder encoder0, encoder1;
   uart_obj rf_start_messure;
   uart_obj rf_get_status;
   uart_obj rf_get_distance;
+  
+  uart_obj get_focus;
 
+  
+extern  Kes_type key_menu;
 //  uart_obj system_init_wait;
+
+
+
+extern spi_def spi_sets;
+
+#define EXPOSSITION_MAX 15
+#define EXPOSSITION_MIN -15
+#define EOC_BRIGHTNES_MAX 8
+#define EOC_BRIGHTNES_MIN 0
+#define LED_BRIGHTNES_MAX 255
+#define LED_BRIGHTNES_MIN 1
+
+s8 expossition_value;
+u16 expo_timeout;
+u8 led_brightnes = LED_BRIGHTNES_MAX;
+extern operator_control_state eye_sens_state;
+extern u16 error_counter;
+extern bool led_pulse_enable;
+u8 eoc_brightnes_value = EOC_BRIGHTNES_MAX;
+extern bool cam_power_state;
+bool led_consist;
+
 
 /*
 #ifdef CU_DEVICE
@@ -142,8 +169,8 @@ void smart_device_ini()
 
    case 0x00008200:// 2 encoder, 1 control unit
      net_sets.net_control_unit1 = true;
-     net_sets.net_encoder_1 = true;
-     net_sets.net_encoder_0 = true;
+     net_sets.net_encoder_2 = true;
+     net_sets.net_encoder_3 = true;
      encoder0.adress =  ADRESS_ENCODER0;
      encoder1.adress =ADRESS_ENCODER1;
      
@@ -157,11 +184,12 @@ void smart_device_ini()
    case 0x00008000:// 2 encoder, 0 control unit
      net_sets.net_encoder_1 = true;
      net_sets.net_encoder_0 = true;
-     encoder0.adress = ADRESS_ENCODER1;
+     encoder0.adress = ADRESS_ENCODER2;
      encoder1.adress = ADRESS_ENCODER3;
      
      encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
-     
+     encoder0_masks_buf[EYE_SENSOR_ON_FUNC_NUM] = MASK_OFF;
+     encoder0_masks_buf[EOC_BRIGHTNES_FUNC_NUM] = MASK_OFF;     
      encoder1.encoder_func = encoder0_func;
      if(flash.cam_type&CONFIG_BALL_TEST) encoder0.encoder_func = encoder1_func;
      else encoder0.encoder_func = encoder1_t_func;
@@ -170,6 +198,7 @@ void smart_device_ini()
    case 0x00000200:// 0 encoder, 1 control unit
      net_sets.net_control_unit1 = true;
      encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
+     encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_OFF;
      encoder0.adress =  ADRESS_ENCODER0;
      encoder1.adress =ADRESS_ENCODER1;
    break;
@@ -197,17 +226,31 @@ void smart_device_ini()
  if(flash.cam_type&CONFIG_BALL_TEST)   cam_sets.ball_calculation = true;
  else cam_sets.ball_calculation = false;
  
+ if(flash.cam_type&CONFIG_AUTO_FOCUS_TEST) net_sets.net_auto_focus = true;
+   else net_sets.net_auto_focus = false;
+ 
  if(((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_MONOCULAR)||((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_NOZZLE))
  {
    encoder0_masks_buf[MARKS_BRIGHTNES_FUNC_NUM] = MASK_OFF;
    encoder0_masks_buf[DISTANTS_FUNC_NUM] = MASK_OFF;
  }
  
+  if(((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_MEDICAL)||((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_NOZZLE)||((flash.cam_type&CONFIG_CAM_TYPE_TEST)==CAM_IS_MONOCULAR))
+  {
+   encoder0_masks_buf[EYE_SENSOR_ON_FUNC_NUM]  = MASK_OFF;
+  }
+ if(!(flash.cam_type&CONFIG_EYE_SENS_TEST))
+  {
+  encoder0_masks_buf[EYE_SENSOR_ON_FUNC_NUM]  = MASK_OFF;
+  encoder1_masks_buf[EYE_SENSOR_ON_FUNC_NUM]  = MASK_OFF;
+  }
  if(!(flash.cam_type&CONFIG_TEMP_PRESS_TEST))
    {
     encoder0_masks_buf[TEMP_ENTER_FUNC_NUM]  = MASK_OFF;
     encoder0_masks_buf[PRESS_ENTER_FUNC_NUM]   = MASK_OFF; 
    }
+ 
+ 
 }
 
 /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
@@ -460,8 +503,58 @@ void net_init()
      uart_obj_buf[obj_in_net] = rf_get_distance;
      obj_in_net++;
     }
+  
+  if(net_sets.net_auto_focus)
+    {
+      get_focus.task_id  = AF_GET_FOCUS;
+      get_focus.dev_addr = ADRESS_OBJ_FOCUS;
+      get_focus.command  = GET_FOCUS_F_REQUEST;
+      get_focus.counter  = 0;
+      get_focus.delay    = AUTOFOCUS_GET_FOCUS_TIMER;
+      get_focus.synchro  = SYNCHRO;
+      get_focus.obj_net_number = obj_in_net;
+      uart_obj_buf[obj_in_net] = get_focus;
+      obj_in_net++;    
+    }
 
 }
+
+
+
+/*##############################################################################
+METEO ACTIVATE/DEACTEVATE FUNCTION
+##############################################################################*/
+void meteo_actevate(bool active)
+{
+if(active)
+{
+     uart_obj_buf[get_temperature.obj_net_number].synchro     = SYNCHRO;     
+     uart_obj_buf[get_pressure.obj_net_number].synchro     = SYNCHRO;
+
+     if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)uart_obj_buf[get_inclinate.obj_net_number].synchro     = SYNCHRO;
+     else uart_obj_buf[get_inclinate.obj_net_number].synchro   = ASYNCHRO;
+
+     
+     if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)uart_obj_buf[get_declinate.obj_net_number].synchro     = SYNCHRO;
+     else uart_obj_buf[get_declinate.obj_net_number].synchro    = ASYNCHRO;
+
+}
+else
+{
+     uart_obj_buf[get_temperature.obj_net_number].synchro     = ASYNCHRO;     
+     uart_obj_buf[get_pressure.obj_net_number].synchro     = ASYNCHRO;
+
+     if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)uart_obj_buf[get_inclinate.obj_net_number].synchro     = ASYNCHRO;
+     else uart_obj_buf[get_inclinate.obj_net_number].synchro   = ASYNCHRO;
+
+     
+     if((flash.cam_type&CONFIG_METEO_TEST) == TPABCmeteo)uart_obj_buf[get_declinate.obj_net_number].synchro     = ASYNCHRO;
+     else uart_obj_buf[get_declinate.obj_net_number].synchro    = ASYNCHRO;
+
+}
+}
+
+
 
 /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
 Ôóíêöèÿ èíêðèìåíòèðîâàíèÿ ñ÷åò÷èêîâ ñèíõðîíèçàöèè
@@ -486,18 +579,13 @@ void net_task()
  u8 task_number;
 if(!task_flag)
   {
+
    for(i=0;i<obj_in_net;i++)
       {
        if(uart_obj_buf[i].counter >= uart_obj_buf[i].delay)
          {
           push(&net_status.fifo_stack, i);
           uart_obj_buf[i].counter = 0;
-          /*make_request(uart_obj_buf[i]);
-          net_status.last_net_task = uart_obj_buf[i].task_id;
-          uart_obj_buf[i].counter = 0;
-          task_flag = true;
-          //net_global_count = i;
-          i = obj_in_net;*/
          }
       }
 
@@ -508,6 +596,7 @@ if(!task_flag)
       net_status.last_net_task = uart_obj_buf[task_number].task_id;
       uart_obj_buf[task_number].counter = 0;
       task_flag = true;
+      
     }
   }
  }
@@ -517,13 +606,15 @@ if(!task_flag)
 /*¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹
  Ôóíêöèÿ ôîðìèðîâàíèÿ çàïðîñà äëÿ óñòðîéñòâ.
 ¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹¹*/
-void make_request(uart_obj object)
-{
+u8 last_com, last_adrr;
 
+void make_request(uart_obj object)
+{  
      push(&TXbuf,object.dev_addr);
      push(&TXbuf,object.command);
      insert_crc(&TXbuf);
      insert_stsp(&TXbuf);
+     
      USART_ITConfig(USART1, USART_IT_TC, ENABLE);
 }
 
@@ -578,19 +669,9 @@ void Power_control_func()
  //if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET)
 //  {
   // adc_data = ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_1);
-   voltage = ((float)ADC_data.battery_ctrl*6.6)/4096;
-   current_temp =((float)ADC_data.temperature);///4096;// ((((float)ADC_data.temperature*3.3)/4096)-1.8663)/0.01169;
+  // voltage = ((float)ADC_data.battery_ctrl*6.6)/4096;
    eye_temp = (float)ADC_data.operator_photo;
-  if(voltage<3.4)
-   {
-//   uart_obj_buf[power_off.obj_net_number].counter  = POWER_OFF_TIMER;
-   voltage =0;
-   }
-   if(temperature <0)
-   {
-    temperature =0;
-   }
-  
+
   eye_buff_sum = eye_buff_sum - eye_buff[eye_buff_point]+eye_temp;
   eye_buff[eye_buff_point]=eye_temp;
   
@@ -605,10 +686,10 @@ void Power_control_func()
   eye_sens_par.eye_photo_data = eye_buff_sum/eye_buff_quant;
   eye_sens_par.current_sens   = current_buff_summ/eye_buff_quant;
   
-  senspar.inclinate = temperature;//*10;
+  //senspar.inclinate = temperature;//*10;
   eye_sens_par.eye_norn_data = eye_sens_par.eye_photo_data;///eye_sens_par.current_sens;
  
-    if(eye_sens_par.eye_norn_data>2880)//16.6)//0.02) 
+    if(eye_sens_par.eye_norn_data> eye_sens_par.eye_threshold)//16.6)//0.02) 
     {
               if(display_st== display_on) display_st = display_make_off;        
     }
@@ -722,28 +803,19 @@ void keys_syncro_func()
 #ifdef L6IR_CU
 
 #include "L6IR.h"
-extern spi_def spi_sets;
 
-#define EXPOSSITION_MAX 15
-#define EXPOSSITION_MIN -15
-#define EOC_BRIGHTNES_MAX 8
-#define EOC_BRIGHTNES_MIN 0
-#define LED_BRIGHTNES_MAX 255
-#define LED_BRIGHTNES_MIN 1
 
-s8 expossition_value;
-u16 expo_timeout;
-u8 led_brightnes = LED_BRIGHTNES_MAX;
-extern u16 error_counter;
-extern bool led_pulse_enable;
-u8 eoc_brightnes_value = EOC_BRIGHTNES_MAX;
-extern bool cam_power_state;
 void keys_analis()
 {
   u8 i, key_code;
   u8 ball_num = (u8)(0x0f&(spi_sets.silar_state>>4));
   u32 temp_dist;
   s32 temp_press;
+  
+  if(get_key_event(&key_menu)==CLICK_EVENT)
+  {
+  // WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MENU_CLICK); //Çàêîìåí÷åíî äëÿ êàìåð íà çàâîä. Â äàëüíåéøåì ñäåëàòü íàñòðîå÷íûì ïàðàìåòðîì
+  }
    
   if(!get_empty(&keys.keys_stack))
   {
@@ -791,27 +863,43 @@ void keys_analis()
     
     
     case KEY_DISTANTS_PLUS:
-      if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
-    else
-    {
-      if((!spi_objects[DISTANCE_ADDR].wright_data)&&(spi_objects[DISTANCE_ADDR].wright_enable))
+      if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  
       {
-      temp_dist = (u32)senspar.distance;
-      temp_dist=(temp_dist - temp_dist%50)+50;//(0xfff&(spi_objects[DISTANCE_ADDR].read_data+50));
-     if(temp_dist > 1000) temp_dist =1000;
-
-     spi_objects[DISTANCE_ADDR].reg_for_wright = true;
-     spi_objects[DISTANCE_ADDR].wright_data = (0x0000FFFF&temp_dist);
-     if((0xfff&spi_objects[DISTANCE_ADDR].wright_data)==0) spi_objects[DISTANCE_ADDR].wright_data|=0x01;
-     senspar.distance = (float)temp_dist;
-     senspar.change_par = true;
-     clean(&keys.keys_stack);
+#ifdef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
       }
-    }
+      else
+      {
+       if((!spi_objects[DISTANCE_ADDR].wright_data)&&(spi_objects[DISTANCE_ADDR].wright_enable))
+       {
+        temp_dist = (u32)senspar.distance;
+        temp_dist=(temp_dist - temp_dist%50)+50;//(0xfff&(spi_objects[DISTANCE_ADDR].read_data+50));
+        if(temp_dist > 1000) temp_dist =1000;
+
+        spi_objects[DISTANCE_ADDR].reg_for_wright = true;
+        spi_objects[DISTANCE_ADDR].wright_data = (0x0000FFFF&temp_dist);
+        if((0xfff&spi_objects[DISTANCE_ADDR].wright_data)==0) spi_objects[DISTANCE_ADDR].wright_data|=0x01;
+        senspar.distance = (float)temp_dist;
+        senspar.change_par = true;
+        clean(&keys.keys_stack);
+       }
+      }
     break;
 
     case KEY_DISTANTS_MINUS:
-    if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if((0x08&spi_sets.silar_state)||(ball_num==0)||(!(flash.cam_type&CONFIG_BALL_TEST)))  
+    {
+#ifdef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else
     {
       if((!spi_objects[DISTANCE_ADDR].wright_data)&&(spi_objects[DISTANCE_ADDR].wright_enable))
@@ -822,7 +910,7 @@ void keys_analis()
     if(temp_dist<100) temp_dist =100;
 
     spi_objects[DISTANCE_ADDR].reg_for_wright = true;
-    spi_objects[DISTANCE_ADDR].wright_data = (0xfff&((u32)senspar.distance));
+    spi_objects[DISTANCE_ADDR].wright_data = (0xffff&temp_dist);
     if((0xfff&spi_objects[DISTANCE_ADDR].wright_data)==0) spi_objects[DISTANCE_ADDR].wright_data|=0x01;
     senspar.distance = (float)temp_dist;
     senspar.change_par = true;
@@ -832,32 +920,80 @@ void keys_analis()
     break;
     
     case ENCODER_PLUS_ZOOM:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ZOOM_PLUS);}
     break;
 
     case ENCODER_MINUS_ZOOM:
-    if(0x08&spi_sets.silar_state) {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state) 
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ZOOM_MINUS);}
     break;
 
     case KEY_BRIGHTNES_MINUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_BRIGHTNES_MINUS);}
     break;
 
     case KEY_BRIGHTNES_PLUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_BRIGHTNES_PLUS);}
     break;
 
     case KEY_MARKS_BRIGHTNES_MINUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state) 
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MARKS_BRIGHTNES_MINUS);}
     break;
 
     case KEY_MARKS_BRIGHTNES_PLUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MARKS_BRIGHTNES_PLUS);}
     break;
     
@@ -908,7 +1044,15 @@ void keys_analis()
     
     
     case KEY_EXPOSSITION_MINUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else 
     {
       if((expossition_value>EXPOSSITION_MIN)&&(expo_timeout == 0))        
@@ -923,7 +1067,15 @@ void keys_analis()
     break;
     
     case KEY_EXPOSSITION_PLUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else 
     {
       if((expossition_value<EXPOSSITION_MAX)&&(expo_timeout == 0))        
@@ -934,37 +1086,135 @@ void keys_analis()
       }
       else clean(&keys.keys_stack);
     }    
-    break;    
+    break;   
+    
+    
     case KEY_LEGIBILITY_MINUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_LEGIBILITY_MINUS);}
     break;
 
     case KEY_LEGIBILITY_PLUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_LEGIBILITY_PLUS);}
     break;
 
     case KEY_PALETTE_MINUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PALETTE_MINUS);}
     break;
 
     case KEY_PALETTE_PLUS:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PALETTE_PLUS);}
     break;
 
     case KEY_POSITIVE:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_POSITIVE);}
     break;
 
     case KEY_NEGATIVE:
-    if(0x08&spi_sets.silar_state)  {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+    if(0x08&spi_sets.silar_state) 
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
     else {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_NEGATIVE);}
     break;
-
+    
+    case KEY_EYE_SENS_MINUS:
+          if(0x08&spi_sets.silar_state)  
+          {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+          }
+          else
+          {
+           pop(&keys.keys_stack);
+           eye_sens_state = eye_sensor_off;
+           WRIGHT_SPI_REG(COMMAND_REG_ADDR, (COM_EYE_SENS_DISP+eye_sens_state));
+           spi_sets.current_function = COM_EYE_SENS_DISP+eye_sens_state;
+           Led_OFF;	
+          }
+    break;
+    
+    case KEY_EYE_SENS_PLUS:
+          if(0x08&spi_sets.silar_state)  
+          {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+          }
+          else
+          {
+            pop(&keys.keys_stack);
+            if(eye_sens_state == eye_sensor_off)
+            {
+              eye_sens_state = eye_sensor_on;
+            WRIGHT_SPI_REG(COMMAND_REG_ADDR, (COM_EYE_SENS_DISP+eye_sens_state));
+            spi_sets.current_function = COM_EYE_SENS_DISP+eye_sens_state;
+            eye_sens_set_level();
+            }
+//            else
+//            {
+//              if(led_consist) {Led_OFF; led_consist= false;}
+//              else {Led_ON; led_consist= true;}
+//            }
+          }
+    break;
+    
     case COM_NO_SYMBOL_DISP:
     if(!(0x08&spi_sets.silar_state))//  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
     {
@@ -1046,6 +1296,15 @@ void keys_analis()
     }
     break;
 
+    case COM_EYE_SENS_DISP:
+    if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    else
+    {
+      WRIGHT_SPI_REG(COMMAND_REG_ADDR, (COM_EYE_SENS_DISP+eye_sens_state));
+      spi_sets.current_function = COM_EYE_SENS_DISP+eye_sens_state;
+    }
+    break;
+    
     case KEY_ENTER_L:
      WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_PRESS);
     break;
@@ -1056,12 +1315,14 @@ void keys_analis()
     {
      // WRIGHT_SPI_REG(COMMAND_REG_ADDR, CAMERA_OFF_COMMAND);
       clean(&keys.keys_stack);
+#ifdef L6IR
       if(net_sets.net_control_unit1)
       {
-      uart_obj_buf[power_off.obj_net_number].counter  = POWER_OFF_TIMER;
-      uart_obj_buf[power_off.obj_net_number].synchro  = SYNCHRO;
+        uart_obj_buf[power_off.obj_net_number].counter  = POWER_OFF_TIMER;
+        uart_obj_buf[power_off.obj_net_number].synchro  = SYNCHRO;
       }
       // pop(&);
+#endif
     }
     break;
     
@@ -1070,10 +1331,27 @@ void keys_analis()
      break;
      
     case COM_TEMPERATURE_DISP:
+    if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    else
+    {
       WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_TEMPERATURE_DISP); 
+      spi_sets.current_function = COM_DISTANTS_DISP;     
+    }
+     
     break;  
     
     case KEY_TEMPERATURE_PLUS:
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
+    else
+    {
      senspar.temp_auto = false;
      clean(&keys.keys_stack);
      if(senspar.temperature < 50)
@@ -1081,24 +1359,54 @@ void keys_analis()
          senspar.temperature += 1;
          wright_data_to_cam(GET_TEMPERATURE_DATA, senspar.temperature);
        }
+    }
     break;
          
     case KEY_TEMPERATURE_MINUS:
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
+    else
+    {
      senspar.temp_auto = false;
      clean(&keys.keys_stack);
      if(senspar.temperature > -50)
        {
          senspar.temperature -= 1;
          wright_data_to_cam(GET_TEMPERATURE_DATA, senspar.temperature);
-       }     
+       }
+    }     
     break;
          
     case COM_PRESSURE_DISP:
+    if(0x08&spi_sets.silar_state)  {WRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENTER_CLICK);}
+    else
+    {
       WRIGHT_SPI_REG(COMMAND_REG_ADDR, COM_PRESSURE_DISP);
+      spi_sets.current_function = COM_DISTANTS_DISP;     
+    }
+      
     break;
     
          
     case KEY_PRESSURE_PLUS:
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP
+        if(net_sets.net_encoder_1) { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_PLUS);}
+        else                        {cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);}
+#else
+        cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_PLUS_CLICK);
+#endif
+    }
+    else
+    {
       senspar.press_auto = false;
       clean(&keys.keys_stack);
       if(senspar.pressure < 990)
@@ -1108,10 +1416,22 @@ void keys_analis()
            senspar.pressure = (float)temp_press;
           wright_data_to_cam(GET_PRESSURE_DATA, senspar.pressure);
         }
+    }
     break;
     
          
     case KEY_PRESSURE_MINUS:
+    if(0x08&spi_sets.silar_state)  
+    {
+#ifndef ENCODER2_IS_UP     
+      if(net_sets.net_encoder_1)    {  cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_ENCODER2_MINUS);}
+      else                          { cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);}
+#else 
+      cWRIGHT_SPI_REG(COMMAND_REG_ADDR, KEY_MINUS_CLICK);
+#endif
+    }
+    else
+    {
       clean(&keys.keys_stack);
       senspar.press_auto = false;
       if(senspar.pressure > 200)
@@ -1120,7 +1440,8 @@ void keys_analis()
           temp_press = temp_press -10 - (temp_press%10);
           senspar.pressure = (float)temp_press;
           wright_data_to_cam(GET_PRESSURE_DATA, senspar.pressure);
-        } 
+        }
+    }
     break;
     
      case NO_ACTION:

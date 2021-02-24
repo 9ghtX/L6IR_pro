@@ -7,6 +7,7 @@
 
 display_state display_st;
 operator_control_consist operator_ctrl_consist;
+operator_control_state eye_sens_state;
 s16 waiting_control_time;
 extern uint16_t ADCBuffer[];
 extern ADC_result ADC_data;
@@ -46,12 +47,12 @@ void Operator_present_control()
     case pulse_adc3:
       photo_data_light+= ADC_data.operator_photo;//ADCBuffer[2];//ADC_GetInjectedConversionValue(ADC1, ADC_InjectedChannel_3);   
       //photo_data_light = photo_data_light/OPERATOR_CONTROL_PERIOD;
-       if((display_st == display_on)&&(photo_data_light>PHOTO_DEFAULT_OFF_VALUE)) display_st = display_make_off;
+       //if((display_st == display_on)&&(photo_data_light>PHOTO_DEFAULT_OFF_VALUE)) display_st = display_make_off;
 
        
-       if((display_st == display_off)&&(photo_data_light<PHOTO_DEFAULT_ON_VALUE))  display_st = display_make_on;
+       //if((display_st == display_off)&&(photo_data_light<PHOTO_DEFAULT_ON_VALUE))  display_st = display_make_on;
      
-      Led_OFF;
+     // Led_OFF;
       //display_st = display_on;
       waiting_control_time = OPERATOR_CONTROL_PERIOD;
       operator_ctrl_consist = led_pulse;

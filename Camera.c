@@ -19,6 +19,7 @@ extern bool key1_pulse;
 extern u16  key1_count;
 extern bool led_pulse_enable;
 extern encoder encoder0;
+extern float currient_focus;
 
 void init_spi_objects()
 {
@@ -331,29 +332,39 @@ void spi_silar_tasks()
 // if(cam_operation == read)
 // {
 #ifndef TEST_MODE
- if((spi_sets.read_sichro_count==0)&&spi_sets.stat_read_enable)
+ if(spi_sets.read_sichro_count==0)
    {
-    spi_sets.silar_status = spi_silar_read(STATUS_REG_ADDR);
+    if(spi_sets.stat_read_enable)
+     {
+      spi_sets.silar_status = spi_silar_read(STATUS_REG_ADDR);
 
-    for(count=0;count<32;count++)
-       {
-         if((spi_sets.silar_status>>count)&0x00000001)
+      for(count=0;count<32;count++)
          {
-           spi_objects[count].read_data = spi_silar_read(READ_COM|spi_objects[count].adress);
+          if((spi_sets.silar_status>>count)&0x00000001)
+            {
+             spi_objects[count].read_data = spi_silar_read(READ_COM|spi_objects[count].adress);
 
-           if((spi_objects[count].read_data != spi_objects[count].last_data)&&(spi_objects[count].reg_for_wright))
-             {
-              if((count <= 16)||(count == 30))              cam_sets.syncro_count = 0;
-              spi_objects[count].wright_data = spi_objects[count].last_data;
-              spi_objects[count].wright_enable = true;
-             }
+             if((spi_objects[count].read_data != spi_objects[count].last_data)&&(spi_objects[count].reg_for_wright))
+               {
+                if((count <= 16)||(count == 30))              cam_sets.syncro_count = 0;
+                spi_objects[count].wright_data = spi_objects[count].last_data;
+                spi_objects[count].wright_enable = true;
+               }
 
            if(count==30)
            {
              senspar.change_par = true;
              if(spi_objects[count].last_data == KEY_MENU_CLICK)
               {
-               if((0x08&spi_sets.silar_state)) spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+               if((0x08&spi_sets.silar_state))
+               {
+                 spi_objects[COMMAND_REG_ADDR].wright_data = spi_sets.current_function;
+                 //meteo_actevate(true);
+               }
+               else
+               {
+                //meteo_actevate(false);
+               }
               }
             
            }
@@ -370,17 +381,19 @@ void spi_silar_tasks()
               if(count == 30)spi_sets.stat_read_enable = false;
              }
          }
-         else
-         {
-          if(!spi_objects[count].wright_enable)spi_objects[count].error_count++;
-          if(spi_objects[count].error_count>10)
-          {
-           senspar.change_par = true;
-           init_spi_objects();
-          }
-         }
-
        }
+     }
+     else
+      {
+      if(!spi_objects[count].wright_enable)spi_objects[count].error_count++;
+      if(spi_objects[count].error_count>10)
+        {
+         senspar.change_par = true;
+         init_spi_objects();
+        }
+      }
+
+       
 
     spi_sets.silar_status = 0;
 
@@ -564,9 +577,9 @@ void correct_enter(u8 mark_addr, float v_angle,float g_angle, u16 offset, float 
 
 void default_cam_sets()
 {
-  cam_sets.pix_size =  0.017;
-  cam_sets.obj_focus = 50.7;
-  cam_sets.life_size_snail_val = 1.0;
+  cam_sets.pix_size =  0.012;
+  cam_sets.obj_focus = 34.3;
+  cam_sets.life_size_snail_val = 1.7;
 
 
 
@@ -661,67 +674,88 @@ void flash_reading_process()
 //##############################################################################
 //                       MARKS CONTROL FUNCTION
 //##############################################################################
-#define MARK_START_POSITION           300//1600
-#define LIFE_SIZE_SNAIL_START_POS     496//2535
+//#define MARK_START_POSITION           300//1600
+//#define LIFE_SIZE_SNAIL_START_POS     496//2535
+//#define SCREEN_CENTER 563
 
-//float zoom_val[4] = {1.25, 2.0, 3.0, 4.0};
-  float zoom_val[4] = {1.25, 2.5, 3.75, 5.0};
+
+  float zoom_val[4] = {ZOOM1, ZOOM2, ZOOM3, ZOOM4};
+
 void marks_syncro_func()
 {
  if(cam_sets.syncro_count!=0) cam_sets.syncro_count--;
 }
 
-#define SCREEN_CENTER 563
+
 
 void mark_tasks()
 {
   u32 color_mark;
   u8 ball_num;
-  float tresholt = flash.pix_size/flash.obj_focus;
+ // float tresholt = flash.pix_size/flash.obj_focus;
   ball_result ball_res;
   spi_read_camers_state();//spi_sets.silar_state = spi_silar_read(CAMERA_STATE_ADDR);
   ball_num = (u8)(0x0f&(spi_sets.silar_state>>4));
+  float obj_focus_var;
+  
+  if(flash.cam_type&CONFIG_AUTO_FOCUS_TEST)
+  {
+    if(obj_focus_var != currient_focus)senspar.change_par = true;
+    obj_focus_var = currient_focus;
+  }
+  else obj_focus_var = flash.obj_focus;
+  
+  
+    float tresholt = flash.pix_size/obj_focus_var;
   if(senspar.change_par)
     {
      senspar.change_par = false;
 
      if(senspar.trabl_par)color_mark = RED_COLOR;
-     else                 color_mark = GREEN_COLOR;//BLUE_COLOR;
+     else                 color_mark = BLUE_COLOR;
      
     // color_mark = INVISIBLE;
 
       u32 vert_possition, gor_possition, null_possition;
 
-      // ростовая улитка
+      
+      //###################
+      //ростовая улитка
+      //###################
+      
       null_possition =  YELLOW_COLOR|NULL_POSSITION_DESCRIPT_3;
      
-      vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*flash.obj_focus*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
+      vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*obj_focus_var*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
       gor_possition  = cam_sets.marks_offset[4];
 
       spi_objects[cam_sets.mark_addres[4]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
 
       null_possition =  YELLOW_COLOR|NULL_POSSITION_DESCRIPT_3;
-      vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*flash.obj_focus*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
+      vert_possition = (u32)(LIFE_SIZE_SNAIL_START_POS - (u32)((zoom_val[ZOOM]*obj_focus_var*cam_sets.life_size_snail_val)/(flash.pix_size*senspar.distance)));
       gor_possition  = cam_sets.marks_offset[5];
 
       spi_objects[cam_sets.mark_addres[5]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
 
 
-       //#ifdef METEO
-      // индикация заклона
+      //#################
+      //индикация заклона
+      //#################
+      
       if(senspar.declinate>30) senspar.declinate = 30;
       if(senspar.declinate<-30) senspar.declinate = -30;
- //     if(((s32)(senspar.declinate)) == 0)
- //     {
- //       null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;
- //     }
-      
-      null_possition = color_mark|NULL_POSSITION_DESCRIPT_3; 
+
+       
+      null_possition = color_mark|NULL_POSSITION_DESCRIPT_1; 
       if(flash.cam_type&CONFIG_METEO_TEST)
       {
       vert_possition = MARK_START_POSITION - 5*((s32)(senspar.declinate));
-      if(tresholt > ZOOM_TRESHOLD)gor_possition  = SCREEN_CENTER - (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][0];
-      else                         gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
+#ifndef CIVIL1024
+      if(tresholt > ZOOM_TRESHOLD)gor_possition  = SCREEN_CENTER - (u32)(zoom_val[ZOOM]*obj_focus_var*DECLINE_SCALE_COEFF +16);//declin_gor_poss[ZOOM][0];
+      else                        gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF +16);
+#else
+      if(ZOOM<2)                  gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF +16);//declin_gor_poss[ZOOM][0];
+      else                        gor_possition  = SCREEN_CENTER - (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF/3 +16);
+#endif
       
       spi_objects[cam_sets.mark_addres[6]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
       }
@@ -732,11 +766,17 @@ void mark_tasks()
       
       
      if(flash.cam_type&CONFIG_METEO_TEST)
-      {     
-      null_possition = color_mark|NULL_POSSITION_DESCRIPT_3;//|REDROW_SCREEN;
+      {    
+      null_possition = color_mark|NULL_POSSITION_DESCRIPT_1;
+      if(!(flash.cam_type&CONFIG_BALL_TEST))null_possition|=REDROW_SCREEN; // Redrow screen now, if ballistic is tabble
       vert_possition = MARK_START_POSITION + 5*((s32)(senspar.declinate));
-      if(tresholt > ZOOM_TRESHOLD)   gor_possition  = SCREEN_CENTER + (u32)(zoom_val[ZOOM]*flash.obj_focus*1.1088 +10);//declin_gor_poss[ZOOM][1];
-      else  gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*flash.obj_focus*1.1088 +10);
+#ifndef CIVIL1024      
+      if(tresholt > ZOOM_TRESHOLD)   gor_possition  = SCREEN_CENTER + (u32)(zoom_val[ZOOM]*obj_focus_var*DECLINE_SCALE_COEFF +16);//declin_gor_poss[ZOOM][1];
+      else  gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF +16);
+#else
+      if(ZOOM<2)                     gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF +16);//declin_gor_poss[ZOOM][1];
+      else  gor_possition  = SCREEN_CENTER + (u32)(zoom_val[0]*obj_focus_var*DECLINE_SCALE_COEFF/3 +16);
+#endif
       
       spi_objects[cam_sets.mark_addres[7]].wright_data = null_possition|(0x1fff&((u32)vert_possition))|((0x1fff&((u32)gor_possition))<<13);
       }
@@ -744,9 +784,14 @@ void mark_tasks()
       {
         spi_objects[cam_sets.mark_addres[7]].wright_data = 0x80000000;
       }
-            
-      // #endif
-     //Расчет положений марок дальности
+             
+             
+     //#######################
+     //        Расчет положений марок дальности
+     //#######################        
+     
+    if(flash.cam_type&CONFIG_BALL_TEST)
+           {             
      for(u16 i =0; i<cam_sets.mark_quant; i++)
         {
           if(senspar.distance>100)correct_enter(cam_sets.mark_addres[i],ball_res.MOAySM,ball_res.MOAxSM, cam_sets.marks_offset[i],(float)cam_sets.dist_mark[i],false/*(i==(cam_sets.mark_quant-1))*/,INVISIBLE);
@@ -760,10 +805,22 @@ void mark_tasks()
      if(EN_MENU) ball_res = balCalculate(100, flash.ballistics_buf[ball_num]);
      else        ball_res = balCalculate(senspar.distance, flash.ballistics_buf[ball_num]);
      if(ball_res.correct) correct_enter(MARK_16_ADDR,ball_res.MOAySM,ball_res.MOAxSM,0, senspar.distance, true,YELLOW_COLOR);
-      cam_sets.syncro_count = MARK_CORRECT_PERIOD;
+     else
+     {
+      spi_objects[cam_sets.mark_addres[7]].wright_data = spi_objects[cam_sets.mark_addres[7]].wright_data|REDROW_SCREEN;
+      spi_objects[cam_sets.mark_addres[6]].wright_data = spi_objects[cam_sets.mark_addres[6]].wright_data|REDROW_SCREEN;
      }
-
+     }
+    }
+cam_sets.syncro_count = MARK_CORRECT_PERIOD;
 }
+
+
+/*##############################################################################
+
+            OPERATOR PRESENTS CONTROL
+
+##############################################################################*/
 
 void oled_control()
 {
@@ -789,3 +846,18 @@ void oled_control()
          }
           
 }
+
+u8 eye_sens_set_level_count;
+extern ADC_result ADC_data;
+void eye_sens_set_level()
+{
+ float eye_temp = 0.0;
+ Led_ON;
+ eye_sens_set_level_count =0;
+ while(eye_sens_set_level_count<100)
+ {
+   if(eye_sens_set_level_count%10==9) {eye_temp += (float)ADC_data.operator_photo; eye_sens_set_level_count++;} 
+ }
+ eye_sens_par.eye_threshold = (eye_temp/10)+50;
+}
+

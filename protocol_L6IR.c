@@ -14,16 +14,16 @@ Buf_Head	 TXbuf,RXbuf, keyBuf;
 encoder encoder0, encoder1;
 bool fuck_power_off_command = true;
 extern spi_def spi_sets;
-
+float currient_focus;
 //#define MASK_OFF         0x00
 //#define MASK_ON          0xFF
 
- u8 encoder_plus_buf[ALL_ENCODER_FUNC]=  {KEY_DISTANTS_PLUS, KEY_BRIGHTNES_PLUS, ENCODER_PLUS_ZOOM, KEY_POSITIVE, KEY_PALETTE_PLUS, KEY_LEGIBILITY_PLUS, KEY_MARKS_BRIGHTNES_PLUS, KEY_EOC_BRIGHTNES_PLUS, KEY_EXPOSSITION_PLUS, KEY_TEMPERATURE_PLUS, KEY_PRESSURE_PLUS};
- u8 encoder_minus_buf[ALL_ENCODER_FUNC]= {KEY_DISTANTS_MINUS, KEY_BRIGHTNES_MINUS, ENCODER_MINUS_ZOOM, KEY_NEGATIVE, KEY_PALETTE_MINUS, KEY_LEGIBILITY_MINUS,KEY_MARKS_BRIGHTNES_MINUS, KEY_EOC_BRIGHTNES_MINUS, KEY_EXPOSSITION_MINUS,KEY_TEMPERATURE_MINUS, KEY_PRESSURE_MINUS};
- u8 encoder_func_buf[ALL_ENCODER_FUNC+1]=  {COM_NO_SYMBOL_DISP, COM_DISTANTS_DISP, COM_BRIGHTNES_DISP, COM_ZOOM_DISP, COM_POS_NEG_DISP, COM_POLETTE_DISP, COM_LIGIBILITY_DISP, COM_MARKS_BRIGHTNES_DISP, COM_EOC_BRIGHTNES_DISP, COM_EXPOSSITION_DISP, COM_TEMPERATURE_DISP, COM_PRESSURE_DISP};
- u8 encoder0_masks_buf[ALL_ENCODER_FUNC+1]   ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
- u8 encoder1_masks_buf[ALL_ENCODER_FUNC+1]   ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
- u8 ctrl_unit_masks_buf[ALL_ENCODER_FUNC+1]  ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
+ u8 encoder_plus_buf[ALL_ENCODER_FUNC]=  {KEY_DISTANTS_PLUS, KEY_BRIGHTNES_PLUS, ENCODER_PLUS_ZOOM, KEY_POSITIVE, KEY_PALETTE_PLUS, KEY_LEGIBILITY_PLUS, KEY_MARKS_BRIGHTNES_PLUS, KEY_EOC_BRIGHTNES_PLUS, KEY_EXPOSSITION_PLUS, KEY_TEMPERATURE_PLUS, KEY_PRESSURE_PLUS, KEY_EYE_SENS_PLUS};
+ u8 encoder_minus_buf[ALL_ENCODER_FUNC]= {KEY_DISTANTS_MINUS, KEY_BRIGHTNES_MINUS, ENCODER_MINUS_ZOOM, KEY_NEGATIVE, KEY_PALETTE_MINUS, KEY_LEGIBILITY_MINUS,KEY_MARKS_BRIGHTNES_MINUS, KEY_EOC_BRIGHTNES_MINUS, KEY_EXPOSSITION_MINUS,KEY_TEMPERATURE_MINUS, KEY_PRESSURE_MINUS, KEY_EYE_SENS_MINUS};
+ u8 encoder_func_buf[ALL_ENCODER_FUNC+1]=  {COM_NO_SYMBOL_DISP, COM_DISTANTS_DISP, COM_BRIGHTNES_DISP, COM_ZOOM_DISP, COM_POS_NEG_DISP, COM_POLETTE_DISP, COM_LIGIBILITY_DISP, COM_MARKS_BRIGHTNES_DISP, COM_EOC_BRIGHTNES_DISP, COM_EXPOSSITION_DISP, COM_TEMPERATURE_DISP, COM_PRESSURE_DISP, COM_EYE_SENS_DISP};
+ u8 encoder0_masks_buf[ALL_ENCODER_FUNC+1]   ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
+ u8 encoder1_masks_buf[ALL_ENCODER_FUNC+1]   ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
+ u8 ctrl_unit_masks_buf[ALL_ENCODER_FUNC+1]  ={MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON, MASK_ON};
  u8 encoder_func_count;
 
 u16 error_counter;
@@ -41,9 +41,10 @@ void func_buffer_ini()
  encoder_plus_buf[LIGIBILITY_FUNC_NUM-1] = KEY_LEGIBILITY_PLUS;
  encoder_plus_buf[MARKS_BRIGHTNES_FUNC_NUM-1] =  KEY_MARKS_BRIGHTNES_PLUS;
  encoder_plus_buf[EOC_BRIGHTNES_FUNC_NUM-1] = KEY_EOC_BRIGHTNES_PLUS;
- encoder_plus_buf[EXPOSSITION_FUNC_NUM-1] = KEY_EXPOSSITION_PLUS;
- encoder_plus_buf[TEMP_ENTER_FUNC_NUM -1] = KEY_TEMPERATURE_PLUS;
- encoder_plus_buf[PRESS_ENTER_FUNC_NUM -1] = KEY_PRESSURE_PLUS;
+ encoder_plus_buf[EXPOSSITION_FUNC_NUM-1]   = KEY_EXPOSSITION_PLUS;
+ encoder_plus_buf[TEMP_ENTER_FUNC_NUM -1]   = KEY_TEMPERATURE_PLUS;
+ encoder_plus_buf[PRESS_ENTER_FUNC_NUM -1]  = KEY_PRESSURE_PLUS;
+ encoder_plus_buf[EYE_SENSOR_ON_FUNC_NUM-1] =  KEY_EYE_SENS_PLUS;
  
  encoder_minus_buf[DISTANTS_FUNC_NUM-1] = KEY_DISTANTS_MINUS;
  encoder_minus_buf[BRIGHTNES_FUNC_NUM-1] = KEY_BRIGHTNES_MINUS;
@@ -56,6 +57,7 @@ void func_buffer_ini()
  encoder_minus_buf[EXPOSSITION_FUNC_NUM-1] = KEY_EXPOSSITION_MINUS;
  encoder_minus_buf[TEMP_ENTER_FUNC_NUM -1] =  KEY_TEMPERATURE_MINUS;
  encoder_minus_buf[PRESS_ENTER_FUNC_NUM -1] =  KEY_PRESSURE_MINUS;
+ encoder_minus_buf[EYE_SENSOR_ON_FUNC_NUM-1] = KEY_EYE_SENS_MINUS; 
  
  encoder_func_buf[DISTANTS_FUNC_NUM] = COM_DISTANTS_DISP;
  encoder_func_buf[BRIGHTNES_FUNC_NUM] = COM_BRIGHTNES_DISP;
@@ -68,6 +70,7 @@ void func_buffer_ini()
  encoder_func_buf[EXPOSSITION_FUNC_NUM] = COM_EXPOSSITION_DISP;
  encoder_func_buf[TEMP_ENTER_FUNC_NUM] = COM_TEMPERATURE_DISP;
  encoder_func_buf[PRESS_ENTER_FUNC_NUM] =   COM_PRESSURE_DISP;
+ encoder_func_buf[EYE_SENSOR_ON_FUNC_NUM] = COM_EYE_SENS_DISP;
 }
 
 void encoder_func_ini()
@@ -77,18 +80,32 @@ void encoder_func_ini()
       keys.quant++;
 }
 
-
+extern u8 last_com, last_adrr;
 
  void protocol()
 {
  bool st;
  u8 command, adress;
  u8 i, keys_q,dop_symb=0,code;
+// if(last_com == 0x02)
+// {
+//  adress = last_adrr;
+//  command = last_com;
+// }
+// else
+ {
  del_stsp(&RXbuf);
  st = check_crc(&RXbuf);
+ if(!st)
+ {
+   task_flag = false;
+   return;
+ }
  adress = pop(&RXbuf);
+
  command = pop(&RXbuf);
-// error_counter = ERROR_WAITING_TIME;
+ }
+ // error_counter = ERROR_WAITING_TIME;
 
 if(adress == ADRESS_CU)
  {
@@ -197,7 +214,7 @@ if(adress == ADRESS_EXT_MASTER)
     switch(command)
     {
       case EXT_MASTER_REQUEST:
-           net_set_default(NET_SLAVE);
+          // net_set_default(NET_SLAVE);
       break;
       
       case EXT_MASTER_RFU_START:
@@ -333,6 +350,19 @@ if(adress == encoder0.adress)
 if(adress == ADRESS_LPD)
   {
     lpd_requests(command);
+  }
+
+if(adress == ADRESS_OBJ_FOCUS)
+  {
+   float focus;
+   float* focus_pointer = &focus;
+   u8* data;
+   data = (u8*)(focus_pointer);
+          *(data+0) = pop(&RXbuf);
+          *(data+1) = pop(&RXbuf);
+          *(data+2) = pop(&RXbuf);
+          *(data+3) = pop(&RXbuf);
+   currient_focus = focus;
   }
 
  clean(&RXbuf);

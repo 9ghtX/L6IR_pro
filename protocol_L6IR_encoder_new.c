@@ -50,11 +50,11 @@ void encoder1_func(u8 command)
            break;
            
            case ENCODER_PLUS_PRESS_1:
-             keys.buffer[keys.quant+i] = KEY_ENTER_SPECIAL_MENU;
+             push(&keys.keys_stack, KEY_ENTER_SPECIAL_MENU);//keys.buffer[keys.quant+i] = KEY_ENTER_SPECIAL_MENU;
            break;
              
            case KEY_MENU_ENTER:
-             keys.buffer[keys.quant+i] = KEY_POWER_OFF;
+            push(&keys.keys_stack, KEY_POWER_OFF);// keys.buffer[keys.quant+i] = KEY_POWER_OFF;
              
            break;
            
@@ -81,11 +81,11 @@ void encoder1_t_func(u8 command)
           code = pop(&RXbuf);
           switch(code)
           {
-           case ENCODER_PLUS_0:
+           case ENCODER_PLUS_1:
                  push(&keys.keys_stack, KEY_PLUS);//encoder_plus_buf[encoder_func_count-1];
            break;
 
-           case ENCODER_MINUS_0:
+           case ENCODER_MINUS_1:
                  push(&keys.keys_stack, KEY_MINUS);//encoder_minus_buf[encoder_func_count-1];
                  
            break;
@@ -166,14 +166,16 @@ void encoder0_func(u8 command)
            error_counter = ERROR_WAITING_TIME;
           switch(code)
           {
-           case ENCODER_PLUS_0:
+           case ENCODER_PLUS_1:
+           case ENCODER_PLUS_0:  
               //senspar.change_par = true;
                  push(&keys.keys_stack, encoder_plus_buf[encoder_func_count-1]);
                 fuck_next_command = false;
                 fuck_power_off_command = false;
            break;
 
-           case ENCODER_MINUS_0:
+           case ENCODER_MINUS_1:
+           case ENCODER_MINUS_0:  
               //senspar.change_par = true;
                  push(&keys.keys_stack, encoder_minus_buf[encoder_func_count-1]);
                 fuck_next_command = false;
@@ -219,12 +221,12 @@ void encoder0_func(u8 command)
            break;
 
            case KEY_MENU_ENTER:
-             if(!fuck_power_off_command) 
-             {
-               push(&keys.keys_stack, KEY_POWER_OFF);
-             fuck_next_command = false;
-             }
-             //keys.buffer[keys.quant+i] = code;
+//             if(!fuck_power_off_command) 
+//             {
+//               push(&keys.keys_stack, KEY_POWER_OFF);
+//             fuck_next_command = false;
+//             }
+             push(&keys.keys_stack, KEY_POWER_OFF);//keys.buffer[keys.quant+i] = code;
            break;
           }
         }

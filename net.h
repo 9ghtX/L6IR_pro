@@ -39,6 +39,8 @@
 
 #define EXTERN_MASTER_FIND     0x15
 #define CU_GET_NET_CONDIT      0x16
+
+#define AF_GET_FOCUS           0x17
 /*
 Времена синхронизации сетевых событий
 */
@@ -61,7 +63,7 @@
 #define POWER_OFF_TIMER              150
 #define EXT_MASTER_DELAY             5200
 #define CU_GET_CONDIT_TIMER          5300
-
+#define AUTOFOCUS_GET_FOCUS_TIMER    200
 
 
 #define LD_START_MESURE              0x03
@@ -139,6 +141,7 @@ typedef struct
  bool net_meteo;
  bool net_range_finder;
  bool net_ext_communication;
+ bool net_auto_focus;
  bool net_encoder_0;
  bool net_encoder_1;
  bool net_encoder_2;
@@ -187,6 +190,7 @@ void encoder1_func(u8 command);
 void encoder1_t_func(u8 command);
 void encoder0_eoc_func(u8 command);
 void keys_analis_P_O();
+void meteo_actevate(bool active);
 /*
 #ifdef CU_DEVICE
 
